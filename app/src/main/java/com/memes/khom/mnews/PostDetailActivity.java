@@ -177,6 +177,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         }
     }
 
+
+
     private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
 
         private Context mContext;

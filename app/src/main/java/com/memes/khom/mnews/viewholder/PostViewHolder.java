@@ -3,6 +3,7 @@ package com.memes.khom.mnews.viewholder;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.memes.khom.mnews.R;
@@ -17,6 +18,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView starView;
     public TextView numStarsView;
     public TextView bodyView;
+    public TextView post_date;
+    public LinearLayout comments_lay;
 
     public PostViewHolder(View itemView) {
         super(itemView);
@@ -28,6 +31,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         numStarsView = itemView.findViewById(R.id.post_num_stars);
         iv_piture = itemView.findViewById(R.id.iv_piture);
         bodyView = itemView.findViewById(R.id.post_body);
+        comments_lay = itemView.findViewById(R.id.comments_lay);
+        post_date = itemView.findViewById(R.id.post_date);
     }
 
     public void bindToPost(Post post, View.OnClickListener starClickListener) {
@@ -35,7 +40,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.starCount));
         bodyView.setText(post.body);
-
+        post_date.setText(post.create_date);
         starView.setOnClickListener(starClickListener);
     }
 }

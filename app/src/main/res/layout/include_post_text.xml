@@ -2,6 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_gravity="center_horizontal"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -9,29 +12,29 @@
     <TextView
         android:id="@+id/post_title"
         style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:layout_margin="8dp"
         android:maxLines="1"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:textColor="@color/text_black"
         android:textStyle="bold"
-        tools:text="My First Post" />
+        tools:text="" />
 
     <TextView
         android:id="@+id/post_body"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="5dp"
-        tools:text="@string/lorem" />
+        android:layout_height="match_parent"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        tools:text="" />
 
     <ImageView
         android:id="@+id/iv_piture"
+        android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop" />
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

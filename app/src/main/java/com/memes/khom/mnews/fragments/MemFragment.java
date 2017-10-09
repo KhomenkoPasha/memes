@@ -96,7 +96,7 @@ public class MemFragment extends Fragment {
 
                     viewHolder.mTitleTask.setText(title);
 
-                    mStorageRef.child("images/" +  getRef(position).getKey().toString()).getDownloadUrl()
+                    mStorageRef.child("images/" +  getRef(position).getKey()).getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {

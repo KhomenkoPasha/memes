@@ -33,7 +33,7 @@ public class Post {
         this.author = author;
         this.title = title;
         this.body = body;
-        this.create_date = new SimpleDateFormat("dd.mm.yyyy", Locale.US).format(new Date());
+        this.create_date = new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
     }
 
     // [START post_to_map]

@@ -1,6 +1,10 @@
 package com.memes.khom.mnews.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -31,6 +36,10 @@ import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.viewholder.PostViewHolder;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 
 public abstract class PostListFragment extends Fragment {
@@ -44,13 +53,12 @@ public abstract class PostListFragment extends Fragment {
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
 
-    private LinearLayoutManager mManager;
-
-    public PostListFragment() {}
+    public PostListFragment() {
+    }
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
 
@@ -64,12 +72,23 @@ public abstract class PostListFragment extends Fragment {
         return rootView;
     }
 
+    public static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = newWidth / width;
+        float scaleHeight = newHeight / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(bm, 0, 0, width, height,
+                matrix, false);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // Set up Layout Manager, reverse layout
-        mManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
@@ -84,7 +103,7 @@ public abstract class PostListFragment extends Fragment {
 
                 // Set click listener for the whole post view
                 final String postKey = postRef.getKey();
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                viewHolder.comments_lay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // Launch PostDetailActivity
@@ -98,18 +117,70 @@ public abstract class PostListFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
+                                Target target = new Target() {
+
+                                    @Override
+                                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                                        /*
+                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+                                        Bitmap decodedMap = BitmapFactory.decodeStream(new ByteArrayInputStream(outputStream.toByteArray()));
+                                        viewHolder.iv_piture.setImageBitmap(decodedMap);
+*/
+                                        Bitmap originalPhoto = bitmap;
+                                        final float MAX_SIZE = viewHolder.itemView.getWidth();
+                                        final float height = bitmap.getHeight();
+                                        final float width = bitmap.getWidth();
+
+                                        if (height >= MAX_SIZE || width >= MAX_SIZE) {
+                                            float newWidth;
+                                            float newHeight;
+                                            if (height > width) {
+                                                newHeight = MAX_SIZE;
+                                                newWidth = width / (height / MAX_SIZE);
+                                            } else {
+                                                newWidth = MAX_SIZE;
+                                                newHeight = height / (width / MAX_SIZE);
+                                            }
+                                            originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
+                                        }
+
+
+                                        /*
+                                        if (bitmap.getHeight() > bitmap.getWidth()) {
+                                            viewHolder.iv_piture.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                                            viewHolder.iv_piture.setImageBitmap(originalPhoto);
+                                        } else {
+                                            viewHolder.iv_piture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                                        }
+                                        */
+                                        viewHolder.iv_piture.setImageBitmap(originalPhoto);
+                                    }
+
+                                    @Override
+                                    public void onBitmapFailed(Drawable errorDrawable) {
+                                    }
+
+                                    @Override
+                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                    }
+                                };
                                 Picasso.with(getContext())
                                         .load(uri)
-                                        .into(viewHolder.iv_piture);
+                                        .into(target);
+                                viewHolder.iv_piture.setTag(target);
                             }
 
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.i("Load","" + e);
+                        Log.i("Load", "" + e);
 
                     }
                 });
+
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.stars.containsKey(getUid())) {
