@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "44267967193",
+    "firebase_url": "https://topmemnews.firebaseio.com",
+    "project_id": "topmemnews",
+    "storage_bucket": "topmemnews.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44267967193:android:238fe56c2271ed3c",
+        "android_client_info": {
+          "package_name": "com.memes.khom.memsnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44267967193-rbhpnr3dveoe091pnfqqa5dmuu4vitro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.memes.khom.memsnews",
+            "certificate_hash": "f011c4c49b7df1a77d8a244ca5640f2444edc95c"
+          }
+        },
+        {
+          "client_id": "44267967193-duffte5nlrcf70ttbmkoq999i5t9otjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDogd733xP2MmoozYGU_Go-a8INKpqcdYA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44267967193-duffte5nlrcf70ttbmkoq999i5t9otjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
