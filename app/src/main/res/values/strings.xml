@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">memsNews</string>
+    <string name="app_name">Go</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -22,7 +22,7 @@
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="send_text">Send</string>
-   <string name="title_sign_in">Welcome</string>
+    <string name="title_sign_in">Welcome</string>
     <string name="sign_up">Sign Up</string>
     <string name="hint_password">password</string>
     <string name="hint_email">email</string>

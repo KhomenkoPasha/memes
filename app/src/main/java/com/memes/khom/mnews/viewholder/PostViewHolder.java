@@ -12,14 +12,15 @@ import com.memes.khom.mnews.models.Post;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView titleView;
-    public TextView authorView;
+    private TextView titleView;
+    private TextView authorView;
+    private TextView numStarsView;
+    private TextView bodyView;
+    private TextView post_date;
+
+    public LinearLayout comments_lay;
     public ImageView iv_piture;
     public ImageView starView;
-    public TextView numStarsView;
-    public TextView bodyView;
-    public TextView post_date;
-    public LinearLayout comments_lay;
 
     public PostViewHolder(View itemView) {
         super(itemView);

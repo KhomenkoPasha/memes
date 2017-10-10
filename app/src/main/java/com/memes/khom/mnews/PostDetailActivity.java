@@ -1,31 +1,48 @@
 package com.memes.khom.mnews;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.memes.khom.mnews.fragments.PostListFragment.getResizedBitmap;
 
 public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
 
@@ -38,11 +55,15 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private ValueEventListener mPostListener;
     private String mPostKey;
     private CommentAdapter mAdapter;
+    private StorageReference mStorageRef;
 
     private TextView mAuthorView;
+    private TextView datePost;
     private TextView mTitleView;
     private TextView mBodyView;
+    private ImageView iv_piture;
     private EditText mCommentField;
+    private LinearLayout linearLayoutCard;
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
 
@@ -56,7 +77,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         if (mPostKey == null) {
             throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
         }
-
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference()
                 .child("posts").child(mPostKey);
@@ -64,15 +85,22 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 .child("post-comments").child(mPostKey);
 
         // Initialize Views
+        datePost = findViewById(R.id.post_date);
         mAuthorView = findViewById(R.id.post_author);
         mTitleView = findViewById(R.id.post_title);
         mBodyView = findViewById(R.id.post_body);
         mCommentField = findViewById(R.id.field_comment_text);
         mCommentButton = findViewById(R.id.button_post_comment);
         mCommentsRecycler = findViewById(R.id.recycler_comments);
-
+        iv_piture = findViewById(R.id.iv_piture);
+        linearLayoutCard = findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -80,8 +108,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     public void onStart() {
         super.onStart();
 
-        // Add value event listener to the post
-        // [START post_value_event_listener]
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -91,7 +119,59 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mAuthorView.setText(post.author);
                 mTitleView.setText(post.title);
                 mBodyView.setText(post.body);
-                // [END_EXCLUDE]
+                datePost.setText(post.create_date);
+
+                mStorageRef.child("images/" + mPostKey).getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Target target = new Target() {
+
+                                    @Override
+                                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                                        Bitmap originalPhoto = bitmap;
+                                        final float MAX_SIZE = (float) (linearLayoutCard.getWidth() / 2);
+                                        final float height = bitmap.getHeight();
+                                        final float width = bitmap.getWidth();
+
+                                        if (height >= MAX_SIZE || width >= MAX_SIZE) {
+                                            float newWidth;
+                                            float newHeight;
+                                            if (height > width) {
+                                                newHeight = MAX_SIZE;
+                                                newWidth = width / (height / MAX_SIZE);
+                                            } else {
+                                                newWidth = MAX_SIZE;
+                                                newHeight = height / (width / MAX_SIZE);
+                                            }
+                                            originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
+                                        }
+
+                                        iv_piture.setImageBitmap(originalPhoto);
+                                    }
+
+                                    @Override
+                                    public void onBitmapFailed(Drawable errorDrawable) {
+                                    }
+
+                                    @Override
+                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                    }
+                                };
+                                Picasso.with(PostDetailActivity.this)
+                                        .load(uri)
+                                        .into(target);
+                                iv_piture.setTag(target);
+                            }
+
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("Load", "" + e);
+
+                    }
+                });
             }
 
             @Override
@@ -105,15 +185,25 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             }
         };
         mPostReference.addValueEventListener(postListener);
-        // [END post_value_event_listener]
-
         // Keep copy of post listener so we can remove it when app stops
         mPostListener = postListener;
-
         // Listen for comments
         mAdapter = new CommentAdapter(this, mCommentsReference);
         mCommentsRecycler.setAdapter(mAdapter);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case android.R.id.home:
+                this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public void onStop() {
@@ -145,11 +235,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
                         String authorName = user.username;
-
                         // Create new comment object
                         String commentText = mCommentField.getText().toString();
                         Comment comment = new Comment(uid, authorName, commentText);
-
                         // Push the comment, it will appear in the list
                         mCommentsReference.push().setValue(comment);
 
@@ -166,17 +254,16 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView authorView;
-        public TextView bodyView;
+        TextView authorView;
+        TextView bodyView;
 
-        public CommentViewHolder(View itemView) {
+        CommentViewHolder(View itemView) {
             super(itemView);
 
             authorView = itemView.findViewById(R.id.comment_author);
             bodyView = itemView.findViewById(R.id.comment_body);
         }
     }
-
 
 
     private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {

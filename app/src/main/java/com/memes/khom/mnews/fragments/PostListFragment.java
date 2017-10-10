@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +32,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.memes.khom.mnews.PictureActivity;
 import com.memes.khom.mnews.PostDetailActivity;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
@@ -116,18 +118,11 @@ public abstract class PostListFragment extends Fragment {
                 mStorageRef.child("images/" + postKey).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onSuccess(Uri uri) {
+                            public void onSuccess(final Uri uri) {
                                 Target target = new Target() {
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                                        /*
-                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-                                        Bitmap decodedMap = BitmapFactory.decodeStream(new ByteArrayInputStream(outputStream.toByteArray()));
-                                        viewHolder.iv_piture.setImageBitmap(decodedMap);
-*/
                                         Bitmap originalPhoto = bitmap;
                                         final float MAX_SIZE = viewHolder.itemView.getWidth();
                                         final float height = bitmap.getHeight();
@@ -146,17 +141,15 @@ public abstract class PostListFragment extends Fragment {
                                             originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
                                         }
 
-
-                                        /*
-                                        if (bitmap.getHeight() > bitmap.getWidth()) {
-                                            viewHolder.iv_piture.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                                            viewHolder.iv_piture.setImageBitmap(originalPhoto);
-                                        } else {
-                                            viewHolder.iv_piture.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                                        }
-                                        */
                                         viewHolder.iv_piture.setImageBitmap(originalPhoto);
+                                        viewHolder.iv_piture.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent myIntent = new Intent(getContext(), PictureActivity.class);
+                                                myIntent.putExtra("photo_url", uri);
+                                                getContext().startActivity(myIntent);
+                                            }
+                                        });
                                     }
 
                                     @Override
