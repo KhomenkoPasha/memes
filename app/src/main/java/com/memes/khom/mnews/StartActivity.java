@@ -124,6 +124,8 @@ public class StartActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_send:
+                Intent login = new Intent(StartActivity.this, FaceebookRegAct.class);
+                startActivity(login);
                 break;
 
             default:

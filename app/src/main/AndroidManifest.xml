@@ -24,6 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <activity android:name=".SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,8 +50,14 @@
             android:name=".PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar_dialog" />
+
         <activity android:name=".FaceebookRegAct" />
-        <activity android:name=".UserProfile"></activity>
+        <activity
+            android:name=".UserProfile"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
+
 
 </manifest>
