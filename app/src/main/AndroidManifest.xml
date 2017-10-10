@@ -27,33 +27,27 @@
         <activity android:name=".SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".NewPostActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
-
         <activity
             android:name=".PostDetailActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout">
-        </activity>
-
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
         <activity
             android:name=".StartActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:label="@string/title_activity_start"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-            android:theme="@style/AppTheme.NoActionBar_dialog" >
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar_dialog" />
+        <activity android:name=".FaceebookRegAct" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>
