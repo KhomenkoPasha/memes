@@ -110,7 +110,6 @@ public class StartActivity extends AppCompatActivity
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
             Picasso.with(this).load(user.getPhotoUrl()).into(avat);
-
             ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
             ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
         }
