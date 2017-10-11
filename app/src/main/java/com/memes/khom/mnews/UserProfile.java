@@ -32,12 +32,12 @@ public class UserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_user_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         shareDialog = new ShareDialog(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -51,9 +51,9 @@ public class UserProfile extends AppCompatActivity {
         String surname = inBundle.get("surname").toString();
         String imageUrl = inBundle.get("imageUrl").toString();
 
-        TextView nameView = (TextView) findViewById(R.id.nameAndSurname);
+        TextView nameView = findViewById(R.id.nameAndSurname);
         nameView.setText("" + name + " " + surname);
-        Button logout = (Button) findViewById(R.id.logout);
+        Button logout = findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -63,16 +63,16 @@ public class UserProfile extends AppCompatActivity {
                 finish();
             }
         });
+
         new UserProfile.DownloadImage((ImageView)findViewById(R.id.profileImage)).execute(imageUrl);
     }
 
-    public class DownloadImage extends AsyncTask<String, Void, Bitmap>{
+    private class DownloadImage extends AsyncTask<String, Void, Bitmap>{
         ImageView bmImage;
 
-        public DownloadImage(ImageView bmImage){
+        DownloadImage(ImageView bmImage){
             this.bmImage = bmImage;
         }
-
         protected Bitmap doInBackground(String... urls){
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;

@@ -91,7 +91,6 @@ public class StartActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
-
         //((TextView) header.findViewById(R.id.textViewUserName)).setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         ((TextView) header.findViewById(R.id.textViewUserName)).setText("Jason Statham");
         ((TextView) header.findViewById(R.id.textViewEmail)).setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
