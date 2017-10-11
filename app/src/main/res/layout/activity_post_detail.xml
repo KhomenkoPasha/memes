@@ -3,8 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:layout_margin="4dp">
 
+    <LinearLayout
+        android:id="@+id/comment_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:weightSum="1.0">
+
+
+        <EditText
+            android:id="@+id/field_comment_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:hint="Write a comment..."
+            android:maxLines="1" />
+
+        <Button
+            android:id="@+id/button_post_comment"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Post" />
+
+    </LinearLayout>
+
+    <!--
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -12,67 +43,53 @@
         android:padding="6dp"
         android:layout_margin="6dp"
         android:id="@+id/cardView">
+-->
+    <LinearLayout
+        android:id="@+id/linearLayoutInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <LinearLayout
-            android:id="@+id/linearLayoutInfo"
+        <include
+            android:id="@+id/post_author_layout"
+            layout="@layout/include_post_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1" />
+
+        <include
+            android:id="@+id/post_text_layout"
+            layout="@layout/include_post_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:orientation="vertical">
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1" />
 
-            <include
-                android:id="@+id/post_author_layout"
-                layout="@layout/include_post_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="1" />
-
-            <include
-                android:id="@+id/post_text_layout"
-                layout="@layout/include_post_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:id="@+id/comment_form"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:weightSum="1.0">
-
-                <EditText
-                    android:id="@+id/field_comment_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:hint="Write a comment..."
-                    android:maxLines="1" />
-
-                <Button
-                    android:id="@+id/button_post_comment"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:text="Post" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
+        <View
+            android:id="@+id/viewLineTop"
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="12dp"
+            android:background="#30000000" />
+    </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_comments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_comment"
-        android:layout_below="@+id/cardView" />
+        android:layout_above="@+id/comment_form"
+        android:layout_below="@+id/linearLayoutInfo"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/white"
+        android:visibility="visible"
+        tools:listitem="@layout/item_comment">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

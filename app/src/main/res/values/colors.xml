@@ -13,5 +13,6 @@
     <color name="white">#ffffff</color>
     <color name="icons">#212121</color>
     <color name="divider">#BDBDBD</color>
+    <color name="colorPrimaryTeal">#A5D6A7</color>
 
 </resources>

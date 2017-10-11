@@ -2,6 +2,7 @@ package com.memes.khom.mnews;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,13 +17,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.memes.khom.mnews.R.drawable.profile;
 
 public class StartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,6 +41,7 @@ public class StartActivity extends AppCompatActivity
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,24 +61,27 @@ public class StartActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final Fragment[] mFragments = new Fragment[] {
+            private final Fragment[] mFragments = new Fragment[]{
                     new RecentPostsFragment(),
                     new MyPostsFragment(),
                     new MyTopPostsFragment(),
             };
-            private final String[] mFragmentNames = new String[] {
+            private final String[] mFragmentNames = new String[]{
                     getString(R.string.heading_recent),
                     getString(R.string.heading_my_posts),
                     getString(R.string.heading_my_top_posts)
             };
+
             @Override
             public Fragment getItem(int position) {
                 return mFragments[position];
             }
+
             @Override
             public int getCount() {
                 return mFragments.length;
             }
+
             @Override
             public CharSequence getPageTitle(int position) {
                 return mFragmentNames[position];
@@ -85,17 +100,20 @@ public class StartActivity extends AppCompatActivity
                 startActivity(new Intent(StartActivity.this, NewPostActivity.class));
             }
         });
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (user != null) {
 
-        Toast.makeText(this, FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_LONG).show();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-        //((TextView) header.findViewById(R.id.textViewUserName)).setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        ((TextView) header.findViewById(R.id.textViewUserName)).setText("Jason Statham");
-        ((TextView) header.findViewById(R.id.textViewEmail)).setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            navigationView.setNavigationItemSelectedListener(this);
+            View header = navigationView.getHeaderView(0);
+            CircleImageView avat = header.findViewById(R.id.profile_image);
+            Picasso.with(this).load(user.getPhotoUrl()).into(avat);
 
-
+            ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
+            ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
+        }
     }
 
     @Override
@@ -110,7 +128,7 @@ public class StartActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

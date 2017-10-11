@@ -98,7 +98,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -256,12 +255,14 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
         TextView authorView;
         TextView bodyView;
+        ImageView comment_photo;
 
         CommentViewHolder(View itemView) {
             super(itemView);
 
             authorView = itemView.findViewById(R.id.comment_author);
             bodyView = itemView.findViewById(R.id.comment_body);
+            comment_photo = itemView.findViewById(R.id.comment_photo);
         }
     }
 
@@ -380,6 +381,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         public void onBindViewHolder(CommentViewHolder holder, int position) {
             Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
+           // Picasso.with(mContext).load().into(holder.comment_photo);
             holder.bodyView.setText(comment.text);
         }
 
