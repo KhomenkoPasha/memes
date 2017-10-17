@@ -185,7 +185,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void onAuthSuccess(FirebaseUser user) {
-        writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
+        writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "");
         startActivity(new Intent(SignInActivity.this, StartActivity.class));
         finish();
     }
@@ -218,8 +218,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     }
 
     // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
+    private void writeNewUser(String userId, String name, String email, String uriPhoto) {
+        User user = new User(name, email, uriPhoto);
         mDatabase.child("users").child(userId).setValue(user);
     }
     // [END basic_write]

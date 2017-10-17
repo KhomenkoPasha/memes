@@ -59,6 +59,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private TextView mAuthorView;
     private TextView datePost;
+    private ImageView post_author_photo;
     private TextView mTitleView;
     private TextView mBodyView;
     private ImageView iv_piture;
@@ -86,6 +87,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
         // Initialize Views
         datePost = findViewById(R.id.post_date);
+        post_author_photo = findViewById(R.id.post_author_photo);
         mAuthorView = findViewById(R.id.post_author);
         mTitleView = findViewById(R.id.post_title);
         mBodyView = findViewById(R.id.post_body);
@@ -115,11 +117,28 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 // Get Post object and use the values to update the UI
                 Post post = dataSnapshot.getValue(Post.class);
                 // [START_EXCLUDE]
-                mAuthorView.setText(post.author);
-                mTitleView.setText(post.title);
-                mBodyView.setText(post.body);
-                datePost.setText(post.create_date);
+                if (post != null) {
+                    mAuthorView.setText(post.author);
+                    mTitleView.setText(post.title);
+                    mBodyView.setText(post.body);
+                    datePost.setText(post.create_date);
+                    FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.getValue() != null) {
+                                String str = snapshot.getValue().toString();
+                                if (str != null) {
+                                    Picasso.with(PostDetailActivity.this).load(str).into(post_author_photo);
+                                }
+                            }
+                        }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+
+                }
                 mStorageRef.child("images/" + mPostKey).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -276,6 +295,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         private List<String> mCommentIds = new ArrayList<>();
         private List<Comment> mComments = new ArrayList<>();
 
+
         public CommentAdapter(final Context context, DatabaseReference ref) {
             mContext = context;
             mDatabaseReference = ref;
@@ -350,8 +370,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
                     // A comment has changed position, use the key to determine if we are
                     // displaying this comment and if so move it.
-                    Comment movedComment = dataSnapshot.getValue(Comment.class);
-                    String commentKey = dataSnapshot.getKey();
+                    //  Comment movedComment = dataSnapshot.getValue(Comment.class);
+                    //  String commentKey = dataSnapshot.getKey();
 
                     // ...
                 }
@@ -378,10 +398,26 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public void onBindViewHolder(CommentViewHolder holder, int position) {
-            Comment comment = mComments.get(position);
+        public void onBindViewHolder(final CommentViewHolder holder, int position) {
+            final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
-           // Picasso.with(mContext).load().into(holder.comment_photo);
+            FirebaseDatabase.getInstance().getReference().child("users/" + comment.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        String str = snapshot.getValue().toString();
+                        if (str != null) {
+                            Picasso.with(mContext).load(str).into(holder.comment_photo);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+
             holder.bodyView.setText(comment.text);
         }
 

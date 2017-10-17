@@ -8,7 +8,7 @@
     android:background="@color/cardview_light_background"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/comment_photo"
         android:layout_width="32dp"
         android:layout_height="32dp"

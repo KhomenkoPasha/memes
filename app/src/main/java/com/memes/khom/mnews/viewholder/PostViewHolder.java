@@ -17,6 +17,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView numStarsView;
     private TextView bodyView;
     private TextView post_date;
+    public ImageView post_author_photo;
 
     public LinearLayout comments_lay;
     public ImageView iv_piture;
@@ -24,7 +25,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public PostViewHolder(View itemView) {
         super(itemView);
-
 
         titleView = itemView.findViewById(R.id.post_title);
         authorView = itemView.findViewById(R.id.post_author);
@@ -34,6 +34,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         bodyView = itemView.findViewById(R.id.post_body);
         comments_lay = itemView.findViewById(R.id.comments_lay);
         post_date = itemView.findViewById(R.id.post_date);
+        post_author_photo  = itemView.findViewById(R.id.post_author_photo);
     }
 
     public void bindToPost(Post post, View.OnClickListener starClickListener) {
