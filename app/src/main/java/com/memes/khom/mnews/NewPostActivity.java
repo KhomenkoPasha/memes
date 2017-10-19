@@ -1,6 +1,7 @@
 package com.memes.khom.mnews;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -12,10 +13,13 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,7 +62,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
     private ImageView mIVpicture;
-    private MaterialFancyButton mBTNaddPicture;
+    private MaterialFancyButton mBTNaddPicture,add_cat_button;
     private File mTempPhoto;
     private String mImageUri = "";
     private Uri mageUri;
@@ -84,11 +88,10 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mBTNaddPicture = findViewById(R.id.btn_add_picture);
         mBTNaddPicture.setOnClickListener(this);
         mTitleField = findViewById(R.id.field_title);
-
         catSpinner = findViewById(R.id.searchableSpinnerCat);
+        add_cat_button = findViewById(R.id.add_cat_button);
         catSpinner.setTitle("Select Category");
         catSpinner.setPositiveButton("Ок");
-
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
         File localFile;
@@ -127,6 +130,38 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         });
 
         this.setTitle("Создать публикацию");
+
+        add_cat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
+                builder.setTitle("Добавить категорию");
+                // I'm using fragment here so I'm using getView() to provide ViewGroup
+                // but you can provide here any other instance of ViewGroup from your Fragment / Activity
+                View viewInflated = LayoutInflater.from(NewPostActivity.this).inflate(R.layout.text_input_string, (ViewGroup)findViewById(android.R.id.content), false);
+                // Set up the input
+                final EditText input = viewInflated.findViewById(R.id.input);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                builder.setView(viewInflated);
+
+                // Set up the buttons
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                       // m_Text = input.getText().toString();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
 
     }
 
