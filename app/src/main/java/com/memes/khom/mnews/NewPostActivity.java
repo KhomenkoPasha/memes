@@ -36,7 +36,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
+import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.squareup.picasso.Picasso;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +58,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
     private ImageView mIVpicture;
-    private Button mBTNaddPicture;
+    private MaterialFancyButton mBTNaddPicture;
     private File mTempPhoto;
     private String mImageUri = "";
     private Uri mageUri;
@@ -67,6 +69,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private StorageReference mStorageRef;
     private EditText mTitleField;
     private EditText mBodyField;
+    private SearchableSpinner catSpinner;
     private FloatingActionButton mSubmitButton;
 
     @Override
@@ -81,6 +84,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mBTNaddPicture = findViewById(R.id.btn_add_picture);
         mBTNaddPicture.setOnClickListener(this);
         mTitleField = findViewById(R.id.field_title);
+
+        catSpinner = findViewById(R.id.searchableSpinnerCat);
+        catSpinner.setTitle("Select Category");
+        catSpinner.setPositiveButton("Ок");
+
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
         File localFile;
@@ -208,7 +216,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body);
+        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

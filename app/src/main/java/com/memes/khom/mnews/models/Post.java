@@ -28,11 +28,12 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String author, String title, String body) {
+    public Post(String uid, String author, String title, String body,String cat) {
         this.uid = uid;
         this.author = author;
         this.title = title;
         this.body = body;
+        this.category = cat;
         this.create_date = new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
     }
 
@@ -47,6 +48,7 @@ public class Post {
         result.put("starCount", starCount);
         result.put("stars", stars);
         result.put("create_date", create_date);
+        result.put("category", category);
         return result;
     }
     // [END post_to_map]
