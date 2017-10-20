@@ -192,7 +192,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         categRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
                 List<String> cats = new ArrayList<>();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Categ ct = postSnapshot.getValue(Categ.class);
@@ -238,6 +237,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Body is required
         if (TextUtils.isEmpty(body)) {
             mBodyField.setError(REQUIRED);
+            return;
+        }
+
+        // Cat is required
+        if (catSpinner.getSelectedItem() == null) {
+            Toast.makeText(this, "Заполните категорию", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (catSpinner.getSelectedItem() == null) {
+            Toast.makeText(this, "Добавте фото", Toast.LENGTH_SHORT).show();
             return;
         }
 
