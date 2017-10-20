@@ -21,9 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,12 +33,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.memes.khom.mnews.models.Categ;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
@@ -62,13 +65,14 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
     private ImageView mIVpicture;
-    private MaterialFancyButton mBTNaddPicture,add_cat_button;
+    private MaterialFancyButton mBTNaddPicture, add_cat_button;
     private File mTempPhoto;
     private String mImageUri = "";
     private Uri mageUri;
     private String mRereference = "";
     // [START declare_database_ref]
     private DatabaseReference mDatabase;
+    private DatabaseReference categRef;
     // [END declare_database_ref]
     private StorageReference mStorageRef;
     private EditText mTitleField;
@@ -90,12 +94,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mTitleField = findViewById(R.id.field_title);
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         add_cat_button = findViewById(R.id.add_cat_button);
+
         catSpinner.setTitle("Select Category");
         catSpinner.setPositiveButton("Ок");
+
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
         File localFile;
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        categRef = FirebaseDatabase.getInstance().getReference().child("categ");
+        fillSpinnerCat();
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -138,7 +147,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 builder.setTitle("Добавить категорию");
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
                 // but you can provide here any other instance of ViewGroup from your Fragment / Activity
-                View viewInflated = LayoutInflater.from(NewPostActivity.this).inflate(R.layout.text_input_string, (ViewGroup)findViewById(android.R.id.content), false);
+                View viewInflated = LayoutInflater.from(NewPostActivity.this).inflate(R.layout.text_input_string, (ViewGroup) findViewById(android.R.id.content), false);
                 // Set up the input
                 final EditText input = viewInflated.findViewById(R.id.input);
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -148,8 +157,21 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        String key = categRef.push().getKey();
+                        Categ categ = new Categ();
+                        categ.name = input.getText().toString();
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put(key, categ);
+
+                        categRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Toast.makeText(NewPostActivity.this, "Ошибка добавления категории", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                         dialog.dismiss();
-                       // m_Text = input.getText().toString();
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -164,6 +186,31 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         });
 
     }
+
+
+    private void fillSpinnerCat() {
+        categRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                List<String> cats = new ArrayList<>();
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Categ ct = postSnapshot.getValue(Categ.class);
+                    if (ct != null)
+                        cats.add(ct.name);
+                }
+                ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
+                catSpinner.setAdapter(arrayAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -197,8 +244,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
-
-        // [START single_value_read]
         final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -218,22 +263,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                             // Write new post
                             writeNewPost(userId, user.username, title, body);
                         }
-
                         // Finish this Activity, back to the stream
                         setEditingEnabled(true);
                         finish();
-                        // [END_EXCLUDE]
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        // [START_EXCLUDE]
                         setEditingEnabled(true);
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END single_value_read]
     }
 
     private void setEditingEnabled(boolean enabled) {

@@ -33,16 +33,4 @@
     <string name="action_settings">Settings</string>
     <string name="facebook_app_id">370573573385221</string>
 
-    <string-array name="planets">
-        <item>Кисики</item>
-        <item>Стетхэм</item>
-        <item>Еее бой</item>
-        <item>Баяны</item>
-        <item>Баттл</item>
-        <item>Мемы Ютуба‎</item>
-        <item>Капитан Очевидность</item>
-        <item>Фейсы</item>
-        <item>Мимимишечки</item>
-    </string-array>
-
 </resources>

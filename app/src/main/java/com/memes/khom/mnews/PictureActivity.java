@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -26,6 +27,7 @@ public class PictureActivity extends AppCompatActivity {
         try {
             Bundle extras = getIntent().getExtras();
             final ImageView mImageView = findViewById(R.id.imagePhotoView);
+            TextView pict_tag =  findViewById(R.id.pict_tag);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             this.setTitle("Picture");
             Uri uri = extras.getParcelable(PHOTO_URL);
@@ -48,8 +50,8 @@ public class PictureActivity extends AppCompatActivity {
                     }
                 };
 
-                Picasso.with(this).load(uri).into(mImageView, imageLoadedCallback);
-                this.setTitle(uri.getEncodedPath());
+                Picasso.with(this).load(uri).fit().into(mImageView, imageLoadedCallback);
+              //  pict_tag.setText(uri.getEncodedPath());
                 if (getSupportActionBar() != null)
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
