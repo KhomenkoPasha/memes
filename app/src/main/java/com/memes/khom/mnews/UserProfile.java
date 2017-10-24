@@ -1,59 +1,59 @@
 package com.memes.khom.mnews;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
-
-import java.io.InputStream;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 
 public class UserProfile extends AppCompatActivity {
 
     private ShareDialog shareDialog;
-    private Button logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_user_profile);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         shareDialog = new ShareDialog(this);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FloatingActionButton fab = findViewById(R.id.fab);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                ShareLinkContent content = new ShareLinkContent.Builder().build();
-                shareDialog.show(content);
+               // ShareLinkContent content = new ShareLinkContent.Builder().build();
+                //shareDialog.show(content);
             }
         });
 
-        Bundle inBundle = getIntent().getExtras();
-        String name = inBundle.get("name").toString();
-        String surname = inBundle.get("surname").toString();
-        String imageUrl = inBundle.get("imageUrl").toString();
-
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         TextView nameView = findViewById(R.id.nameAndSurname);
-        nameView.setText("" + name + " " + surname);
-        Button logout = findViewById(R.id.logout);
+        TextView email = findViewById(R.id.email);
+        TextView number = findViewById(R.id.number);
+
+        this.setTitle(user.getDisplayName());
+        nameView.setText(user.getDisplayName());
+        email.setText(user.getEmail());
+        number.setText(user.getPhoneNumber());
+       // Button logout = findViewById(R.id.logout);
+        /*
         logout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -63,32 +63,21 @@ public class UserProfile extends AppCompatActivity {
                 finish();
             }
         });
-
-        new UserProfile.DownloadImage((ImageView)findViewById(R.id.profileImage)).execute(imageUrl);
+*/
+        Picasso.with(this).load(user.getPhotoUrl()).into((ImageView)findViewById(R.id.profileImage));
     }
 
-    private class DownloadImage extends AsyncTask<String, Void, Bitmap>{
-        ImageView bmImage;
 
-        DownloadImage(ImageView bmImage){
-            this.bmImage = bmImage;
-        }
-        protected Bitmap doInBackground(String... urls){
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try{
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            }catch (Exception e){
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
-        protected void onPostExecute(Bitmap result){
-            bmImage.setImageBitmap(result);
+            case android.R.id.home:
+                this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
     }
+
 }

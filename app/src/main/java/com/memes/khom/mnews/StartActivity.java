@@ -1,6 +1,7 @@
 package com.memes.khom.mnews;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -26,10 +27,18 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchFilter;
+import com.lapism.searchview.SearchHistoryTable;
+import com.lapism.searchview.SearchItem;
+import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,6 +50,7 @@ public class StartActivity extends AppCompatActivity
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +59,7 @@ public class StartActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
         mAuth = FirebaseAuth.getInstance();
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         // Create the adapter that will return a fragment for each section
@@ -105,7 +108,7 @@ public class StartActivity extends AppCompatActivity
         if (user != null) {
 
             Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+           // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             navigationView.setNavigationItemSelectedListener(this);
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
@@ -113,6 +116,88 @@ public class StartActivity extends AppCompatActivity
             ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
             ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
         }
+
+
+        final SearchHistoryTable mHistoryDatabase = new SearchHistoryTable(this);
+
+        mSearchView = findViewById(R.id.searchView);
+
+        View v = mSearchView.findViewById(R.id.search_view_shadow);
+        v.setBackgroundColor(Color.parseColor("#2E7D32"));
+
+        if (mSearchView != null) {
+            mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
+            mSearchView.setHint("Поиск...");
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    mHistoryDatabase.addItem(new SearchItem(query));
+                    mSearchView.close(false);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+            mSearchView.setOnNavigationIconClickListener(new SearchView.OnNavigationIconClickListener() {
+                @Override
+                public void onNavigationIconClick(float state) {
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    if (!drawer.isDrawerOpen(GravityCompat.START)) {
+                        drawer.openDrawer(GravityCompat.START);}
+                }
+            });
+
+
+            mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+                @Override
+                public boolean onOpen() {
+                    return true;
+                }
+
+                @Override
+                public boolean onClose() {
+                    return true;
+                }
+            });
+            mSearchView.setVoiceText("Set permission on Android 6.0+ !");
+            mSearchView.setOnVoiceIconClickListener(new SearchView.OnVoiceIconClickListener() {
+                @Override
+                public void onVoiceIconClick() {
+                    // permission
+                }
+            });
+
+            List<SearchItem> suggestionsList = new ArrayList<>();
+            suggestionsList.add(new SearchItem("search1"));
+            suggestionsList.add(new SearchItem("search2"));
+            suggestionsList.add(new SearchItem("search3"));
+
+            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
+            searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+                @Override
+                public void onSearchItemClick(View view, int position, String text) {
+                    mHistoryDatabase.addItem(new SearchItem(text));
+                    mSearchView.close(false);
+                }
+            });
+            mSearchView.setAdapter(searchAdapter);
+
+            suggestionsList.add(new SearchItem("search1"));
+            suggestionsList.add(new SearchItem("search2"));
+            suggestionsList.add(new SearchItem("search3"));
+            searchAdapter.notifyDataSetChanged();
+
+            List<SearchFilter> filter = new ArrayList<>();
+            filter.add(new SearchFilter("Filter1", true));
+            filter.add(new SearchFilter("Filter2", true));
+            mSearchView.setFilters(filter);
+
+            //use mSearchView.getFiltersStates() to consider filter when performing search
+        }
+
     }
 
     @Override
@@ -136,41 +221,45 @@ public class StartActivity extends AppCompatActivity
                 startActivity(new Intent(StartActivity.this, NewPostActivity.class));
                 break;
 
-            case R.id.nav_share:
+            case R.id.my_profile:
+                Intent about = new Intent(StartActivity.this, UserProfile.class);
+                startActivity(about);
                 break;
 
             case R.id.nav_send:
-                Intent login = new Intent(StartActivity.this, FaceebookRegAct.class);
-                startActivity(login);
+                ////    Intent about = new Intent(StartActivity.this, FaceebookRegAct.class);
+                //   startActivity(about);
                 break;
 
-            default:
-                break;
-        }
+                default:
+                    break;
+            }
 
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if (i == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, SignInActivity.class));
-            finish();
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+        }
+
+
+        @Override
+        public boolean onCreateOptionsMenu (Menu menu){
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected (MenuItem item) {
+            switch (item.getItemId()) {
+
+                case R.id.action_logout:
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(this, SignInActivity.class));
+                    finish();
+                    return true;
+
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
         }
     }
-}

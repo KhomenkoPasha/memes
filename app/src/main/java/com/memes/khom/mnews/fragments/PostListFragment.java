@@ -42,9 +42,7 @@ public abstract class PostListFragment extends Fragment {
 
     private static final String TAG = "PostListFragment";
 
-    // [START define_database_reference]
     private DatabaseReference mDatabase;
-    // [END define_database_reference]
     private StorageReference mStorageRef;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
