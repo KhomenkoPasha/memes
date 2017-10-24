@@ -136,6 +136,7 @@ public class StartActivity extends AppCompatActivity
                     return true;
                 }
 
+
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     return false;
