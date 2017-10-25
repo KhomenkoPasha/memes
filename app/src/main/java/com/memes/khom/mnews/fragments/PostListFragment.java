@@ -44,6 +44,11 @@ public abstract class PostListFragment extends Fragment {
 
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
+
+    public FirebaseRecyclerAdapter<Post, PostViewHolder> getmAdapter() {
+        return mAdapter;
+    }
+
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
 
@@ -77,18 +82,9 @@ public abstract class PostListFragment extends Fragment {
                 matrix, false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // Set up Layout Manager, reverse layout
-        LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
+    public void refreshFragment(Query postsQuery){
 
         // Set up FirebaseRecyclerAdapter with the Query
-        Query postsQuery = getQuery(mDatabase);
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
                 PostViewHolder.class, postsQuery) {
             @Override
@@ -199,7 +195,6 @@ public abstract class PostListFragment extends Fragment {
                         // Need to write to both places the post is stored
                         DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
-
                         // Run two transactions
                         onStarClicked(globalPostRef);
                         onStarClicked(userPostRef);
@@ -209,6 +204,17 @@ public abstract class PostListFragment extends Fragment {
         };
         mRecycler.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Set up Layout Manager, reverse layout
+        LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
+        mManager.setReverseLayout(true);
+        mManager.setStackFromEnd(true);
+        mRecycler.setLayoutManager(mManager);
+        refreshFragment(getQuery(mDatabase));
     }
 
 

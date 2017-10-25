@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
+import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.memes.khom.mnews.models.Categ;
 import com.squareup.picasso.Picasso;
@@ -46,7 +49,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class StartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FragmentPagerAdapter mPagerAdapter;
+    private SectionsPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
     private SearchView mSearchView;
@@ -64,35 +67,7 @@ public class StartActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         // Create the adapter that will return a fragment for each section
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final Fragment[] mFragments = new Fragment[]{
-                    new AllTopPostsFragment(),
-                    new RecentPostsFragment(),
-                    new MyPostsFragment(),
-                    new MyTopPostsFragment(),
-            };
-            private final String[] mFragmentNames = new String[]{
-                    getString(R.string.heading_all_top),
-                    getString(R.string.heading_recent),
-                    getString(R.string.heading_my_posts),
-                    getString(R.string.heading_my_top_posts)
-            };
-
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return mFragments.length;
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return mFragmentNames[position];
-            }
-        };
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
@@ -143,6 +118,10 @@ public class StartActivity extends AppCompatActivity
                 public boolean onQueryTextSubmit(String query) {
                     mHistoryDatabase.addItem(new SearchItem(query));
                     mSearchView.close(false);
+                    ((PostListFragment)mPagerAdapter.getCurrentFragment()).
+                            refreshFragment(FirebaseDatabase.getInstance().
+                                    getReference().child("posts").orderByChild("category").equalTo(query)
+                            .limitToFirst(50));
                     return true;
                 }
 
@@ -274,4 +253,96 @@ public class StartActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    private class SectionsPagerAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener {
+
+
+        private Fragment mCurrentFragment;
+
+        Fragment getCurrentFragment() {
+            return mCurrentFragment;
+        }
+
+        SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return  new AllTopPostsFragment();
+                case 1:
+                    return  new RecentPostsFragment();
+                case 2:
+                    return  new MyPostsFragment();
+                case 3:
+                    return  new MyTopPostsFragment();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            // Show 4 total pages.
+            return 4;
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            if (getCurrentFragment() != object) {
+                mCurrentFragment = ((Fragment) object);
+            }
+            switch (position) {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
+
+            super.setPrimaryItem(container, position, object);
+        }
+
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return getString(R.string.heading_all_top);
+                case 1:
+                    return getString(R.string.heading_recent);
+                case 2:
+                    return getString(R.string.heading_my_posts);
+                case 3:
+                    return getString(R.string.heading_my_top_posts);
+            }
+            return null;
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    }
+
 }
