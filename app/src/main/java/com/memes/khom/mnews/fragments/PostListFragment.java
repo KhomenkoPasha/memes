@@ -208,7 +208,11 @@ public abstract class PostListFragment extends Fragment {
             }
         };
         mRecycler.setAdapter(mAdapter);
+
     }
+
+
+
 
     // [START post_stars_transaction]
     private void onStarClicked(DatabaseReference postRef) {

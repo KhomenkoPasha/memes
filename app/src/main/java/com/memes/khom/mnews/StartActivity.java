@@ -11,38 +11,37 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.Profile;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchFilter;
 import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
+import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
+import com.memes.khom.mnews.models.Categ;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.memes.khom.mnews.R.drawable.profile;
 
 public class StartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,6 +50,8 @@ public class StartActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
     private SearchView mSearchView;
+    private SearchHistoryTable mHistoryDatabase;
+    private DatabaseReference categRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +66,13 @@ public class StartActivity extends AppCompatActivity
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[]{
+                    new AllTopPostsFragment(),
                     new RecentPostsFragment(),
                     new MyPostsFragment(),
                     new MyTopPostsFragment(),
             };
             private final String[] mFragmentNames = new String[]{
+                    getString(R.string.heading_all_top),
                     getString(R.string.heading_recent),
                     getString(R.string.heading_my_posts),
                     getString(R.string.heading_my_top_posts)
@@ -96,6 +99,7 @@ public class StartActivity extends AppCompatActivity
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +112,7 @@ public class StartActivity extends AppCompatActivity
         if (user != null) {
 
             Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
-           // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             navigationView.setNavigationItemSelectedListener(this);
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
@@ -118,10 +122,16 @@ public class StartActivity extends AppCompatActivity
         }
 
 
-        final SearchHistoryTable mHistoryDatabase = new SearchHistoryTable(this);
-
+        mHistoryDatabase = new SearchHistoryTable(this);
+        mHistoryDatabase.open();
         mSearchView = findViewById(R.id.searchView);
+        initSearcher();
 
+    }
+
+    private void initSearcher() {
+
+        categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         View v = mSearchView.findViewById(R.id.search_view_shadow);
         v.setBackgroundColor(Color.parseColor("#2E7D32"));
 
@@ -136,7 +146,6 @@ public class StartActivity extends AppCompatActivity
                     return true;
                 }
 
-
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     return false;
@@ -147,7 +156,8 @@ public class StartActivity extends AppCompatActivity
                 public void onNavigationIconClick(float state) {
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
                     if (!drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.openDrawer(GravityCompat.START);}
+                        drawer.openDrawer(GravityCompat.START);
+                    }
                 }
             });
 
@@ -171,35 +181,36 @@ public class StartActivity extends AppCompatActivity
                 }
             });
 
-            List<SearchItem> suggestionsList = new ArrayList<>();
-            suggestionsList.add(new SearchItem("search1"));
-            suggestionsList.add(new SearchItem("search2"));
-            suggestionsList.add(new SearchItem("search3"));
 
-            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
-            searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+            categRef.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onSearchItemClick(View view, int position, String text) {
-                    mHistoryDatabase.addItem(new SearchItem(text));
-                    mSearchView.close(false);
+                public void onDataChange(DataSnapshot snapshot) {
+                    List<SearchItem> suggestionsList = new ArrayList<>();
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        Categ ct = postSnapshot.getValue(Categ.class);
+                        if (ct != null)
+                            suggestionsList.add(new SearchItem(ct.name));
+                    }
+
+                    SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
+                    searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+                        @Override
+                        public void onSearchItemClick(View view, int position, String text) {
+                            mSearchView.close(false);
+                        }
+                    });
+                    mSearchView.setAdapter(searchAdapter);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
                 }
             });
-            mSearchView.setAdapter(searchAdapter);
 
-            suggestionsList.add(new SearchItem("search1"));
-            suggestionsList.add(new SearchItem("search2"));
-            suggestionsList.add(new SearchItem("search3"));
-            searchAdapter.notifyDataSetChanged();
-
-            List<SearchFilter> filter = new ArrayList<>();
-            filter.add(new SearchFilter("Filter1", true));
-            filter.add(new SearchFilter("Filter2", true));
-            mSearchView.setFilters(filter);
-
-            //use mSearchView.getFiltersStates() to consider filter when performing search
         }
-
     }
+
 
     @Override
     public void onBackPressed() {
@@ -232,35 +243,35 @@ public class StartActivity extends AppCompatActivity
                 //   startActivity(about);
                 break;
 
-                default:
-                    break;
-            }
-
-
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
+            default:
+                break;
         }
 
 
-        @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            getMenuInflater().inflate(R.menu.menu_main, menu);
-            return true;
-        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item) {
-            switch (item.getItemId()) {
 
-                case R.id.action_logout:
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(this, SignInActivity.class));
-                    finish();
-                    return true;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, SignInActivity.class));
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
+}
