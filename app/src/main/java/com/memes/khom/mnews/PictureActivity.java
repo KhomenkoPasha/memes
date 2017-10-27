@@ -9,10 +9,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PictureActivity extends AppCompatActivity {
 
@@ -30,7 +30,10 @@ public class PictureActivity extends AppCompatActivity {
             TextView pict_tag =  findViewById(R.id.pict_tag);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             this.setTitle("Picture");
-            Uri uri = extras.getParcelable(PHOTO_URL);
+            Uri uri = null;
+            if (extras != null) {
+                uri = extras.getParcelable(PHOTO_URL);
+            }
             if (mImageView != null && uri != null) {
 
                 Callback imageLoadedCallback = new Callback() {

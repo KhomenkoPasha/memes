@@ -53,7 +53,7 @@ public class StartActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
     private SearchView mSearchView;
-    private SearchHistoryTable mHistoryDatabase;
+  //  private SearchHistoryTable mHistoryDatabase;
     private DatabaseReference categRef;
 
     @Override
@@ -97,8 +97,8 @@ public class StartActivity extends AppCompatActivity
         }
 
 
-        mHistoryDatabase = new SearchHistoryTable(this);
-        mHistoryDatabase.open();
+  //      mHistoryDatabase = new SearchHistoryTable(this);
+   //     mHistoryDatabase.open();
         mSearchView = findViewById(R.id.searchView);
         initSearcher();
 
@@ -116,20 +116,35 @@ public class StartActivity extends AppCompatActivity
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    mHistoryDatabase.addItem(new SearchItem(query));
-                    mSearchView.close(false);
-                    ((PostListFragment)mPagerAdapter.getCurrentFragment()).
-                            refreshFragment(FirebaseDatabase.getInstance().
-                                    getReference().child("posts").orderByChild("category").equalTo(query)
-                            .limitToFirst(50));
+                    try {
+
+                        mSearchView.close(false);
+                        ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                refreshFragment(FirebaseDatabase.getInstance().
+                                        getReference().child("posts").orderByChild("category").equalTo(query)
+                                        .limitToFirst(50));
+
+                      //  mHistoryDatabase.addItem(new SearchItem(query));
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    if (newText.isEmpty()) {
+                        mSearchView.close(false);
+                        ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                refreshFragment(FirebaseDatabase.getInstance().
+                                        getReference().child("posts")
+                                        .limitToFirst(50));
+                    }
                     return false;
                 }
             });
+
             mSearchView.setOnNavigationIconClickListener(new SearchView.OnNavigationIconClickListener() {
                 @Override
                 public void onNavigationIconClick(float state) {
@@ -176,6 +191,11 @@ public class StartActivity extends AppCompatActivity
                         @Override
                         public void onSearchItemClick(View view, int position, String text) {
                             mSearchView.close(false);
+                            mSearchView.setHint(text);
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts").orderByChild("category").equalTo(text)
+                                            .limitToFirst(50));
                         }
                     });
                     mSearchView.setAdapter(searchAdapter);
@@ -277,13 +297,13 @@ public class StartActivity extends AppCompatActivity
 
             switch (position) {
                 case 0:
-                    return  new AllTopPostsFragment();
+                    return new AllTopPostsFragment();
                 case 1:
-                    return  new RecentPostsFragment();
+                    return new RecentPostsFragment();
                 case 2:
-                    return  new MyPostsFragment();
+                    return new MyPostsFragment();
                 case 3:
-                    return  new MyTopPostsFragment();
+                    return new MyTopPostsFragment();
             }
             return null;
         }
