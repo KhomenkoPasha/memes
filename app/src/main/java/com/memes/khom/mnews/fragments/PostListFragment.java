@@ -187,7 +187,6 @@ public abstract class PostListFragment extends Fragment {
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
                 }
-
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToPost(model, new View.OnClickListener() {
                     @Override
@@ -195,7 +194,6 @@ public abstract class PostListFragment extends Fragment {
                         // Need to write to both places the post is stored
                         DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
-                        // Run two transactions
                         onStarClicked(globalPostRef);
                         onStarClicked(userPostRef);
                     }

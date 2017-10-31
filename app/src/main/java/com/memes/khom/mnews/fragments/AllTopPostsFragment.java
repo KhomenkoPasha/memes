@@ -9,8 +9,7 @@ public class AllTopPostsFragment extends PostListFragment {
 
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
-        Query recentPostsQuery = databaseReference.child("posts").orderByChild("starCount")
+        return databaseReference.child("posts").orderByChild("starCount")
                 .limitToFirst(100);
-        return recentPostsQuery;
     }
 }

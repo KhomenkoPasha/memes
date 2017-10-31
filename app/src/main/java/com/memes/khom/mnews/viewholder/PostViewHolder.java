@@ -8,11 +8,7 @@ import android.widget.TextView;
 
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.memes.khom.mnews.utils.Convert;
 
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
@@ -48,16 +44,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.starCount));
         bodyView.setText(post.body);
+        post_date.setText(Convert.getDateTimeFromDouble(Long.parseLong(post.create_date)));
         categ.setText(String.format("Категория: %s", post.category));
         starView.setOnClickListener(starClickListener);
-        try {
-            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
-            Date input = inputFormat.parse(post.create_date);
-            String finaldate = inputFormat.format(input);
-            post_date.setText(finaldate);
-        }catch (Exception ex) {
-          ex.printStackTrace();
-        }
-
     }
 }

@@ -9,8 +9,7 @@ public class RecentPostsFragment extends PostListFragment {
 
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
-        Query recentPostsQuery = databaseReference.child("posts").orderByChild("create_date")
-                .limitToFirst(1);
-        return recentPostsQuery;
+        return databaseReference.child("posts").orderByChild("create_date")
+                .limitToLast(50);
     }
 }
