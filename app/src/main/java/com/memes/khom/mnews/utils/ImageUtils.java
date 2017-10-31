@@ -9,7 +9,7 @@ public class ImageUtils {
 
 
     public static Bitmap getResizeFile(Bitmap bitmap, float mxSize) {
-        Bitmap originalPhoto = null;
+        Bitmap originalPhoto = bitmap;
         final float height = bitmap.getHeight();
         final float width = bitmap.getWidth();
 
@@ -29,7 +29,7 @@ public class ImageUtils {
         return originalPhoto;
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
+    private static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = newWidth / width;

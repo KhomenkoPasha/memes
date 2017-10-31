@@ -75,13 +75,11 @@ public abstract class PostListFragment extends Fragment {
 
     public void refreshFragment(Query postsQuery){
 
-        // Set up FirebaseRecyclerAdapter with the Query
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
                 PostViewHolder.class, postsQuery) {
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, final int position) {
                 final DatabaseReference postRef = getRef(position);
-
                 // Set click listener for the whole post view
                 final String postKey = postRef.getKey();
 

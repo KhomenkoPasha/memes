@@ -30,7 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchHistoryTable;
+import com.lapism.searchview.SearchFilter;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
@@ -50,11 +50,7 @@ public class StartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SectionsPagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
-    private FirebaseAuth mAuth;
     private SearchView mSearchView;
-  //  private SearchHistoryTable mHistoryDatabase;
-    private DatabaseReference categRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +58,12 @@ public class StartActivity extends AppCompatActivity
         setContentView(R.layout.activity_start);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mAuth = FirebaseAuth.getInstance();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -97,16 +91,15 @@ public class StartActivity extends AppCompatActivity
         }
 
 
-  //      mHistoryDatabase = new SearchHistoryTable(this);
-   //     mHistoryDatabase.open();
+        //      mHistoryDatabase = new SearchHistoryTable(this);
+        //     mHistoryDatabase.open();
         mSearchView = findViewById(R.id.searchView);
         initSearcher();
 
     }
 
     private void initSearcher() {
-
-        categRef = FirebaseDatabase.getInstance().getReference().child("categ");
+        DatabaseReference categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         View v = mSearchView.findViewById(R.id.search_view_shadow);
         v.setBackgroundColor(Color.parseColor("#2E7D32"));
 
@@ -121,15 +114,15 @@ public class StartActivity extends AppCompatActivity
                         mSearchView.close(false);
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                 refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts").orderByChild("category").equalTo(query)
+                                        getReference().child("posts").orderByChild("searcher").equalTo(query, query)
                                         .limitToFirst(50));
 
-                      //  mHistoryDatabase.addItem(new SearchItem(query));
+                        //  mHistoryDatabase.addItem(new SearchItem(query));
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    return true;
+                    return false;
                 }
 
                 @Override
@@ -175,30 +168,16 @@ public class StartActivity extends AppCompatActivity
                 }
             });
 
+            final List<SearchItem> suggestionsList = new ArrayList<>();
 
             categRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                    List<SearchItem> suggestionsList = new ArrayList<>();
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         Categ ct = postSnapshot.getValue(Categ.class);
                         if (ct != null)
                             suggestionsList.add(new SearchItem(ct.name));
                     }
-
-                    SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
-                    searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
-                        @Override
-                        public void onSearchItemClick(View view, int position, String text) {
-                            mSearchView.close(false);
-                            mSearchView.setHint(text);
-                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                    refreshFragment(FirebaseDatabase.getInstance().
-                                            getReference().child("posts").orderByChild("category").equalTo(text)
-                                            .limitToFirst(50));
-                        }
-                    });
-                    mSearchView.setAdapter(searchAdapter);
                 }
 
                 @Override
@@ -206,6 +185,16 @@ public class StartActivity extends AppCompatActivity
 
                 }
             });
+
+            SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
+            searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+                @Override
+                public void onSearchItemClick(View view, int position, String text) {
+                    mSearchView.close(true);
+                    mSearchView.setQuery(text, true);
+                }
+            });
+            mSearchView.setAdapter(searchAdapter);
 
         }
     }

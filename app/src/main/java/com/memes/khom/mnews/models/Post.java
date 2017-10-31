@@ -28,17 +28,16 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String author, String title, String body,String cat) {
+    public Post(String uid, String author, String title, String body, String cat) {
         this.uid = uid;
         this.author = author;
         this.title = title;
         this.body = body;
         this.category = cat;
         this.create_date = String.valueOf(System.currentTimeMillis());
-                //new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
+        //new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
     }
 
-    // [START post_to_map]
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -50,9 +49,8 @@ public class Post {
         result.put("stars", stars);
         result.put("create_date", create_date);
         result.put("category", category);
+        result.put("searcher", title + body + category);
         return result;
     }
-    // [END post_to_map]
 
 }
-// [END post_class]
