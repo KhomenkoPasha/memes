@@ -34,7 +34,8 @@ public class Post {
         this.title = title;
         this.body = body;
         this.category = cat;
-        this.create_date = new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
+        this.create_date = String.valueOf(System.currentTimeMillis());
+                //new SimpleDateFormat("dd.MM.yyyy hh:mm").format(new Date());
     }
 
     // [START post_to_map]

@@ -239,8 +239,18 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.button_post_comment) {
-            postComment();
+        switch (i) {
+            case R.id.button_post_comment:
+
+                if (!mCommentField.getText().toString().isEmpty()) postComment();
+                else {
+
+                    Toast.makeText(this, "Введите Ваш коментарий", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+            default:
+                break;
         }
     }
 
@@ -406,11 +416,12 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 public void onDataChange(DataSnapshot snapshot) {
                     if (snapshot.getValue() != null) {
                         String str = snapshot.getValue().toString();
-                        if (str != null) {
+                        if (str != null && !str.isEmpty()) {
                             Picasso.with(mContext).load(str).into(holder.comment_photo);
                         }
                     }
                 }
+
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

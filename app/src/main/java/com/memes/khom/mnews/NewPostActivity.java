@@ -246,13 +246,15 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             return;
         }
 
-        if (catSpinner.getSelectedItem() == null) {
+        if (mageUri == null) {
             Toast.makeText(this, "Добавте фото", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
+
+
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
         final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
