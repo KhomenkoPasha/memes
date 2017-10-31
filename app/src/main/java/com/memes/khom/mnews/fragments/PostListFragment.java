@@ -2,7 +2,6 @@ package com.memes.khom.mnews.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import com.memes.khom.mnews.PictureActivity;
 import com.memes.khom.mnews.PostDetailActivity;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
+import com.memes.khom.mnews.utils.ImageUtils;
 import com.memes.khom.mnews.viewholder.PostViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -71,16 +71,7 @@ public abstract class PostListFragment extends Fragment {
         return rootView;
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = newWidth / width;
-        float scaleHeight = newHeight / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        return Bitmap.createBitmap(bm, 0, 0, width, height,
-                matrix, false);
-    }
+
 
     public void refreshFragment(Query postsQuery){
 
@@ -113,24 +104,7 @@ public abstract class PostListFragment extends Fragment {
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        Bitmap originalPhoto = bitmap;
-                                        final float MAX_SIZE = viewHolder.itemView.getWidth();
-                                        final float height = bitmap.getHeight();
-                                        final float width = bitmap.getWidth();
-
-                                        if (height >= MAX_SIZE || width >= MAX_SIZE) {
-                                            float newWidth;
-                                            float newHeight;
-                                            if (height > width) {
-                                                newHeight = MAX_SIZE;
-                                                newWidth = width / (height / MAX_SIZE);
-                                            } else {
-                                                newWidth = MAX_SIZE;
-                                                newHeight = height / (width / MAX_SIZE);
-                                            }
-                                            originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
-                                        }
-
+                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap,viewHolder.itemView.getWidth());
                                         viewHolder.iv_piture.setImageBitmap(originalPhoto);
                                         viewHolder.iv_piture.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -229,7 +203,6 @@ public abstract class PostListFragment extends Fragment {
                 }
 
                 if (p.stars.containsKey(getUid())) {
-                    // Unstar the post and remove self from stars
                     p.starCount = p.starCount - 1;
                     p.stars.remove(getUid());
                 } else {

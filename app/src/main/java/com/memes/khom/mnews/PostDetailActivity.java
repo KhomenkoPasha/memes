@@ -35,6 +35,7 @@ import com.google.firebase.storage.StorageReference;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
+import com.memes.khom.mnews.utils.ImageUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -42,7 +43,6 @@ import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.memes.khom.mnews.fragments.PostListFragment.getResizedBitmap;
 
 public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
 
@@ -147,25 +147,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                                        Bitmap originalPhoto = bitmap;
-                                        final float MAX_SIZE = (float) (linearLayoutCard.getWidth() / 2);
-                                        final float height = bitmap.getHeight();
-                                        final float width = bitmap.getWidth();
-
-                                        if (height >= MAX_SIZE || width >= MAX_SIZE) {
-                                            float newWidth;
-                                            float newHeight;
-                                            if (height > width) {
-                                                newHeight = MAX_SIZE;
-                                                newWidth = width / (height / MAX_SIZE);
-                                            } else {
-                                                newWidth = MAX_SIZE;
-                                                newHeight = height / (width / MAX_SIZE);
-                                            }
-                                            originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
-                                        }
-
+                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, (float) (linearLayoutCard.getWidth() / 2));
                                         iv_piture.setImageBitmap(originalPhoto);
                                     }
 
@@ -354,36 +336,21 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
-
-                    // A comment has changed, use the key to determine if we are displaying this
-                    // comment and if so remove it.
                     String commentKey = dataSnapshot.getKey();
-
-                    // [START_EXCLUDE]
                     int commentIndex = mCommentIds.indexOf(commentKey);
                     if (commentIndex > -1) {
                         // Remove data from the list
                         mCommentIds.remove(commentIndex);
                         mComments.remove(commentIndex);
-
-                        // Update the RecyclerView
                         notifyItemRemoved(commentIndex);
                     } else {
                         Log.w(TAG, "onChildRemoved:unknown_child:" + commentKey);
                     }
-                    // [END_EXCLUDE]
                 }
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
                     Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
-
-                    // A comment has changed position, use the key to determine if we are
-                    // displaying this comment and if so move it.
-                    //  Comment movedComment = dataSnapshot.getValue(Comment.class);
-                    //  String commentKey = dataSnapshot.getKey();
-
-                    // ...
                 }
 
                 @Override
@@ -437,7 +404,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             return mComments.size();
         }
 
-        public void cleanupListener() {
+        void cleanupListener() {
             if (mChildEventListener != null) {
                 mDatabaseReference.removeEventListener(mChildEventListener);
             }
