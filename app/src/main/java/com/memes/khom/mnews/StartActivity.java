@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchFilter;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
@@ -85,7 +83,8 @@ public class StartActivity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
-            Picasso.with(this).load(user.getPhotoUrl()).into(avat);
+            if (user.getPhotoUrl() != null)
+                Picasso.with(this).load(user.getPhotoUrl()).into(avat);
             ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
             ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
         }
@@ -105,7 +104,7 @@ public class StartActivity extends AppCompatActivity
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
-            mSearchView.setHint("Поиск...");
+            mSearchView.setHint("Поиск по категории...");
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -114,7 +113,8 @@ public class StartActivity extends AppCompatActivity
                         mSearchView.close(false);
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                 refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts").orderByChild("searcher").equalTo(query, query)
+                                        getReference().child("posts").orderByChild("category").startAt(query)
+                                        .endAt(query + "\uf8ff")
                                         .limitToFirst(50));
 
                         //  mHistoryDatabase.addItem(new SearchItem(query));
@@ -127,12 +127,16 @@ public class StartActivity extends AppCompatActivity
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    if (newText.isEmpty()) {
-                        mSearchView.close(false);
-                        ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts")
-                                        .limitToFirst(50));
+                    try {
+                        if (newText.isEmpty()) {
+                            mSearchView.close(false);
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts")
+                                            .limitToFirst(50));
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                     return false;
                 }
@@ -160,6 +164,7 @@ public class StartActivity extends AppCompatActivity
                     return true;
                 }
             });
+
             mSearchView.setVoiceText("Set permission on Android 6.0+ !");
             mSearchView.setOnVoiceIconClickListener(new SearchView.OnVoiceIconClickListener() {
                 @Override

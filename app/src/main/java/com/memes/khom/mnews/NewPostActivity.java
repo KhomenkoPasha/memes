@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -24,7 +23,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static com.memes.khom.mnews.utils.ImageUtils.getRealPathFromURI;
 
 public class NewPostActivity extends BaseActivity implements View.OnClickListener {
 
@@ -373,17 +372,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    //Получаем абсолютный путь файла из Uri
-    private String getRealPathFromURI(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        @SuppressWarnings("deprecation")
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int columnIndex = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(columnIndex);
-    }
-
     /*
       File storageDir -  абсолютный путь к каталогу конкретного приложения на
       основном общем /внешнем устройстве хранения, где приложение может размещать
@@ -425,7 +413,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             case REQUEST_CODE_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
-                        mImageUri = getRealPathFromURI(data.getData());
+                        mImageUri = getRealPathFromURI(data.getData(), NewPostActivity.this);
 
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
@@ -468,6 +456,4 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-
-    // [END write_fan_out]
 }

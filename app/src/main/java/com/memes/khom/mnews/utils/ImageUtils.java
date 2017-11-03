@@ -1,8 +1,12 @@
 package com.memes.khom.mnews.utils;
 
 
+import android.app.Activity;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 
 public class ImageUtils {
@@ -27,6 +31,17 @@ public class ImageUtils {
 
         }
         return originalPhoto;
+    }
+
+    //Получаем абсолютный путь файла из Uri
+    public static String getRealPathFromURI(Uri uri, Activity activity) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        @SuppressWarnings("deprecation")
+        Cursor cursor = activity.managedQuery(uri, projection, null, null, null);
+        int columnIndex = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(columnIndex);
     }
 
     private static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {

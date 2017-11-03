@@ -21,9 +21,9 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/profile"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="1dp" />
+        android:src="@drawable/no_image_con"
+        app:civ_border_color="#80000000"
+        app:civ_border_width="1px" />
 
 
     <TextView
