@@ -38,14 +38,49 @@
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/nameAndSurname"
-            android:textSize="22sp"
-            android:textColor="@color/text_black"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/nameAndSurname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:ellipsize="end"
+                    android:enabled="false"
+                    android:gravity="left"
+                    android:hint="Ник"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/colorPrimaryDark" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/enable_edit"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:baselineAligned="false"
+                app:srcCompat="@drawable/ic_image_edit" />
+
+        </LinearLayout>
+
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="100dp"

@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,7 +50,8 @@ public class UserProfile extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
     private File mTempPhoto;
-    private ImageView imgPhoto;
+    private ImageView imgPhoto, enable_edit;
+    private TextView nameView;
     private Uri mageUri;
     private String mImageUri = "";
     private FirebaseUser user;
@@ -65,7 +65,11 @@ public class UserProfile extends AppCompatActivity {
 
 
         shareDialog = new ShareDialog(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
         FloatingActionButton fab = findViewById(R.id.fab);
         if (getSupportActionBar() != null)
@@ -74,18 +78,25 @@ public class UserProfile extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // ShareLinkContent content = new ShareLinkContent.Builder().build();
-                //shareDialog.show(content);
+                nameView.setEnabled(true);
             }
         });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        TextView nameView = findViewById(R.id.nameAndSurname);
+        nameView = findViewById(R.id.nameAndSurname);
         TextView email = findViewById(R.id.email);
         TextView number = findViewById(R.id.number);
         btn_edit_picture = findViewById(R.id.btn_edit_picture);
         imgPhoto = findViewById(R.id.profileImage);
         btn_edit_save = findViewById(R.id.btn_edit_save);
+        enable_edit = findViewById(R.id.enable_edit);
+
+        enable_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nameView.setEnabled(true);
+            }
+        });
 
         btn_edit_picture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,6 +255,7 @@ public class UserProfile extends AppCompatActivity {
 
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setPhotoUri(donwoldUri)
+                                .setDisplayName(nameView.getText().toString())
                                 .build();
 
                         user.updateProfile(profileUpdates)
@@ -255,7 +267,6 @@ public class UserProfile extends AppCompatActivity {
                                         }
                                     }
                                 });
-
                     }
                 }
             });
