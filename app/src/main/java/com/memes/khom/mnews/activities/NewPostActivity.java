@@ -96,8 +96,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
 
-        catSpinner.setTitle("Select Category");
-        catSpinner.setPositiveButton("Ок");
+        catSpinner.setTitle("Выберите категорию");
+        catSpinner.setPositiveButton("Выбрать");
 
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);

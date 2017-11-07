@@ -23,13 +23,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
@@ -37,11 +31,8 @@ import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
-import com.memes.khom.mnews.models.Category;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,6 +41,7 @@ public class StartActivity extends AppCompatActivity
 
     private SectionsPagerAdapter mPagerAdapter;
     private SearchView mSearchView;
+    private SearchableSpinner catSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,13 +91,14 @@ public class StartActivity extends AppCompatActivity
     }
 
     private void initSearcher() {
-        DatabaseReference categRef = FirebaseDatabase.getInstance().getReference().child("categ");
+
+      //  DatabaseReference categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         View v = mSearchView.findViewById(R.id.search_view_shadow);
         v.setBackgroundColor(Color.parseColor("#2E7D32"));
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
-            mSearchView.setHint("Поиск по категории...");
+            mSearchView.setHint("Поиск по тегу...");
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -114,11 +107,10 @@ public class StartActivity extends AppCompatActivity
                         mSearchView.close(false);
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                 refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts").orderByChild("category").startAt(query)
+                                        getReference().child("posts").orderByChild("title").startAt(query)
                                         .endAt(query + "\uf8ff")
                                         .limitToFirst(50));
 
-                        //  mHistoryDatabase.addItem(new SearchItem(query));
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -157,6 +149,7 @@ public class StartActivity extends AppCompatActivity
             mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
                 @Override
                 public boolean onOpen() {
+
                     return true;
                 }
 
@@ -174,6 +167,7 @@ public class StartActivity extends AppCompatActivity
                 }
             });
 
+            /*
             final List<SearchItem> suggestionsList = new ArrayList<>();
 
             categRef.addValueEventListener(new ValueEventListener() {
@@ -184,6 +178,21 @@ public class StartActivity extends AppCompatActivity
                         if (ct != null)
                             suggestionsList.add(new SearchItem(ct.name));
                     }
+
+
+                    SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
+                    searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+                        @Override
+                        public void onSearchItemClick(View view, int position, String text) {
+                            // mSearchView.close(true);
+                            mSearchView.setQuery(text, true);
+                            mSearchView.close(false);
+                        }
+                    });
+                    // mSearchView.
+                    mSearchView.setAdapter(searchAdapter);
+                  //  mSearchView.setSuggestionsList(suggestionsList);
+
                 }
 
                 @Override
@@ -191,20 +200,11 @@ public class StartActivity extends AppCompatActivity
 
                 }
             });
-
-            SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
-            searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
-                @Override
-                public void onSearchItemClick(View view, int position, String text) {
-                    mSearchView.close(true);
-                    mSearchView.setQuery(text, true);
-                }
-            });
-            mSearchView.setAdapter(searchAdapter);
-
+*/
+            //  mSearchView.showSuggestions();
+            // mSearchView.open(true);
         }
     }
-
 
 
     @Override

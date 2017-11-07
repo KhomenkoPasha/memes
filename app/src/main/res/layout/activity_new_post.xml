@@ -23,7 +23,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:hint="Title"
+            android:hint="Тэг/заголовок"
             android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
@@ -47,14 +47,15 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="5dp"
-        android:hint="Write your post..."
+        android:hint="Сообщение/описание"
         android:inputType="textMultiLine"
         android:maxLines="10"
         android:scrollHorizontally="false" />
 
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/fab_submit_post"
@@ -72,7 +73,12 @@
                 android:id="@+id/searchableSpinnerCat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:paddingLeft="4dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
                 android:layout_weight="0.89"
+                android:gravity="center_vertical"
                 android:textColor="#757575"
                 app:hintText="Категория" />
 
