@@ -28,8 +28,8 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.memes.khom.mnews.PictureActivity;
-import com.memes.khom.mnews.PostDetailActivity;
+import com.memes.khom.mnews.activities.PictureActivity;
+import com.memes.khom.mnews.activities.PostDetailActivity;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.utils.ImageUtils;
@@ -154,7 +154,7 @@ public abstract class PostListFragment extends Fragment {
                 });
 
                 // Determine if the current user has liked this post and set UI accordingly
-                if (model.stars.containsKey(getUid())) {
+                if (model.likes.containsKey(getUid())) {
                     viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
@@ -196,17 +196,15 @@ public abstract class PostListFragment extends Fragment {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Post p = mutableData.getValue(Post.class);
-                if (p == null) {
+                if (p == null)
                     return Transaction.success(mutableData);
-                }
 
-                if (p.stars.containsKey(getUid())) {
-                    p.starCount = p.starCount - 1;
-                    p.stars.remove(getUid());
+                if (p.likes.containsKey(getUid())) {
+                    p.likes_count = p.likes_count - 1;
+                    p.likes.remove(getUid());
                 } else {
-                    // Star the post and add self to stars
-                    p.starCount = p.starCount + 1;
-                    p.stars.put(getUid(), true);
+                    p.likes_count = p.likes_count + 1;
+                    p.likes.put(getUid(), true);
                 }
 
                 // Set value and report transaction success
@@ -217,12 +215,10 @@ public abstract class PostListFragment extends Fragment {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
-                // Transaction completed
                 Log.d(TAG, "postTransaction:onComplete:" + databaseError);
             }
         });
     }
-    // [END post_stars_transaction]
 
     @Override
     public void onDestroy() {

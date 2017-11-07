@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
+import com.memes.khom.mnews.R;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.squareup.picasso.Picasso;
 
@@ -38,8 +39,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.memes.khom.mnews.NewPostActivity.addIntentsToList;
-import static com.memes.khom.mnews.NewPostActivity.createTempImageFile;
 import static com.memes.khom.mnews.utils.ImageUtils.getRealPathFromURI;
 
 
@@ -174,7 +173,7 @@ public class UserProfile extends AppCompatActivity {
         } else {
             //Если все разрешения получены
             try {
-                mTempPhoto = createTempImageFile(getExternalCacheDir());
+                mTempPhoto = NewPostActivity.createTempImageFile(getExternalCacheDir());
                 mImageUri = mTempPhoto.getAbsolutePath();
 
                 //Создаём лист с интентами для работы с изображениями
@@ -188,8 +187,8 @@ public class UserProfile extends AppCompatActivity {
                 takePhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempPhoto));
 
-                intentList = addIntentsToList(this, intentList, pickIntent);
-                intentList = addIntentsToList(this, intentList, takePhotoIntent);
+                intentList = NewPostActivity.addIntentsToList(this, intentList, pickIntent);
+                intentList = NewPostActivity.addIntentsToList(this, intentList, takePhotoIntent);
 
                 if (!intentList.isEmpty()) {
                     chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose your image source");

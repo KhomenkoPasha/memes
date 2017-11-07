@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.memes.khom.mnews.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 

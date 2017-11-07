@@ -42,7 +42,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public void bindToPost(Post post, View.OnClickListener starClickListener) {
         titleView.setText(post.title);
         authorView.setText(post.author);
-        numStarsView.setText(String.valueOf(post.starCount));
+        numStarsView.setText(String.valueOf(post.likes_count));
         bodyView.setText(post.body);
         post_date.setText(Convert.getDateTimeFromDouble(Long.parseLong(post.create_date)));
         categ.setText(String.format("Категория: %s", post.category));

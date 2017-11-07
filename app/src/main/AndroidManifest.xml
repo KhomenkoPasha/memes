@@ -28,7 +28,7 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".SignInActivity">
+        <activity android:name=".activities.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,24 +36,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewPostActivity"
+            android:name=".activities.NewPostActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
         <activity
-            android:name=".PostDetailActivity"
+            android:name=".activities.PostDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
         <activity
-            android:name=".StartActivity"
+            android:name=".activities.StartActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:label="@string/title_activity_start"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PictureActivity"
+            android:name=".activities.PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar_dialog" />
 
-        <activity android:name=".FaceebookRegAct" />
+        <activity android:name=".activities.FaceebookRegAct" />
         <activity
-            android:name=".UserProfile"
+            android:name=".activities.UserProfile"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

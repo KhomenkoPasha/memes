@@ -73,11 +73,12 @@
 
                 <ImageView
                     android:id="@+id/star"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="6dp"
                     android:background="?attr/selectableItemBackground"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="6dp"
+                    android:alpha=".75"
                     android:src="@drawable/ic_toggle_star_outline_24" />
 
                 <TextView
@@ -91,7 +92,7 @@
                     android:id="@+id/post_likes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="6dp"
                     android:gravity="center"
                     android:text="Like" />
 
@@ -108,10 +109,11 @@
 
                 <ImageView
                     android:id="@+id/comment"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:alpha=".75"
                     android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_comment_black_24dp" />
 
@@ -119,8 +121,8 @@
                     android:id="@+id/comments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
                     android:gravity="center"
                     android:text="Comments" />
 
@@ -137,10 +139,11 @@
 
                 <ImageView
                     android:id="@+id/share_img"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_width="25dp"
+                    android:alpha=".75"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
                     android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_share_black_24dp" />
 
@@ -148,8 +151,8 @@
                     android:id="@+id/share"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
                     android:gravity="center"
                     android:text="Share" />
 

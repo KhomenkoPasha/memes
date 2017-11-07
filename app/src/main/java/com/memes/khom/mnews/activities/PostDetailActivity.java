@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;

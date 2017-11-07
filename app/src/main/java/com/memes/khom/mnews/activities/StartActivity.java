@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,12 +31,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.lapism.searchview.SearchAdapter;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
+import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
-import com.memes.khom.mnews.models.Categ;
+import com.memes.khom.mnews.models.Category;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -179,7 +180,7 @@ public class StartActivity extends AppCompatActivity
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        Categ ct = postSnapshot.getValue(Categ.class);
+                        Category ct = postSnapshot.getValue(Category.class);
                         if (ct != null)
                             suggestionsList.add(new SearchItem(ct.name));
                     }

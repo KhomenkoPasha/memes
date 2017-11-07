@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.memes.khom.mnews.R;
 
 
 public class FaceebookRegAct extends AppCompatActivity {

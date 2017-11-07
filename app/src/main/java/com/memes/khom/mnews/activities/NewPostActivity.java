@@ -1,4 +1,4 @@
-package com.memes.khom.mnews;
+package com.memes.khom.mnews.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,7 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.memes.khom.mnews.models.Categ;
+import com.memes.khom.mnews.R;
+import com.memes.khom.mnews.models.Category;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
@@ -64,7 +65,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
     private ImageView mIVpicture;
-    private MaterialFancyButton mBTNaddPicture, add_cat_button;
     private File mTempPhoto;
     private String mImageUri = "";
     private Uri mageUri;
@@ -88,11 +88,12 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
         mIVpicture = findViewById(R.id.iv_piture);
-        mBTNaddPicture = findViewById(R.id.btn_add_picture);
-        mBTNaddPicture.setOnClickListener(this);
+        MaterialFancyButton mBTNadaPicture = findViewById(R.id.btn_add_picture);
+
+        mBTNadaPicture.setOnClickListener(this);
         mTitleField = findViewById(R.id.field_title);
         catSpinner = findViewById(R.id.searchableSpinnerCat);
-        add_cat_button = findViewById(R.id.add_cat_button);
+        MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
 
         catSpinner.setTitle("Select Category");
         catSpinner.setPositiveButton("Ок");
@@ -157,7 +158,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String key = categRef.push().getKey();
-                        Categ categ = new Categ();
+                        Category categ = new Category();
                         categ.name = input.getText().toString();
                         Map<String, Object> childUpdates = new HashMap<>();
                         childUpdates.put(key, categ);
@@ -193,7 +194,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             public void onDataChange(DataSnapshot snapshot) {
                 List<String> cats = new ArrayList<>();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Categ ct = postSnapshot.getValue(Categ.class);
+                    Category ct = postSnapshot.getValue(Category.class);
                     if (ct != null)
                         cats.add(ct.name);
                 }
@@ -262,8 +263,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         User user = dataSnapshot.getValue(User.class);
-
-                        // [START_EXCLUDE]
                         if (user == null) {
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
@@ -297,18 +296,13 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    // [START write_fan_out]
     private void writeNewPost(String userId, String username, String title, String body) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
         Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
         Map<String, Object> postValues = post.toMap();
-
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/posts/" + key, postValues);
         childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-
         mDatabase.updateChildren(childUpdates);
         mRereference = key;
         uploadFileInFireBaseStorage(mageUri);
@@ -443,8 +437,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri donwoldUri = taskSnapshot.getMetadata().getDownloadUrl();
-                Log.i("Load", "Uri donwlod" + donwoldUri);
+                Toast.makeText(NewPostActivity.this, "Загружено", Toast.LENGTH_SHORT).show();
             }
         });
     }
