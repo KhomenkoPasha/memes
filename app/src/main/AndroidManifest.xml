@@ -54,6 +54,7 @@
         <activity android:name=".activities.FaceebookRegAct" />
         <activity
             android:name=".activities.UserProfile"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

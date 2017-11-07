@@ -35,6 +35,7 @@ import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
+import com.memes.khom.mnews.utils.Convert;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -65,7 +66,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private ImageView iv_piture;
     private EditText mCommentField;
     private LinearLayout linearLayoutCard;
-    private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
 
     @Override
@@ -92,7 +92,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mTitleView = findViewById(R.id.post_title);
         mBodyView = findViewById(R.id.post_body);
         mCommentField = findViewById(R.id.field_comment_text);
-        mCommentButton = findViewById(R.id.button_post_comment);
+        Button mCommentButton = findViewById(R.id.button_post_comment);
         mCommentsRecycler = findViewById(R.id.recycler_comments);
         iv_piture = findViewById(R.id.iv_piture);
         linearLayoutCard = findViewById(R.id.linearLayoutInfo);
@@ -121,7 +121,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     mAuthorView.setText(post.author);
                     mTitleView.setText(post.title);
                     mBodyView.setText(post.body);
-                    datePost.setText(post.create_date);
+                    datePost.setText(Convert.getDateTimeFromDouble(Long.parseLong(post.create_date)));
                     FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
@@ -244,15 +244,17 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
-                        String authorName = user.username;
-                        // Create new comment object
-                        String commentText = mCommentField.getText().toString();
-                        Comment comment = new Comment(uid, authorName, commentText);
-                        // Push the comment, it will appear in the list
-                        mCommentsReference.push().setValue(comment);
+                        if (user != null) {
+                            String  authorName = user.username;
+                            // Create new comment object
+                            String commentText = mCommentField.getText().toString();
+                            Comment comment = new Comment(uid, authorName, commentText);
+                            // Push the comment, it will appear in the list
+                            mCommentsReference.push().setValue(comment);
 
-                        // Clear the field
-                        mCommentField.setText(null);
+                            // Clear the field
+                            mCommentField.setText(null);
+                        }
                     }
 
                     @Override
@@ -288,7 +290,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         private List<Comment> mComments = new ArrayList<>();
 
 
-        public CommentAdapter(final Context context, DatabaseReference ref) {
+        CommentAdapter(final Context context, DatabaseReference ref) {
             mContext = context;
             mDatabaseReference = ref;
 
@@ -319,18 +321,13 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     Comment newComment = dataSnapshot.getValue(Comment.class);
                     String commentKey = dataSnapshot.getKey();
 
-                    // [START_EXCLUDE]
                     int commentIndex = mCommentIds.indexOf(commentKey);
                     if (commentIndex > -1) {
-                        // Replace with the new data
                         mComments.set(commentIndex, newComment);
-
-                        // Update the RecyclerView
                         notifyItemChanged(commentIndex);
                     } else {
                         Log.w(TAG, "onChildChanged:unknown_child:" + commentKey);
                     }
-                    // [END_EXCLUDE]
                 }
 
                 @Override

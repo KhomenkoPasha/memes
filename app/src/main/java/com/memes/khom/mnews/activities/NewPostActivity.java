@@ -1,5 +1,6 @@
 package com.memes.khom.mnews.activities;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,12 +68,12 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private ImageView mIVpicture;
     private File mTempPhoto;
     private String mImageUri = "";
-    private Uri mageUri;
-    private String mRereference = "";
-    // [START declare_database_ref]
+    private Uri imageUri;
+    private String mReference = "";
+
     private DatabaseReference mDatabase;
     private DatabaseReference categRef;
-    // [END declare_database_ref]
+
     private StorageReference mStorageRef;
     private EditText mTitleField;
     private EditText mBodyField;
@@ -112,7 +113,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             localFile = createTempImageFile(getExternalCacheDir());
             final File finalLocalFile = localFile;
 
-            mStorageRef.child("images/" + mRereference).getFile(localFile)
+            mStorageRef.child("images/" + mReference).getFile(localFile)
                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -189,17 +190,16 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
 
     private void fillSpinnerCat() {
+        final List<String> cats =  new ArrayList<>();
         categRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                List<String> cats = new ArrayList<>();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Category ct = postSnapshot.getValue(Category.class);
                     if (ct != null)
                         cats.add(ct.name);
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
-                catSpinner.setAdapter(arrayAdapter);
+
             }
 
             @Override
@@ -208,6 +208,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             }
         });
 
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
+        catSpinner.setAdapter(arrayAdapter);
     }
 
 
@@ -223,6 +225,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    public void removeSearchableDialog() {
+        Fragment searchableSpinnerDialog = getFragmentManager().findFragmentByTag("TAG");
+        if (searchableSpinnerDialog != null && searchableSpinnerDialog.isAdded()) {
+            getFragmentManager().beginTransaction().remove(searchableSpinnerDialog).commit();
+        }
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        removeSearchableDialog();
+    }
 
     private void submitPost() {
         final String title = mTitleField.getText().toString();
@@ -246,7 +259,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             return;
         }
 
-        if (mageUri == null) {
+        if (imageUri == null) {
             Toast.makeText(this, "Добавте фото", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -304,8 +317,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         childUpdates.put("/posts/" + key, postValues);
         childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
         mDatabase.updateChildren(childUpdates);
-        mRereference = key;
-        uploadFileInFireBaseStorage(mageUri);
+        mReference = key;
+        uploadFileInFireBaseStorage(imageUri);
     }
 
 
@@ -412,14 +425,14 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .into(mIVpicture);
-                        mageUri = data.getData();
+                        imageUri = data.getData();
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
 
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .into(mIVpicture);
-                        mageUri = Uri.fromFile((mTempPhoto));
+                        imageUri = Uri.fromFile((mTempPhoto));
                     }
                 }
                 break;
@@ -427,7 +440,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     public void uploadFileInFireBaseStorage(Uri uri) {
-        UploadTask uploadTask = mStorageRef.child("images/" + mRereference).putFile(uri);
+        UploadTask uploadTask = mStorageRef.child("images/" + mReference).putFile(uri);
         uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
