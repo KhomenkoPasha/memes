@@ -2,6 +2,7 @@ package com.memes.khom.mnews.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,12 +19,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lapism.searchview.SearchView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
@@ -31,8 +37,12 @@ import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
+import com.memes.khom.mnews.models.Category;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,7 +68,7 @@ public class StartActivity extends AppCompatActivity
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
+        catSpinner = findViewById(R.id.searchableSpinnerCat);
 
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
@@ -87,14 +97,13 @@ public class StartActivity extends AppCompatActivity
         //     mHistoryDatabase.open();
         mSearchView = findViewById(R.id.searchView);
         initSearcher();
+        fillSpinnerCat();
 
     }
 
     private void initSearcher() {
-
-      //  DatabaseReference categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         View v = mSearchView.findViewById(R.id.search_view_shadow);
-        v.setBackgroundColor(Color.parseColor("#2E7D32"));
+        v.setBackgroundColor(Color.parseColor("#FAFAFA"));
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
@@ -167,42 +176,6 @@ public class StartActivity extends AppCompatActivity
                 }
             });
 
-            /*
-            final List<SearchItem> suggestionsList = new ArrayList<>();
-
-            categRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        Category ct = postSnapshot.getValue(Category.class);
-                        if (ct != null)
-                            suggestionsList.add(new SearchItem(ct.name));
-                    }
-
-
-                    SearchAdapter searchAdapter = new SearchAdapter(StartActivity.this, suggestionsList);
-                    searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
-                        @Override
-                        public void onSearchItemClick(View view, int position, String text) {
-                            // mSearchView.close(true);
-                            mSearchView.setQuery(text, true);
-                            mSearchView.close(false);
-                        }
-                    });
-                    // mSearchView.
-                    mSearchView.setAdapter(searchAdapter);
-                  //  mSearchView.setSuggestionsList(suggestionsList);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-*/
-            //  mSearchView.showSuggestions();
-            // mSearchView.open(true);
         }
     }
 
@@ -216,6 +189,53 @@ public class StartActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
+    private void fillSpinnerCat() {
+        try {
+            final List<String> cats = new ArrayList<>();
+            FirebaseDatabase.getInstance().getReference().child("categ")
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                                Category ct = postSnapshot.getValue(Category.class);
+                                if (ct != null)
+                                    cats.add(ct.name);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+
+            ArrayAdapter arrayAdapter = new ArrayAdapter<>(StartActivity.this, R.layout.item_sp, cats);
+            catSpinner.setAdapter(arrayAdapter);
+
+
+            catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    TextView textView = (TextView) parent.getChildAt(0);
+                    textView.setTextColor(Color.WHITE);
+                    textView.setTextSize(16);
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            catSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

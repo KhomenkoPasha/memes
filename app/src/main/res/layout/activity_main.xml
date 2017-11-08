@@ -6,11 +6,13 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
+        android:textColor="@color/text_black"
         android:layout_height="wrap_content" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
+        android:textColor="@color/text_black"
         android:layout_height="match_parent"
         android:layout_below="@id/tabs" />
 

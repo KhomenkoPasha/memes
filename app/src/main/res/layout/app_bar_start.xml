@@ -14,42 +14,47 @@
         <com.lapism.searchview.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:minHeight="60dp"
+            android:background="@color/colorPrimary" />
 
         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/searchableSpinnerCat"
-            android:layout_width="match_parent"
+            style="@style/Widget.AppCompat.Spinner"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="14dp"
-            android:gravity="center_vertical"
+            android:layout_marginTop="4dp"
+            android:gravity="center_horizontal"
             android:textColor="@color/white"
-            android:layout_marginRight="8dp"
-            app:hintText="Все категории" />
+            app:hintText="Все категории"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <View
             android:id="@+id/viewLineTop"
             android:layout_width="fill_parent"
             android:layout_height="1px"
-            android:layout_marginTop="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
             android:background="#30000000" />
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
                 app:tabIndicatorHeight="4dp"
-                app:tabMode="scrollable" />
-
+                app:tabMode="scrollable"
+                app:tabIndicatorColor="@color/white"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/text_black" />
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

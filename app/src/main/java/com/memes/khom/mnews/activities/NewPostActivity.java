@@ -85,9 +85,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
         mIVpicture = findViewById(R.id.iv_piture);
         MaterialFancyButton mBTNadaPicture = findViewById(R.id.btn_add_picture);
 
@@ -106,7 +104,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         fillSpinnerCat();
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         try {
@@ -196,6 +194,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Category ct = postSnapshot.getValue(Category.class);
+
                     if (ct != null)
                         cats.add(ct.name);
                 }
@@ -210,6 +209,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
         catSpinner.setAdapter(arrayAdapter);
+
     }
 
 
