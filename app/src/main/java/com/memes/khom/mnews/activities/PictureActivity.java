@@ -28,7 +28,7 @@ public class PictureActivity extends AppCompatActivity {
         try {
             Bundle extras = getIntent().getExtras();
             final ImageView mImageView = findViewById(R.id.imagePhotoView);
-            TextView pict_tag =  findViewById(R.id.pict_tag);
+            TextView pict_tag = findViewById(R.id.pict_tag);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             this.setTitle("Picture");
             Uri uri = null;
@@ -41,11 +41,10 @@ public class PictureActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess() {
-                        if (mAttacher != null) {
+                        if (mAttacher != null)
                             mAttacher.update();
-                        } else {
+                        else
                             mAttacher = new PhotoViewAttacher(mImageView);
-                        }
                     }
 
                     @Override
@@ -54,8 +53,8 @@ public class PictureActivity extends AppCompatActivity {
                     }
                 };
 
-                Picasso.with(this).load(uri).fit().into(mImageView, imageLoadedCallback);
-              //  pict_tag.setText(uri.getEncodedPath());
+                Picasso.with(this).load(uri).into(mImageView, imageLoadedCallback);
+                //  pict_tag.setText(uri.getEncodedPath());
                 if (getSupportActionBar() != null)
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }

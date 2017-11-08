@@ -11,13 +11,12 @@ import android.provider.MediaStore;
 
 public class ImageUtils {
 
-
     public static Bitmap getResizeFile(Bitmap bitmap, float mxSize) {
         Bitmap originalPhoto = bitmap;
         final float height = bitmap.getHeight();
         final float width = bitmap.getWidth();
 
-        if (height >= mxSize || width >= mxSize) {
+        if (width >= mxSize) {
             float newWidth;
             float newHeight;
             if (height > width) {
@@ -29,6 +28,8 @@ public class ImageUtils {
             }
             originalPhoto = getResizedBitmap(bitmap, newHeight, newWidth);
 
+        } else {
+            originalPhoto = getResizedBitmap(bitmap,  height / (width / mxSize), mxSize);
         }
         return originalPhoto;
     }
