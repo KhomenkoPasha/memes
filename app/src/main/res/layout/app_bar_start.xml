@@ -15,21 +15,36 @@
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay"
+            android:background="@color/colorPrimary"
             android:minHeight="60dp"
-            android:background="@color/colorPrimary" />
+            android:theme="@style/AppTheme.AppBarOverlay" />
 
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-            android:id="@+id/searchableSpinnerCat"
-            style="@style/Widget.AppCompat.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="4dp"
-            android:gravity="center_horizontal"
-            android:textColor="@color/white"
-            app:hintText="Все категории"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/searchableSpinnerCat"
+                style="@style/Widget.AppCompat.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                app:hintText="@string/all_cats"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <ImageView
+                android:id="@+id/imageClearSpinner"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@+id/searchableSpinnerCat"
+                android:layout_toEndOf="@+id/searchableSpinnerCat"
+                android:layout_toRightOf="@+id/searchableSpinnerCat"
+                app:srcCompat="@drawable/ic_action_clear" />
+        </RelativeLayout>
 
         <View
             android:id="@+id/viewLineTop"
@@ -50,9 +65,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_black"
+                app:tabIndicatorColor="@color/white"
                 app:tabIndicatorHeight="4dp"
                 app:tabMode="scrollable"
-                app:tabIndicatorColor="@color/white"
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextColor="@color/text_black" />
         </RelativeLayout>

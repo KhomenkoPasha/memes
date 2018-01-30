@@ -188,8 +188,6 @@ public abstract class PostListFragment extends Fragment {
     }
 
 
-
-
     // [START post_stars_transaction]
     private void onStarClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {

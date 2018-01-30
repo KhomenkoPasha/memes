@@ -137,13 +137,13 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             }
         });
 
-        this.setTitle("Создать публикацию");
+        this.setTitle(getString(R.string.create_post));
 
         add_cat_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
-                builder.setTitle("Добавить категорию");
+                builder.setTitle(R.string.add_cat);
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
                 // but you can provide here any other instance of ViewGroup from your Fragment / Activity
                 View viewInflated = LayoutInflater.from(NewPostActivity.this).inflate(R.layout.text_input_string, (ViewGroup) findViewById(android.R.id.content), false);
@@ -166,7 +166,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 if (databaseError != null) {
-                                    Toast.makeText(NewPostActivity.this, "Ошибка добавления категории", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(NewPostActivity.this, R.string.error_add_cat, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -255,12 +255,12 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         // Cat is required
         if (catSpinner.getSelectedItem() == null) {
-            Toast.makeText(this, "Заполните категорию", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.need_add_cat, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (imageUri == null) {
-            Toast.makeText(this, "Добавте фото", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.add_image, Toast.LENGTH_SHORT).show();
             return;
         }
 

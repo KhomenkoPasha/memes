@@ -117,7 +117,6 @@ public class UserProfile extends AppCompatActivity {
             nameView.setText(user.getDisplayName());
             email.setText(user.getEmail());
             number.setText(user.getPhoneNumber());
-
             // Button logout = findViewById(R.id.logout);
         /*
         logout.setOnClickListener(new View.OnClickListener(){

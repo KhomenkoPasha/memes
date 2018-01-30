@@ -29,7 +29,7 @@ public class ImageUtils {
             originalPhoto = getResizedBitmap(bitmap, newHeight, newWidth);
 
         } else {
-            originalPhoto = getResizedBitmap(bitmap,  height / (width / mxSize), mxSize);
+            originalPhoto = getResizedBitmap(bitmap, height / (width / mxSize), mxSize);
         }
         return originalPhoto;
     }
@@ -46,13 +46,15 @@ public class ImageUtils {
     }
 
     private static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = newWidth / width;
-        float scaleHeight = newHeight / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        return Bitmap.createBitmap(bm, 0, 0, width, height,
-                matrix, false);
+        if (newHeight > 0 && newWidth > 0) {
+            int width = bm.getWidth();
+            int height = bm.getHeight();
+            float scaleWidth = newWidth / width;
+            float scaleHeight = newHeight / height;
+            Matrix matrix = new Matrix();
+            matrix.postScale(scaleWidth, scaleHeight);
+            return Bitmap.createBitmap(bm, 0, 0, width, height,
+                    matrix, false);
+        } else return bm;
     }
 }

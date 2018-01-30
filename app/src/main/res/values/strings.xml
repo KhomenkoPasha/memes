@@ -35,5 +35,11 @@
     <string name="facebook_app_id">370573573385221</string>
     <string name="edit_my_photo">Редактировать фото профиля</string>
     <string name="save_ed_profile">Сохранить</string>
-
+    <string name="create_post">Создать публикацию</string>
+    <string name="add_cat">Добавить категорию</string>
+    <string name="error_add_cat">Ошибка добавления категории</string>
+    <string name="need_add_cat">Заполните категорию</string>
+    <string name="add_image">Добавте картинку</string>
+    <string name="find_by_tag">Поиск по тегу #</string>
+    <string name="all_cats">Все категории</string>
 </resources>

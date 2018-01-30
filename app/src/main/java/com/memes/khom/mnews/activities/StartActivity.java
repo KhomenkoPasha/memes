@@ -15,12 +15,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +55,9 @@ public class StartActivity extends AppCompatActivity
     private SectionsPagerAdapter mPagerAdapter;
     private SearchView mSearchView;
     private SearchableSpinner catSpinner;
+    private ImageView imageClearSpinner;
+    private String[] arrayOfSelectSpinner = {"", "", "", ""};
+    private int currentFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +66,33 @@ public class StartActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        imageClearSpinner = findViewById(R.id.imageClearSpinner);
         navigationView.setNavigationItemSelectedListener(this);
-        // Create the adapter that will return a fragment for each section
+
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        // Set up the ViewPager with the sections adapter.
+
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        catSpinner = findViewById(R.id.searchableSpinnerCat);
 
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                currentFrag = tab.getPosition();
+                Toast.makeText(StartActivity.this, String.valueOf(arrayOfSelectSpinner[currentFrag]), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        catSpinner = findViewById(R.id.searchableSpinnerCat);
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,13 +115,9 @@ public class StartActivity extends AppCompatActivity
             ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
         }
 
-
-        //      mHistoryDatabase = new SearchHistoryTable(this);
-        //     mHistoryDatabase.open();
         mSearchView = findViewById(R.id.searchView);
         initSearcher();
         fillSpinnerCat();
-
     }
 
     private void initSearcher() {
@@ -107,19 +126,17 @@ public class StartActivity extends AppCompatActivity
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
-            mSearchView.setHint("Поиск по тегу...");
+            mSearchView.setHint(R.string.find_by_tag);
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     try {
-
                         mSearchView.close(false);
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                 refreshFragment(FirebaseDatabase.getInstance().
                                         getReference().child("posts").orderByChild("title").startAt(query)
                                         .endAt(query + "\uf8ff")
                                         .limitToFirst(50));
-
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -158,7 +175,6 @@ public class StartActivity extends AppCompatActivity
             mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
                 @Override
                 public boolean onOpen() {
-
                     return true;
                 }
 
@@ -194,6 +210,7 @@ public class StartActivity extends AppCompatActivity
     private void fillSpinnerCat() {
         try {
             final List<String> cats = new ArrayList<>();
+            cats.add(this.getResources().getString(R.string.all_cats));
             FirebaseDatabase.getInstance().getReference().child("categ")
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -210,7 +227,7 @@ public class StartActivity extends AppCompatActivity
                         }
                     });
 
-            ArrayAdapter arrayAdapter = new ArrayAdapter<>(StartActivity.this, R.layout.item_sp, cats);
+            final ArrayAdapter arrayAdapter = new ArrayAdapter<>(StartActivity.this, R.layout.item_sp, cats);
             catSpinner.setAdapter(arrayAdapter);
 
 
@@ -220,7 +237,25 @@ public class StartActivity extends AppCompatActivity
                     TextView textView = (TextView) parent.getChildAt(0);
                     textView.setTextColor(Color.WHITE);
                     textView.setTextSize(16);
-
+                    String item = textView.getText().toString();
+                    if (!item.equals(StartActivity.this.getResources().getString(R.string.all_cats))) {
+                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||
+                                mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment)
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
+                                            .endAt(textView.getText().toString() + "\uf8ff")
+                                            .limitToFirst(50));
+                        arrayOfSelectSpinner[currentFrag] = textView.getText().toString();
+                    } else {
+                        arrayOfSelectSpinner[currentFrag] = "";
+                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||
+                                mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment)
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts")
+                                            .limitToFirst(50));
+                    }
                 }
 
                 @Override
@@ -228,8 +263,14 @@ public class StartActivity extends AppCompatActivity
 
                 }
             });
-
             catSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+
+            imageClearSpinner.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    catSpinner.setSelection(0);
+                }
+            });
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -367,12 +408,13 @@ public class StartActivity extends AppCompatActivity
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            // Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
 
         }
 
         @Override
         public void onPageSelected(int position) {
-            Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
+            // Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
         }
 
         @Override
