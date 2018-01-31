@@ -50,15 +50,13 @@
             android:name=".activities.PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar_dialog" />
-
         <activity android:name=".activities.FaceebookRegAct" />
         <activity
             android:name=".activities.UserProfile"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.Main2Activity" />
+        <activity android:name=".activities.RegisterActivity"></activity>
     </application>
-
 
 </manifest>

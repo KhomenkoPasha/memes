@@ -36,8 +36,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseAuth mAuth;
     private EditText mEmailField;
     private EditText mPasswordField;
-    private MaterialFancyButton mSignInButton;
-    private MaterialFancyButton mSignUpButton;
     CallbackManager mCallbackManager;
 
     @Override
@@ -51,8 +49,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         // Views
         mEmailField = findViewById(R.id.field_email);
         mPasswordField = findViewById(R.id.field_password);
-        mSignInButton = findViewById(R.id.button_sign_in);
-        mSignUpButton = findViewById(R.id.button_sign_up);
+        MaterialFancyButton mSignInButton = findViewById(R.id.button_sign_in);
+        MaterialFancyButton mSignUpButton = findViewById(R.id.button_sign_up);
 
         // Click listeners
         mSignInButton.setOnClickListener(this);
@@ -154,30 +152,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void signUp() {
-        Log.d(TAG, "signUp");
-        if (!validateForm()) {
-            return;
-        }
-
-        showProgressDialog();
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
     }
 
     private void onAuthSuccess(FirebaseUser user) {
@@ -186,13 +161,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         finish();
     }
 
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
-        }
-    }
 
     private boolean validateForm() {
         boolean result = true;
@@ -218,7 +186,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         User user = new User(name, email, uriPhoto);
         mDatabase.child("users").child(userId).setValue(user);
     }
-    // [END basic_write]
+
 
     @Override
     public void onClick(View v) {

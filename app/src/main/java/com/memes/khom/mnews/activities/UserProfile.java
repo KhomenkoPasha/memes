@@ -89,21 +89,18 @@ public class UserProfile extends AppCompatActivity {
         imgPhoto = findViewById(R.id.profileImage);
         btn_edit_save = findViewById(R.id.btn_edit_save);
         enable_edit = findViewById(R.id.enable_edit);
-
         enable_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 nameView.setEnabled(true);
             }
         });
-
         btn_edit_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addPhoto();
             }
         });
-
         btn_edit_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,18 +114,7 @@ public class UserProfile extends AppCompatActivity {
             nameView.setText(user.getDisplayName());
             email.setText(user.getEmail());
             number.setText(user.getPhoneNumber());
-            // Button logout = findViewById(R.id.logout);
-        /*
-        logout.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                LoginManager.getInstance().logOut();
-                Intent login = new Intent(UserProfile.this, FaceebookRegAct.class);
-                startActivity(login);
-                finish();
-            }
-        });
-*/
+
             if (user.getPhotoUrl() != null)
                 Picasso.with(this).load(user.getPhotoUrl()).into(imgPhoto);
         }

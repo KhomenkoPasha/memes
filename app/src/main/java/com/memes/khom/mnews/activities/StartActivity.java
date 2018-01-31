@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +22,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -286,7 +286,7 @@ public class StartActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_create:
-                startActivity(new Intent(StartActivity.this, NewPostActivity.class));
+                 startActivity(new Intent(StartActivity.this, NewPostActivity.class));
                 break;
 
             case R.id.my_profile:
@@ -294,9 +294,20 @@ public class StartActivity extends AppCompatActivity
                 startActivity(about);
                 break;
 
-            case R.id.nav_send:
-                ////    Intent about = new Intent(StartActivity.this, FaceebookRegAct.class);
-                //   startActivity(about);
+            case R.id.nav_log_out:
+                new MaterialDialog.Builder(this)
+                        .title("Внимание")
+                        .content("Выйти текущим пользователем?")
+                        .positiveText("Да").onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(StartActivity.this, SignInActivity.class));
+                        finish();
+                    }
+                })
+                        .negativeText("Отмена")
+                        .show();
                 break;
 
             default:

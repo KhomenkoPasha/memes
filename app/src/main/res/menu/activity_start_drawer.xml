@@ -6,7 +6,6 @@
             android:id="@+id/nav_create"
             android:icon="@drawable/ic_image_edit"
             android:title="Создать публикацию" />
-
     </group>
 
     <item android:title="Communicate">
@@ -15,6 +14,10 @@
                 android:id="@+id/my_profile"
                 android:icon="@drawable/ic_account_circle_white_24dp"
                 android:title="Мой профиль" />
+            <item
+                android:id="@+id/nav_log_out"
+                android:icon="@drawable/ic_action_log_out"
+                android:title="Log Out" />
             <item
                 android:id="@+id/nav_send"
                 android:visible="false"
