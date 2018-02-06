@@ -53,7 +53,7 @@ public class FaceebookRegAct extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();
                 nextActivity(profile);
-                Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.logging, Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -1,11 +1,13 @@
 package com.memes.khom.mnews.activities;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;

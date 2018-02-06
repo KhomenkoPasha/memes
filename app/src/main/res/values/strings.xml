@@ -74,4 +74,17 @@
     <string name="tag_symbol">#</string>
     <string name="categ">Категория: %s</string>
     <string name="cats_t">Категория:</string>
+    <string name="likes">лайк</string>
+    <string name="comments">Комментарии</string>
+    <string name="share">Поделиться</string>
+    <string name="commentsImg">comments</string>
+    <string name="likesImg">likes</string>
+    <string name="post_itemTag">post_item</string>
+    <string name="shareimgtag">shareImgTag</string>
+    <string name="logging">Logging in...</string>
+    <string name="my_profile">Мой профиль</string>
+    <string name="log_out">Выйти пользователем</string>
+    <string name="send">Send</string>
+    <string name="create_pub">Создать публикацию</string>
+    <string name="additional_menu">Дополнительно</string>
 </resources>
