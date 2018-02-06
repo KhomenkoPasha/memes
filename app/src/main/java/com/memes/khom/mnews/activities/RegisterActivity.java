@@ -146,7 +146,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             hideProgressDialog();
                             if (task.isSuccessful()) {
                                 FirebaseUser firebaseUser = task.getResult().getUser();
-                                writeNewUser(firebaseUser.getUid(), firebaseUser.getDisplayName(),
+                                writeNewUser(firebaseUser.getUid(),fullName.getText().toString(),
                                         firebaseUser.getEmail(), firebaseUser.getPhotoUrl() != null ?
                                                 firebaseUser.getPhotoUrl().toString() : "", firebaseUser);
                             } else {
@@ -209,8 +209,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             // inflate the layout over view
-            View layout = inflater.inflate(R.layout.custom_toast,
-                    (ViewGroup) view.findViewById(R.id.toast_root));
+            View layout;
+            if (inflater != null) {
+                layout = inflater.inflate(R.layout.custom_toast,
+                        (ViewGroup) view.findViewById(R.id.toast_root));
+
 
             // Get TextView id and set error
             TextView text = layout.findViewById(R.id.toast_error);
@@ -221,6 +224,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             toast.setView(layout); // Set Custom View over toast
 
             toast.show();// Finally show toast
+            }
         }
 
     }

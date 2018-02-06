@@ -64,12 +64,12 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_black"
+                android:textColor="@color/white"
                 app:tabIndicatorColor="@color/white"
                 app:tabIndicatorHeight="4dp"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/white"
-                app:tabTextColor="@color/text_black" />
+                app:tabTextColor="@color/white90" />
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

@@ -14,6 +14,7 @@
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="white90">#90FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="green">#388E3C</color>
     <color name="colorPrimaryDarkB">#4000BCD4</color>

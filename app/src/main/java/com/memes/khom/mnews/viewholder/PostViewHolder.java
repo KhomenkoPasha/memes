@@ -1,5 +1,6 @@
 package com.memes.khom.mnews.viewholder;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.utils.Convert;
+
+import java.util.Calendar;
 
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
@@ -22,14 +25,14 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView post_author_photo;
     public LinearLayout comments_lay;
     public ImageView iv_piture;
-    public ImageView starView;
+    public ImageView likeView;
 
     public PostViewHolder(View itemView) {
         super(itemView);
 
         titleView = itemView.findViewById(R.id.post_title);
         authorView = itemView.findViewById(R.id.post_author);
-        starView = itemView.findViewById(R.id.star);
+        likeView = itemView.findViewById(R.id.like);
         numStarsView = itemView.findViewById(R.id.post_num_stars);
         iv_piture = itemView.findViewById(R.id.iv_piture);
         bodyView = itemView.findViewById(R.id.post_body);
@@ -39,13 +42,14 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         categ = itemView.findViewById(R.id.categ);
     }
 
-    public void bindToPost(Post post, View.OnClickListener starClickListener) {
+    public void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {
         titleView.setText(post.title);
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.likes_count));
         bodyView.setText(post.body);
-        post_date.setText(Convert.getDateTimeFromDouble(Long.parseLong(post.create_date)));
-        categ.setText(String.format("Категория: %s", post.category));
-        starView.setOnClickListener(starClickListener);
+        post_date.setText(Convert.printDifference(Long.parseLong(post.create_date),
+                Calendar.getInstance().getTime().getTime(),cnx));
+        categ.setText(String.format(cnx.getString(R.string.categ), post.category));
+        likeView.setOnClickListener(starClickListener);
     }
 }

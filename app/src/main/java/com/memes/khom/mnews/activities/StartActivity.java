@@ -15,12 +15,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,9 +130,37 @@ public class StartActivity extends AppCompatActivity
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
             mSearchView.setHint(R.string.find_by_tag);
+            // mSearchView.setTextOnly(R.string.tag_symbol);
+            // mSearchView.setSele(mSearchView.getTextOnly().length());
+
+
+            EditText mSearchEditText = findViewById(com.lapism.searchview.R.id.search_searchEditText);
+            if (mSearchEditText != null) {
+                // mSearchEditText.setText("#");
+                mSearchEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count,
+                                                  int after) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable text) {
+                        String val = text.toString();
+                        if (val.length() == 1 && !val.substring(0, 1).equals("#"))
+                            text.insert(0, "#");
+                    }
+                });
+            }
+
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    // mSearchView.setQuery("#"+ query, false);
                     try {
                         mSearchView.close(false);
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
@@ -202,7 +233,8 @@ public class StartActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            exitDialog();
         }
     }
 
@@ -286,7 +318,7 @@ public class StartActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_create:
-                 startActivity(new Intent(StartActivity.this, NewPostActivity.class));
+                startActivity(new Intent(StartActivity.this, NewPostActivity.class));
                 break;
 
             case R.id.my_profile:
@@ -318,6 +350,21 @@ public class StartActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void exitDialog() {
+        new MaterialDialog.Builder(this)
+                .title("Внимание")
+                .content("Выйти из приложения?")
+                .positiveText("Да").onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        })
+                .negativeText("Отмена")
+                .show();
+
     }
 
 

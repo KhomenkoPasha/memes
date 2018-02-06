@@ -1,6 +1,11 @@
 package com.memes.khom.mnews.utils;
 
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+
+import com.memes.khom.mnews.R;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,7 +21,7 @@ public class Convert {
         Calendar calendar = Calendar.getInstance();
 
         String[] formats = new String[]{"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss.SSS", "HH:mm:ss.SSS",
-                "yyyy-MM-dd'T'HH:mm:ss","dd.MM.yyyy"};
+                "yyyy-MM-dd'T'HH:mm:ss", "dd.MM.yyyy"};
 
         for (int i = 0; i < formats.length; i++) {
             try {
@@ -46,6 +51,49 @@ public class Convert {
         }
 
         return res;
+    }
+
+    //1 minute = 60 seconds
+    //1 hour = 60 x 60 = 3600
+    //1 day = 3600 x 24 = 86400
+    @SuppressLint("DefaultLocale")
+    public static String printDifference(Long startDate, Long endDate, Context cnx) {
+
+        String res;
+        //milliseconds
+        long different = endDate - startDate;
+
+        System.out.println("startDate : " + startDate);
+        System.out.println("endDate : " + endDate);
+        System.out.println("different : " + different);
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+
+        // different = different % minutesInMilli;
+        // long elapsedSeconds = different / secondsInMilli;
+
+        if (elapsedDays > 0) res = String.format("%d " + cnx.getString(R.string.days) + " ",
+                elapsedDays);
+        else if (elapsedHours > 0) {
+
+            res = String.format("%d " + cnx.getString(R.string.hours) + " ",
+                    elapsedHours);
+
+        } else res = String.format("%d " + cnx.getString(R.string.minutes) + " ",
+                elapsedMinutes);
+
+        return res + cnx.getString(R.string.time_ago);
     }
 
 }

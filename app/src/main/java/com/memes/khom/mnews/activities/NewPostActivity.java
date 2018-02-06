@@ -14,7 +14,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -91,11 +93,29 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         mBTNadaPicture.setOnClickListener(this);
         mTitleField = findViewById(R.id.field_title);
+        mTitleField.setText(R.string.tag_symbol);
+        mTitleField.setSelection(mTitleField.getText().length());
+        mTitleField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable text) {
+                if (text.length() == 0)
+                    text.append(getResources().getString(R.string.tag_symbol));
+            }
+        });
+
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
 
-        catSpinner.setTitle("Выберите категорию");
-        catSpinner.setPositiveButton("Выбрать");
+        catSpinner.setTitle(getString(R.string.select_cat));
+        catSpinner.setPositiveButton(getString(R.string.chose));
 
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
@@ -326,9 +346,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private void addPhoto() {
 
         //Проверяем разрешение на работу с камерой
-        boolean isCameraPermissionGranted = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean isCameraPermissionGranted = ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         //Проверяем разрешение на работу с внешнем хранилещем телефона
-        boolean isWritePermissionGranted = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean isWritePermissionGranted = ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
         //Если разрешения != true
         if (!isCameraPermissionGranted || !isWritePermissionGranted) {

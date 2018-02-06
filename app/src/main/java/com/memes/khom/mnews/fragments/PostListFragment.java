@@ -56,7 +56,7 @@ public abstract class PostListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
@@ -72,8 +72,7 @@ public abstract class PostListFragment extends Fragment {
     }
 
 
-
-    public void refreshFragment(Query postsQuery){
+    public void refreshFragment(Query postsQuery) {
 
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
                 PostViewHolder.class, postsQuery) {
@@ -102,14 +101,16 @@ public abstract class PostListFragment extends Fragment {
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap,viewHolder.itemView.getWidth());
+                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, viewHolder.itemView.getWidth());
                                         viewHolder.iv_piture.setImageBitmap(originalPhoto);
                                         viewHolder.iv_piture.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                Intent myIntent = new Intent(getContext(), PictureActivity.class);
-                                                myIntent.putExtra("photo_url", uri);
-                                                getContext().startActivity(myIntent);
+                                                if (getContext() != null) {
+                                                    Intent myIntent = new Intent(getContext(), PictureActivity.class);
+                                                    myIntent.putExtra("photo_url", uri);
+                                                    getContext().startActivity(myIntent);
+                                                }
                                             }
                                         });
                                     }
@@ -142,7 +143,7 @@ public abstract class PostListFragment extends Fragment {
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.getValue() != null) {
                             String str = snapshot.getValue().toString();
-                            if (str != null) {
+                            if (str != null && !str.isEmpty()) {
                                 Picasso.with(getContext()).load(str).into(viewHolder.post_author_photo);
                             }
                         }
@@ -155,9 +156,9 @@ public abstract class PostListFragment extends Fragment {
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.likes.containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
+                    viewHolder.likeView.setImageResource(R.drawable.ic_toggle_star_24);
                 } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                    viewHolder.likeView.setImageResource(R.drawable.ic_toggle_star_outline_24);
                 }
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToPost(model, new View.OnClickListener() {
@@ -169,7 +170,7 @@ public abstract class PostListFragment extends Fragment {
                         onStarClicked(globalPostRef);
                         onStarClicked(userPostRef);
                     }
-                });
+                }, getContext());
             }
         };
         mRecycler.setAdapter(mAdapter);

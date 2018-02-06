@@ -61,4 +61,17 @@
     <string name="registered_emailid">Please enter your Registered Email Id below:</string>
     <string name="submit">SUBMIT</string>
     <string name="back">BACK</string>
+    <string name="time_ago">назад</string>
+    <string name="days">дней</string>
+    <string name="hours">час</string>
+    <string name="minutes">минут</string>
+    <string name="title_new_post">Тэг/заголовок</string>
+    <string name="description">Сообщение/описание</string>
+    <string name="add_new_pic">Добавить изображение</string>
+    <string name="plus">+</string>
+    <string name="select_cat">Выберите категорию</string>
+    <string name="chose">Выбрать</string>
+    <string name="tag_symbol">#</string>
+    <string name="categ">Категория: %s</string>
+    <string name="cats_t">Категория:</string>
 </resources>
