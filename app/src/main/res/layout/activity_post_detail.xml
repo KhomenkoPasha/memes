@@ -1,49 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="4dp"
     android:background="@color/white">
 
-    <LinearLayout
-        android:id="@+id/comment_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:weightSum="1.0">
-
-
-        <EditText
-            android:id="@+id/field_comment_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:hint="Write a comment..."
-            android:maxLines="1" />
-
-        <Button
-            android:id="@+id/button_post_comment"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:text="Post" />
-
-    </LinearLayout>
-
-    <!--
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_margin="6dp"
-        android:id="@+id/cardView">
--->
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
         android:layout_width="match_parent"
@@ -58,7 +21,6 @@
 
             <TextView
                 android:id="@+id/post_date"
-                style="@style/Base.TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -66,7 +28,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_margin="6dp"
                 android:gravity="center_vertical"
-                tools:text="12.12.12" />
+                tools:ignore="RelativeOverlap" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/post_author_photo"
@@ -75,8 +37,16 @@
                 android:src="@drawable/ic_action_account_circle_40" />
 
             <TextView
+                android:id="@+id/categ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/post_author_photo"
+                android:layout_alignLeft="@+id/post_author"
+                android:layout_alignStart="@+id/post_author"
+                android:text="@string/cats_t" />
+
+            <TextView
                 android:id="@+id/post_author"
-                style="@style/Base.TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -87,78 +57,91 @@
                 android:gravity="center_vertical"
                 tools:text="someauthor@email.com" />
 
+
         </RelativeLayout>
+
+        <View
+            android:id="@+id/viewLineBot"
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_margin="8dp"
+            android:background="#30000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:id="@+id/post_title"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="" />
-
-            <TextView
-                android:id="@+id/categ"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="@string/cats_t" />
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/post_body"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
                 android:gravity="center_horizontal"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
                 tools:text="" />
 
-            <ImageView
-                android:id="@+id/iv_piture"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/post_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp" />
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="fdhgfh" />
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/iv_piture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/post_itemTag" />
 
-        <View
-            android:id="@+id/viewLineTop"
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:layout_marginTop="12dp"
-            android:background="#30000000" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/comment_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:weightSum="1.0">
+
+        <EditText
+            android:id="@+id/field_comment_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:singleLine="true"
+            android:hint="@string/write_comment"
+            android:maxLines="1" />
+
+        <Button
+            android:id="@+id/button_post_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:maxLines="1"
+            android:text="@string/sendPost" />
+
     </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_comments"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/comment_form"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/linearLayoutInfo"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:background="@color/white"
         android:visibility="visible"
         tools:listitem="@layout/item_comment">
-
     </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

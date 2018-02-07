@@ -23,10 +23,10 @@
     <string name="password_label">Password</string>
     <string name="send_text">Send</string>
     <string name="title_sign_in">Welcome</string>
-    <string name="sign_up">Sign Up</string>
+    <string name="sign_up">Регистрация</string>
     <string name="hint_password">password</string>
     <string name="hint_email">email</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in">Войти</string>
     <string name="heading_recent">Новые</string>
     <string name="heading_all_top">В топе</string>
     <string name="heading_my_posts">Мои</string>
@@ -56,7 +56,7 @@
     <string name="location">Location</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="terms_conditions">By clicking SignUp you agree all the Terms and Conditions.</string>
-    <string name="signUp">SIGN UP</string>
+    <string name="signUp">Зарегистрироваться</string>
     <string name="already_user">Already have Account? Login here.</string>
     <string name="registered_emailid">Please enter your Registered Email Id below:</string>
     <string name="submit">SUBMIT</string>
@@ -87,4 +87,8 @@
     <string name="send">Send</string>
     <string name="create_pub">Создать публикацию</string>
     <string name="additional_menu">Дополнительно</string>
+    <string name="update_us_name">Фото пользователя обновлено</string>
+    <string name="userNameUpd">Никнейм обновлен</string>
+    <string name="sendPost">Отправить</string>
+    <string name="write_comment">Пишите комментарий</string>
 </resources>
