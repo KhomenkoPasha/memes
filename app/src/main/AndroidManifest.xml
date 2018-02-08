@@ -24,6 +24,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProv"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -55,8 +64,8 @@
             android:name=".activities.UserProfile"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.Main2Activity" />
-        <activity android:name=".activities.RegisterActivity"></activity>
+        <activity android:name=".activities.RegisterActivity">
+        </activity>
     </application>
 
 </manifest>

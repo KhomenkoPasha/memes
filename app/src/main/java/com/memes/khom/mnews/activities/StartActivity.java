@@ -44,6 +44,7 @@ import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.memes.khom.mnews.models.Category;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -71,19 +72,17 @@ public class StartActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         imageClearSpinner = findViewById(R.id.imageClearSpinner);
         navigationView.setNavigationItemSelectedListener(this);
-
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
+        SmartTabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setViewPager(mViewPager);
+/*
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentFrag = tab.getPosition();
-                Toast.makeText(StartActivity.this, String.valueOf(arrayOfSelectSpinner[currentFrag]), Toast.LENGTH_LONG).show();
+              //  Toast.makeText(StartActivity.this, String.valueOf(arrayOfSelectSpinner[currentFrag]), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -94,7 +93,7 @@ public class StartActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-
+*/
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
@@ -125,14 +124,13 @@ public class StartActivity extends AppCompatActivity
 
     private void initSearcher() {
         View v = mSearchView.findViewById(R.id.search_view_shadow);
-        v.setBackgroundColor(Color.parseColor("#FAFAFA"));
+        v.setBackgroundColor(Color.parseColor("#5c6bc0"));
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
             mSearchView.setHint(R.string.find_by_tag);
             // mSearchView.setTextOnly(R.string.tag_symbol);
             // mSearchView.setSele(mSearchView.getTextOnly().length());
-
 
             EditText mSearchEditText = findViewById(com.lapism.searchview.R.id.search_searchEditText);
             if (mSearchEditText != null) {
@@ -467,7 +465,6 @@ public class StartActivity extends AppCompatActivity
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             // Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
-
         }
 
         @Override

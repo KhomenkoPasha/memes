@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context="com.memes.khom.mnews.activities.StartActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.lapism.searchview.SearchView
@@ -55,21 +58,32 @@
             android:layout_marginTop="8dp"
             android:background="#30000000" />
 
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.design.widget.TabLayout
+            <com.ogaclejapan.smarttablayout.SmartTabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                app:tabIndicatorColor="@color/white"
-                app:tabIndicatorHeight="4dp"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/white"
-                app:tabTextColor="@color/white90" />
+                android:layout_height="50dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:clipToPadding="false"
+                android:paddingLeft="4dp"
+                android:background="@color/colorPrimary"
+                android:paddingRight="4dp"
+                app:stl_defaultTabTextColor="@color/white"
+                app:stl_defaultTabTextHorizontalPadding="18dp"
+                app:stl_dividerColor="@color/colorPrimary"
+                app:stl_dividerThickness="0dp"
+                app:stl_indicatorColor="@color/accent"
+                app:stl_indicatorCornerRadius="18dp"
+                app:stl_indicatorGravity="center"
+                app:stl_indicatorInterpolation="smart"
+                app:stl_drawDecorationAfterTab="false"
+                app:stl_indicatorThickness="36dp"
+                app:stl_underlineColor="@color/accent"
+                app:stl_underlineThickness="0dp" />
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

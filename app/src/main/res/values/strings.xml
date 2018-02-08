@@ -91,4 +91,10 @@
     <string name="userNameUpd">Никнейм обновлен</string>
     <string name="sendPost">Отправить</string>
     <string name="write_comment">Пишите комментарий</string>
+    <string name="enter_tour_comment">Введите Ваш коментарий</string>
+    <string name="loading">Loading...</string>
+    <string name="posting">Posting...</string>
+    <string name="cannot_fetch">Error: could not fetch user.</string>
+    <string name="chose_img">Choose your image source</string>
+    <string name="loaded">Загружено</string>
 </resources>

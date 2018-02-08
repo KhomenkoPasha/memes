@@ -48,7 +48,8 @@ public class FaceebookRegAct extends AppCompatActivity {
 
 
         LoginButton loginButton = findViewById(R.id.login_button);
-        FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
+        FacebookCallback<LoginResult> callback =
+                new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();

@@ -42,13 +42,13 @@ import com.squareup.picasso.Target;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
 public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "PostDetailActivity";
-
     public static final String EXTRA_POST_KEY = "post_key";
 
     private DatabaseReference mPostReference;
@@ -85,7 +85,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mCommentsReference = FirebaseDatabase.getInstance().getReference()
                 .child("post-comments").child(mPostKey);
 
-        // Initialize Views
         datePost = findViewById(R.id.post_date);
         post_author_photo = findViewById(R.id.post_author_photo);
         mAuthorView = findViewById(R.id.post_author);
@@ -98,7 +97,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         linearLayoutCard = findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -121,22 +119,24 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     mAuthorView.setText(post.author);
                     mTitleView.setText(post.title);
                     mBodyView.setText(post.body);
-                    datePost.setText(Convert.getDateTimeFromDouble(Long.parseLong(post.create_date)));
-                    FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            if (snapshot.getValue() != null) {
-                                String str = snapshot.getValue().toString();
-                                if (str != null) {
-                                    Picasso.with(PostDetailActivity.this).load(str).into(post_author_photo);
+                    datePost.setText(Convert.printDifference(Long.parseLong(post.create_date),
+                            Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
+                    FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
+                            addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        String str = snapshot.getValue().toString();
+                                        if (str != null) {
+                                            Picasso.with(PostDetailActivity.this).load(str).into(post_author_photo);
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
 
                 }
                 mStorageRef.child("images/" + mPostKey).getDownloadUrl()
@@ -223,13 +223,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         int i = v.getId();
         switch (i) {
             case R.id.button_post_comment:
-
                 if (!mCommentField.getText().toString().isEmpty()) postComment();
-                else {
-
-                    Toast.makeText(this, "Введите Ваш коментарий", Toast.LENGTH_SHORT).show();
-                }
-
+                else
+                    Toast.makeText(this, R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -245,7 +241,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
-                            String  authorName = user.username;
+                            String authorName = user.username;
                             // Create new comment object
                             String commentText = mCommentField.getText().toString();
                             Comment comment = new Comment(uid, authorName, commentText);
@@ -285,7 +281,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         private Context mContext;
         private DatabaseReference mDatabaseReference;
         private ChildEventListener mChildEventListener;
-
         private List<String> mCommentIds = new ArrayList<>();
         private List<Comment> mComments = new ArrayList<>();
 
@@ -375,22 +370,23 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         public void onBindViewHolder(final CommentViewHolder holder, int position) {
             final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
-            FirebaseDatabase.getInstance().getReference().child("users/" + comment.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null) {
-                        String str = snapshot.getValue().toString();
-                        if (str != null && !str.isEmpty()) {
-                            Picasso.with(mContext).load(str).into(holder.comment_photo);
+            FirebaseDatabase.getInstance().getReference().child("users/" + comment.uid + "/uriPhoto").
+                    addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.getValue() != null) {
+                                String str = snapshot.getValue().toString();
+                                if (str != null && !str.isEmpty()) {
+                                    Picasso.with(mContext).load(str).into(holder.comment_photo);
+                                }
+                            }
                         }
-                    }
-                }
 
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
 
 
             holder.bodyView.setText(comment.text);

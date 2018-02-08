@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -50,6 +53,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,10 +104,12 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
             }
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
             }
+
             @Override
             public void afterTextChanged(Editable text) {
                 if (text.length() == 0)
@@ -124,7 +130,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         fillSpinnerCat();
 
-       getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         try {
@@ -166,7 +172,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 builder.setTitle(R.string.add_cat);
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
                 // but you can provide here any other instance of ViewGroup from your Fragment / Activity
-                View viewInflated = LayoutInflater.from(NewPostActivity.this).inflate(R.layout.text_input_string, (ViewGroup) findViewById(android.R.id.content), false);
+                View viewInflated = LayoutInflater.from(NewPostActivity.this)
+                        .inflate(R.layout.text_input_string, (ViewGroup) findViewById(android.R.id.content), false);
                 // Set up the input
                 final EditText input = viewInflated.findViewById(R.id.input);
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -208,7 +215,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
 
     private void fillSpinnerCat() {
-        final List<String> cats =  new ArrayList<>();
+        final List<String> cats = new ArrayList<>();
         categRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -252,7 +259,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
         removeSearchableDialog();
     }
@@ -262,14 +270,14 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         final String body = mBodyField.getText().toString();
 
         // Title is required
-        if (TextUtils.isEmpty(title)) {
+        if (title.length() < 2) {
             mTitleField.setError(REQUIRED);
             return;
         }
 
         // Body is required
         if (TextUtils.isEmpty(body)) {
-            mBodyField.setError(REQUIRED);
+           // mBodyField.setError(REQUIRED);
             return;
         }
 
@@ -288,7 +296,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         setEditingEnabled(false);
 
 
-        Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.posting, Toast.LENGTH_SHORT).show();
         final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -300,7 +308,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
                             Toast.makeText(NewPostActivity.this,
-                                    "Error: could not fetch user.",
+                                    R.string.cannot_fetch,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
@@ -368,29 +376,38 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSION_RECEIVE_CAMERA);
         } else {
             //Если все разрешения получены
+            //StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            //  StrictMode.setVmPolicy(builder.build());
             try {
-                mTempPhoto = createTempImageFile(getExternalCacheDir());
-                mImageUri = mTempPhoto.getAbsolutePath();
-
-                //Создаём лист с интентами для работы с изображениями
                 List<Intent> intentList = new ArrayList<>();
+                mTempPhoto = createTempImageFile(getExternalCacheDir());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    try {
+                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                        m.invoke(null);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    mImageUri = (FileProvider.getUriForFile(NewPostActivity.this,
+                            NewPostActivity.this.getPackageName() + ".fileProv", mTempPhoto)).getPath();
+
+                } else {
+                    mImageUri = mTempPhoto.getAbsolutePath();
+                }
+                //Создаём лист с интентами для работы с изображениями
+
                 Intent chooserIntent = null;
-
-
                 Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
                 takePhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempPhoto));
-
                 intentList = addIntentsToList(this, intentList, pickIntent);
                 intentList = addIntentsToList(this, intentList, takePhotoIntent);
 
                 if (!intentList.isEmpty()) {
-                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose your image source");
+                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), getString(R.string.chose_img));
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
                 }
-
                 /*После того как пользователь закончит работу с приложеним(которое работает с изображениями)
                  будет вызван метод onActivityResult
                 */
@@ -472,7 +489,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(NewPostActivity.this, "Загружено", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewPostActivity.this, R.string.loaded, Toast.LENGTH_SHORT).show();
             }
         });
     }

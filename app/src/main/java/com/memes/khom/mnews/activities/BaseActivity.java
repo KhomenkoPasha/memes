@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.memes.khom.mnews.R;
 
 
 @SuppressLint("Registered")
@@ -16,7 +17,7 @@ public class BaseActivity extends AppCompatActivity {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setMessage(getString(R.string.loading));
         }
 
         mProgressDialog.show();

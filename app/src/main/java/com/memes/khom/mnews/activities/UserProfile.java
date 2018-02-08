@@ -3,12 +3,15 @@ package com.memes.khom.mnews.activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -39,6 +42,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,10 +174,23 @@ public class UserProfile extends AppCompatActivity {
         } else {
             //Если все разрешения получены
             try {
-                mTempPhoto = NewPostActivity.createTempImageFile(getExternalCacheDir());
-                mImageUri = mTempPhoto.getAbsolutePath();
-                //Создаём лист с интентами для работы с изображениями
+
                 List<Intent> intentList = new ArrayList<>();
+                mTempPhoto = NewPostActivity.createTempImageFile(getExternalCacheDir());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    try{
+                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                        m.invoke(null);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    mImageUri = (FileProvider.getUriForFile(UserProfile.this,
+                            UserProfile.this.getPackageName() + ".fileProv", mTempPhoto)).getPath();
+
+                } else {
+                    mImageUri = mTempPhoto.getAbsolutePath();
+                }
+
                 Intent chooserIntent = null;
                 Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -186,9 +203,6 @@ public class UserProfile extends AppCompatActivity {
                     chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose your image source");
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
                 }
-                /*После того как пользователь закончит работу с приложеним(которое работает с изображениями)
-                 будет вызван метод onActivityResult
-                */
                 startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);
             } catch (IOException e) {
                 Log.e("ERROR", e.getMessage(), e);

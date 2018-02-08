@@ -43,8 +43,8 @@
             android:text="@string/edit_my_photo"
             fancy:mfb_borderColor="#90FFFFFF"
             fancy:mfb_borderWidth="1dp"
-            fancy:mfb_defaultColor="#7ab800"
-            fancy:mfb_focusColor="#9bd823"
+            fancy:mfb_defaultColor="@color/mfb_defaultColor"
+            fancy:mfb_focusColor="@color/mfb_focusColor"
             fancy:mfb_iconPosition="left"
             fancy:mfb_radius="20dp"
             fancy:mfb_textColor="#FFFFFF" />
