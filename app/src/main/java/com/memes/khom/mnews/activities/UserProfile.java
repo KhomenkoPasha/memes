@@ -37,6 +37,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
 import com.memes.khom.mnews.R;
+import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.squareup.picasso.Picasso;
 
@@ -219,20 +220,23 @@ public class UserProfile extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
                         mImageUri = getRealPathFromURI(data.getData(), UserProfile.this);
-
+                        ImageUtils.compressAndRotatePhoto(mImageUri);
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .into(imgPhoto);
                         mageUri = data.getData();
+                        ImageUtils.compressAndRotatePhoto(mageUri.getEncodedPath());
                         btn_edit_save.setVisibility(View.VISIBLE);
 
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
+                        ImageUtils.compressAndRotatePhoto(mImageUri);
 
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .into(imgPhoto);
                         mageUri = Uri.fromFile((mTempPhoto));
+                        ImageUtils.compressAndRotatePhoto(mageUri.getEncodedPath());
                         btn_edit_save.setVisibility(View.VISIBLE);
                     }
                 }

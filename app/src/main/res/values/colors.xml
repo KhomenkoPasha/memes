@@ -7,6 +7,7 @@
     <color name="primary_light">#8e99f3</color>
     <color name="colorPrimaryTeal">#FAFAFA</color>
     <color name="colorPrimary">#5c6bc0</color>
+    <color name="colorPrimary70">#705c6bc0</color>
     <color name="colorPrimaryDark">#26418f</color>
     <color name="colorAccent">#e91e63</color>
     <color name="accent">#b4004e</color>

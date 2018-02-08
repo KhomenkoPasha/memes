@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_margin="6dp"
+                android:textColor="@color/colorPrimary"
                 android:layout_marginLeft="16dp"
                 android:layout_toEndOf="@+id/post_author_photo"
                 android:layout_toRightOf="@+id/post_author_photo"

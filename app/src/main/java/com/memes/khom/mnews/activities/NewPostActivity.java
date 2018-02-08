@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +46,7 @@ import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Category;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
+import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -125,7 +125,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
-        File localFile;
         mStorageRef = FirebaseStorage.getInstance().getReference();
         categRef = FirebaseDatabase.getInstance().getReference().child("categ");
         fillSpinnerCat();
@@ -133,28 +132,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        try {
-            localFile = createTempImageFile(getExternalCacheDir());
-            final File finalLocalFile = localFile;
-
-            mStorageRef.child("images/" + mReference).getFile(localFile)
-                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Picasso.with(getBaseContext())
-                                    .load(Uri.fromFile(finalLocalFile))
-                                    .into(mIVpicture);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("Load", "" + e);
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,12 +249,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Title is required
         if (title.length() < 2) {
             mTitleField.setError(REQUIRED);
-            return;
-        }
-
-        // Body is required
-        if (TextUtils.isEmpty(body)) {
-           // mBodyField.setError(REQUIRED);
             return;
         }
 
@@ -459,15 +430,18 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             case REQUEST_CODE_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
+
                         mImageUri = getRealPathFromURI(data.getData(), NewPostActivity.this);
+                        ImageUtils.compressAndRotatePhoto(mImageUri);
 
                         Picasso.with(getBaseContext())
                                 .load(data.getData())
                                 .into(mIVpicture);
+
                         imageUri = data.getData();
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
-
+                        ImageUtils.compressAndRotatePhoto(mImageUri);
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .into(mIVpicture);
