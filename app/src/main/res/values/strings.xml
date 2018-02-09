@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Go</string>
+    <string name="app_name">Memes</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -36,13 +36,13 @@
     <string name="edit_my_photo">Редактировать фото профиля</string>
     <string name="save_ed_profile">Сохранить</string>
     <string name="create_post">Создать публикацию</string>
+    <string name="info_post">Комментарии</string>
     <string name="add_cat">Добавить категорию</string>
     <string name="error_add_cat">Ошибка добавления категории</string>
     <string name="need_add_cat">Заполните категорию</string>
     <string name="add_image">Добавте картинку</string>
     <string name="find_by_tag">Поиск по тегу #</string>
     <string name="all_cats">Все категории</string>
-
     <string name="email">Email Id</string>
     <string name="passowrd">Password</string>
     <string name="login">LOGIN</string>
@@ -81,7 +81,7 @@
     <string name="likesImg">likes</string>
     <string name="post_itemTag">post_item</string>
     <string name="shareimgtag">shareImgTag</string>
-    <string name="logging">Logging in...</string>
+    <string name="logging">Logging in…</string>
     <string name="my_profile">Мой профиль</string>
     <string name="log_out">Выйти пользователем</string>
     <string name="send">Send</string>
@@ -92,8 +92,8 @@
     <string name="sendPost">Отправить</string>
     <string name="write_comment">Пишите комментарий</string>
     <string name="enter_tour_comment">Введите Ваш коментарий</string>
-    <string name="loading">Loading...</string>
-    <string name="posting">Posting...</string>
+    <string name="loading">Loading…</string>
+    <string name="posting">Posting…</string>
     <string name="cannot_fetch">Error: could not fetch user.</string>
     <string name="chose_img">Choose your image source</string>
     <string name="loaded">Загружено</string>

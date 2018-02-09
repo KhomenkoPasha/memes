@@ -6,11 +6,15 @@
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarStyle">@style/AppTheme.actionBarStyle</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
+        <item name="actionBarStyle">@style/AppTheme.actionBarStyle</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar_dialog" parent="@style/Theme.AppCompat.Dialog">
@@ -18,6 +22,12 @@
         <item name="background">?attr/colorPrimary</item>
         <item name="android:windowBackground">@color/primary_light</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="AppTheme.actionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="background">?attr/colorPrimary</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

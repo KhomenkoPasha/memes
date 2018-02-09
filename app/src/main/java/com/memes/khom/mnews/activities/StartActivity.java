@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -60,8 +61,8 @@ public class StartActivity extends AppCompatActivity
     private SearchView mSearchView;
     private SearchableSpinner catSpinner;
     private ImageView imageClearSpinner;
-    private String[] arrayOfSelectSpinner = {"", "", "", ""};
-    private int currentFrag;
+   // private String[] arrayOfSelectSpinner = {"", "", "", ""};
+   // private int currentFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class StartActivity extends AppCompatActivity
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
 /*
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -276,9 +278,9 @@ public class StartActivity extends AppCompatActivity
                                             getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
                                             .endAt(textView.getText().toString() + "\uf8ff")
                                             .limitToFirst(50));
-                        arrayOfSelectSpinner[currentFrag] = textView.getText().toString();
+                       // arrayOfSelectSpinner[currentFrag] = textView.getText().toString();
                     } else {
-                        arrayOfSelectSpinner[currentFrag] = "";
+                       // arrayOfSelectSpinner[currentFrag] = "";
                         if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||
                                 mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment)
                             ((PostListFragment) mPagerAdapter.getCurrentFragment()).

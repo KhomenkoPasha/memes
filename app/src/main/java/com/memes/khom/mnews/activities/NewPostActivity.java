@@ -169,9 +169,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                         categRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
                                 if (databaseError != null) {
                                     Toast.makeText(NewPostActivity.this, R.string.error_add_cat, Toast.LENGTH_SHORT).show();
                                 }
+
                             }
                         });
                         dialog.dismiss();
@@ -193,14 +195,13 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     private void fillSpinnerCat() {
         final List<String> cats = new ArrayList<>();
-        categRef.addValueEventListener(new ValueEventListener() {
+        ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Category ct = postSnapshot.getValue(Category.class);
-
                     if (ct != null)
-                        cats.add(ct.name);
+                        if (!cats.contains(ct.name)) cats.add(ct.name);
                 }
 
             }
@@ -209,8 +210,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-
+        };
+        categRef.addValueEventListener(valueEventListener);
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
         catSpinner.setAdapter(arrayAdapter);
 

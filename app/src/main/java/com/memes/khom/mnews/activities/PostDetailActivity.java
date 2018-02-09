@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,6 +39,7 @@ import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
 import com.memes.khom.mnews.utils.ImageUtils;
+import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -44,6 +47,9 @@ import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 
 public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
@@ -57,15 +63,16 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private String mPostKey;
     private CommentAdapter mAdapter;
     private StorageReference mStorageRef;
-
+    EmojIconActions emojIcon;
     private TextView mAuthorView;
     private TextView datePost;
     private ImageView post_author_photo;
     private TextView mTitleView;
     private TextView mBodyView;
     private ImageView iv_piture;
-    private EditText mCommentField;
+    private EmojiconEditText mCommentField;
     private LinearLayout linearLayoutCard;
+    ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
 
     @Override
@@ -91,12 +98,22 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mTitleView = findViewById(R.id.post_title);
         mBodyView = findViewById(R.id.post_body);
         mCommentField = findViewById(R.id.field_comment_text);
-        Button mCommentButton = findViewById(R.id.button_post_comment);
+        ImageView mCommentButton = findViewById(R.id.button_post_comment);
         mCommentsRecycler = findViewById(R.id.recycler_comments);
         iv_piture = findViewById(R.id.iv_piture);
         linearLayoutCard = findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(this, R.drawable.devider));
+        mCommentsRecycler.addItemDecoration(itemDecorator);
+        this.setTitle(getString(R.string.info_post));
+
+        emojiButton = findViewById(R.id.emoji_btn);
+        emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
+        emojIcon.ShowEmojIcon();
+        emojIcon.setUseSystemEmoji(false);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
