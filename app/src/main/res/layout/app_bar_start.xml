@@ -46,6 +46,7 @@
                 android:layout_alignTop="@+id/searchableSpinnerCat"
                 android:layout_toEndOf="@+id/searchableSpinnerCat"
                 android:layout_toRightOf="@+id/searchableSpinnerCat"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_action_clear" />
         </RelativeLayout>
 
@@ -76,13 +77,13 @@
                 app:stl_defaultTabTextHorizontalPadding="18dp"
                 app:stl_dividerColor="@color/colorPrimary"
                 app:stl_dividerThickness="0dp"
-                app:stl_indicatorColor="@color/accent"
+                app:stl_indicatorColor="@color/primary_dark"
                 app:stl_indicatorCornerRadius="18dp"
                 app:stl_indicatorGravity="center"
                 app:stl_indicatorInterpolation="smart"
                 app:stl_drawDecorationAfterTab="false"
                 app:stl_indicatorThickness="36dp"
-                app:stl_underlineColor="@color/accent"
+                app:stl_underlineColor="@color/primary_dark"
                 app:stl_underlineThickness="0dp" />
         </RelativeLayout>
 

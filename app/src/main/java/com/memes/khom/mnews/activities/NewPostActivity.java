@@ -122,6 +122,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         catSpinner.setTitle(getString(R.string.select_cat));
         catSpinner.setPositiveButton(getString(R.string.chose));
+       // catSpinner.setBackgroundColor(getColor(R.color.white));
 
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
@@ -150,7 +151,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 // I'm using fragment here so I'm using getView() to provide ViewGroup
                 // but you can provide here any other instance of ViewGroup from your Fragment / Activity
                 View viewInflated = LayoutInflater.from(NewPostActivity.this)
-                        .inflate(R.layout.text_input_string, (ViewGroup) findViewById(android.R.id.content), false);
+                        .inflate(R.layout.text_input_string,
+                                (ViewGroup) findViewById(android.R.id.content), false);
                 // Set up the input
                 final EditText input = viewInflated.findViewById(R.id.input);
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -212,7 +214,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             }
         };
         categRef.addValueEventListener(valueEventListener);
-        ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, android.R.layout.simple_spinner_dropdown_item, cats);
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, R.layout.item_sp, cats);
         catSpinner.setAdapter(arrayAdapter);
 
     }

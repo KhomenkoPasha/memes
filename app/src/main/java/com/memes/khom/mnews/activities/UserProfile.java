@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.share.widget.ShareDialog;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -201,7 +199,7 @@ public class UserProfile extends AppCompatActivity {
                 intentList = NewPostActivity.addIntentsToList(this, intentList, takePhotoIntent);
 
                 if (!intentList.isEmpty()) {
-                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose your image source");
+                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),getString(R.string.chose_img));
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
                 }
                 startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);

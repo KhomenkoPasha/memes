@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -77,7 +76,7 @@ public class StartActivity extends AppCompatActivity
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
 /*
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -126,7 +125,7 @@ public class StartActivity extends AppCompatActivity
 
     private void initSearcher() {
         View v = mSearchView.findViewById(R.id.search_view_shadow);
-        v.setBackgroundColor(Color.parseColor("#5c6bc0"));
+        v.setBackgroundColor(Color.parseColor("#3C515C"));
 
         if (mSearchView != null) {
             mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
@@ -328,9 +327,9 @@ public class StartActivity extends AppCompatActivity
 
             case R.id.nav_log_out:
                 new MaterialDialog.Builder(this)
-                        .title("Внимание")
-                        .content("Выйти текущим пользователем?")
-                        .positiveText("Да").onPositive(new MaterialDialog.SingleButtonCallback() {
+                        .title(R.string.attention)
+                        .content(R.string.exit_cur_user)
+                        .positiveText(R.string.yes).onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         FirebaseAuth.getInstance().signOut();
@@ -338,7 +337,7 @@ public class StartActivity extends AppCompatActivity
                         finish();
                     }
                 })
-                        .negativeText("Отмена")
+                        .negativeText(R.string.cancel)
                         .show();
                 break;
 
@@ -354,15 +353,15 @@ public class StartActivity extends AppCompatActivity
 
     private void exitDialog() {
         new MaterialDialog.Builder(this)
-                .title("Внимание")
-                .content("Выйти из приложения?")
-                .positiveText("Да").onPositive(new MaterialDialog.SingleButtonCallback() {
+                .title(R.string.attention)
+                .content(R.string.exit_app)
+                .positiveText(R.string.yes).onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                android.os.Process.killProcess(android.os.Process.myPid());
+                Process.killProcess(Process.myPid());
             }
         })
-                .negativeText("Отмена")
+                .negativeText(R.string.cancel)
                 .show();
 
     }

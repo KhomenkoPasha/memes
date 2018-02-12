@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="black_20">#33000000</color>
+    <color name="white_20">#33FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="text_enabled">#FFFFFFFF</color>
+    <color name="text_disabled">#4DFFFFFF</color>
+    <color name="icon_enabled">#FFFFFFFF</color>
+    <color name="icon_disabled">#FF63727B</color>
+    <color name="medium_text_enabled">#FF000000</color>
+    <color name="medium_text_disabled">#4D000000</color>
+    <color name="light_blue_500">#03A9F4</color>
+    <color name="cyan_500">#00BCD4</color>c
+    <color name="teal_500">#009688</color>
+    <color name="green_500">#4CAF50</color>
+    <color name="light_green_500">#8BC34A</color>
     <color name="text_black">#90000000</color>
     <color name="blue_800">#1565C0</color>
     <color name="grey_50">#FAFAFA</color>
     <color name="primary_light">#8e99f3</color>
     <color name="colorPrimaryTeal">#FAFAFA</color>
-    <color name="colorPrimary">#5c6bc0</color>
-    <color name="colorPrimary70">#705c6bc0</color>
-    <color name="colorPrimaryDark">#26418f</color>
-    <color name="colorAccent">#e91e63</color>
-    <color name="accent">#b4004e</color>
+    <color name="colorPrimary">#3C515C</color>
+    <color name="colorPrimary70">#703C515C</color>
+    <color name="colorPrimaryDark">#142E3C</color>
+    <color name="colorAccent">#5c6bc0</color>
+
+    <color name="primary">#3C515C</color>
+    <color name="primary_dark">#142E3C</color>
+    <color name="accent">#5c6bc0</color>
+
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
-    <color name="white">#FFFFFF</color>
     <color name="white90">#90FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="mfb_defaultColor">#49599a</color>
@@ -22,7 +41,6 @@
     <color name="green">#388E3C</color>
     <color name="colorPrimaryDarkB">#4000BCD4</color>
     <color name="red">#F44336</color>
-    <color name="black">#000000</color>
     <color name="grey_light">#A9B7C6</color>
     <color name="grey">#808080</color>
     <color name="orange_dark">#CB772F</color>

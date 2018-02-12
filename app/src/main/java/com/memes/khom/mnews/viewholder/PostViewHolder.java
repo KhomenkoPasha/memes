@@ -46,10 +46,14 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         titleView.setText(post.title);
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.likes_count));
-        bodyView.setText(post.body);
+        if(!post.body.isEmpty()) {
+            bodyView.setText(post.body);
+            bodyView.setVisibility(View.VISIBLE);
+        }
         post_date.setText(Convert.printDifference(Long.parseLong(post.create_date),
                 Calendar.getInstance().getTime().getTime(),cnx));
-        categ.setText(String.format(cnx.getString(R.string.categ), post.category));
+       // categ.setText(String.format(cnx.getString(R.string.categ), post.category));
+        categ.setText(post.category);
         likeView.setOnClickListener(starClickListener);
     }
 }

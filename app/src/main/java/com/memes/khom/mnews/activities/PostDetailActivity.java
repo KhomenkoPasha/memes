@@ -68,7 +68,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private TextView datePost;
     private ImageView post_author_photo;
     private TextView mTitleView;
-    private TextView mBodyView;
+    private TextView mBodyView,categ;
     private ImageView iv_piture;
     private EmojiconEditText mCommentField;
     private LinearLayout linearLayoutCard;
@@ -96,6 +96,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         post_author_photo = findViewById(R.id.post_author_photo);
         mAuthorView = findViewById(R.id.post_author);
         mTitleView = findViewById(R.id.post_title);
+        categ = findViewById(R.id.categ);
         mBodyView = findViewById(R.id.post_body);
         mCommentField = findViewById(R.id.field_comment_text);
         ImageView mCommentButton = findViewById(R.id.button_post_comment);
@@ -134,8 +135,21 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 // [START_EXCLUDE]
                 if (post != null) {
                     mAuthorView.setText(post.author);
-                    mTitleView.setText(post.title);
-                    mBodyView.setText(post.body);
+
+                    if (!post.body.isEmpty()) {
+                        mBodyView.setText(post.body);
+                        mBodyView.setVisibility(View.VISIBLE);
+                    }
+
+                    if (!post.title.isEmpty()) {
+                        mTitleView.setText(post.title);
+                        mTitleView.setVisibility(View.VISIBLE);
+                    }
+                    if (!post.category.isEmpty()) {
+                        categ.setText(post.category);
+                        categ.setVisibility(View.VISIBLE);
+                    }
+
                     datePost.setText(Convert.printDifference(Long.parseLong(post.create_date),
                             Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
                     FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
