@@ -1,6 +1,7 @@
 package com.memes.khom.mnews.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -174,14 +175,24 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mStorageRef.child("images/" + mPostKey).getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onSuccess(Uri uri) {
+                            public void onSuccess(final Uri uri) {
                                 Target target = new Target() {
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                                         Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap,
-                                                (float) (linearLayoutCard.getWidth() / 2));
+                                                (float) (linearLayoutCard.getWidth() / 1.8));
                                         iv_piture.setImageBitmap(originalPhoto);
+
+                                        iv_piture.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent myIntent = new Intent(PostDetailActivity.this, PictureActivity.class);
+                                                myIntent.putExtra("photo_url", uri);
+                                                PostDetailActivity.this.startActivity(myIntent);
+                                            }
+                                        });
+
                                     }
 
                                     @Override

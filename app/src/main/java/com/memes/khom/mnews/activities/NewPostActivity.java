@@ -196,7 +196,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
@@ -204,8 +204,16 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
 
     private void fillSpinnerCat() {
+
         final List<String> cats = new ArrayList<>();
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -248,6 +256,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             getFragmentManager().beginTransaction().remove(searchableSpinnerDialog).commit();
         }
     }
+
 
     @Override
     public void onPause() {
@@ -322,15 +331,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void writeNewPost(String userId, String username, String title, String body) {
-        String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
-        Map<String, Object> postValues = post.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-        mDatabase.updateChildren(childUpdates);
-        mReference = key;
-        uploadFileInFireBaseStorage(imageUriToUpload);
+        for (int i = 0; i < 50; i++) {
+            String key = mDatabase.child("posts").push().getKey();
+            Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
+            Map<String, Object> postValues = post.toMap();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("/posts/" + key, postValues);
+            childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+            mDatabase.updateChildren(childUpdates);
+            mReference = key;
+            uploadFileInFireBaseStorage(imageUriToUpload);
+        }
     }
 
 

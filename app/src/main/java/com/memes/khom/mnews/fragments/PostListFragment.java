@@ -80,6 +80,16 @@ public abstract class PostListFragment extends Fragment {
                 final String postKey = postRef.getKey();
 
 
+                viewHolder.lvHeaderPost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Launch PostDetailActivity
+                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
+                        startActivity(intent);
+                    }
+                });
+
                 viewHolder.comments_lay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -135,7 +145,8 @@ public abstract class PostListFragment extends Fragment {
                 });
 
 
-                FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto").addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.getValue() != null) {

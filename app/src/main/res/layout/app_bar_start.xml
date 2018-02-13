@@ -41,12 +41,12 @@
 
             <ImageView
                 android:id="@+id/imageClearSpinner"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignTop="@+id/searchableSpinnerCat"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/searchableSpinnerCat"
                 android:layout_toRightOf="@+id/searchableSpinnerCat"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_action_clear" />
         </RelativeLayout>
 

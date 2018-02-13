@@ -2,22 +2,17 @@ package com.memes.khom.mnews.activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.squareup.picasso.Picasso;
@@ -31,24 +26,15 @@ public class PictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_edit);
-
         try {
             WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
             DisplayMetrics metrics = new DisplayMetrics();
             if (wm != null) {
                 wm.getDefaultDisplay().getMetrics(metrics);
             }
-            //here you can get height of the device.
-            Log.d("check", metrics.heightPixels + "");
-            // if(metrics.heightPixels < 300)
-            this.getWindow().setLayout(metrics.widthPixels - 100, (int)(metrics.heightPixels / 1.5));
-            //  else
-            //     this.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,300);
-
+            this.getWindow().setLayout(metrics.widthPixels - 60, (int)(metrics.heightPixels / 1.5));
             Bundle extras = getIntent().getExtras();
-
             final ImageView mImageView = findViewById(R.id.imagePhotoView);
-
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             this.setTitle("Picture");
             Uri uri = null;

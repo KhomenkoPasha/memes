@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.memes.khom.mnews.R;
@@ -26,6 +27,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public LinearLayout comments_lay;
     public ImageView iv_piture;
     public ImageView likeView;
+    public RelativeLayout lvHeaderPost;
 
     public PostViewHolder(View itemView) {
         super(itemView);
@@ -40,6 +42,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         post_date = itemView.findViewById(R.id.post_date);
         post_author_photo = itemView.findViewById(R.id.post_author_photo);
         categ = itemView.findViewById(R.id.categ);
+        lvHeaderPost = itemView.findViewById(R.id.relativ_header);
     }
 
     public void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {

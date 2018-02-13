@@ -79,24 +79,9 @@ public class StartActivity extends AppCompatActivity
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
-/*
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                currentFrag = tab.getPosition();
-              //  Toast.makeText(StartActivity.this, String.valueOf(arrayOfSelectSpinner[currentFrag]), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-*/
         catSpinner = findViewById(R.id.searchableSpinnerCat);
+        catSpinner.setTitle(getString(R.string.select_cat));
+        catSpinner.setPositiveButton(getString(R.string.chose));
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,13 +247,12 @@ public class StartActivity extends AppCompatActivity
             final ArrayAdapter arrayAdapter = new ArrayAdapter<>(StartActivity.this, R.layout.item_sp, cats);
             catSpinner.setAdapter(arrayAdapter);
 
-
             catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TextView textView = (TextView) parent.getChildAt(0);
                     textView.setTextColor(Color.WHITE);
-                    textView.setTextSize(16);
+                   // textView.setTextSize(16);
                     String item = textView.getText().toString();
                     if (!item.equals(StartActivity.this.getResources().getString(R.string.all_cats))) {
                         if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||

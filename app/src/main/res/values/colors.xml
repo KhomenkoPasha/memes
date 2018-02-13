@@ -26,11 +26,9 @@
     <color name="colorPrimary70">#703C515C</color>
     <color name="colorPrimaryDark">#142E3C</color>
     <color name="colorAccent">#5c6bc0</color>
-
     <color name="primary">#3C515C</color>
     <color name="primary_dark">#142E3C</color>
     <color name="accent">#5c6bc0</color>
-
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>

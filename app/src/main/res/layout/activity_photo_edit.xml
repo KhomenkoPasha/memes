@@ -5,7 +5,7 @@
     android:id="@+id/act_ed_lay"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@drawable/side_nav_bar"
     tools:context="com.memes.khom.mnews.activities.PictureActivity">
 
     <com.github.chrisbanes.photoview.PhotoView
