@@ -70,7 +70,7 @@ public class ImageUtils {
                     originalPhoto = rotateBitmap(originalPhoto, orientation);
                 } else originalPhoto = convertToMutable(originalPhoto);
 
-                originalPhoto.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                originalPhoto.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 out.flush();
                 out.close();
 
@@ -80,6 +80,61 @@ public class ImageUtils {
 
         }
     }
+
+
+    public static void compressAndRotatePhotoTemp(String photoURL, String tempFilePa) {
+        int orientation = 0;
+        File imgFile = new File(photoURL);
+        if (imgFile.exists()) {
+            try {
+                ExifInterface ei = new ExifInterface(imgFile.getAbsolutePath());
+                orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+            final float MAX_SIZE = 1024;
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+            final float height = options.outHeight;
+            final float width = options.outWidth;
+            Bitmap originalPhoto = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+            if (height >= MAX_SIZE || width >= MAX_SIZE) {
+                float newWidth;
+                float newHeight;
+                if (height > width) {
+                    newHeight = MAX_SIZE;
+                    newWidth = width / (height / MAX_SIZE);
+                } else {
+                    newWidth = MAX_SIZE;
+                    newHeight = height / (width / MAX_SIZE);
+                }
+                originalPhoto = getResizedBitmap(originalPhoto, newHeight, newWidth);
+            }
+
+            try {
+                FileOutputStream out = new FileOutputStream(tempFilePa);
+
+                if (orientation > 1) {
+                    originalPhoto = rotateBitmap(originalPhoto, orientation);
+                } else originalPhoto = convertToMutable(originalPhoto);
+
+                originalPhoto.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
 
     private static Bitmap convertToMutable(Bitmap imgIn) {
         try {
@@ -128,7 +183,7 @@ public class ImageUtils {
     }
 
 
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+    private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         try {
             Matrix matrix = new Matrix();
             switch (orientation) {
@@ -175,7 +230,7 @@ public class ImageUtils {
     }
 
     public static Bitmap getResizeFile(Bitmap bitmap, float mxSize) {
-        Bitmap originalPhoto = bitmap;
+        Bitmap originalPhoto;
         final float height = bitmap.getHeight();
         final float width = bitmap.getWidth();
 
@@ -209,15 +264,15 @@ public class ImageUtils {
     }
 
     private static Bitmap getResizedBitmap(Bitmap bm, float newHeight, float newWidth) {
-        if (newHeight > 0 && newWidth > 0) {
-            int width = bm.getWidth();
-            int height = bm.getHeight();
-            float scaleWidth = newWidth / width;
-            float scaleHeight = newHeight / height;
-            Matrix matrix = new Matrix();
-            matrix.postScale(scaleWidth, scaleHeight);
-            return Bitmap.createBitmap(bm, 0, 0, width, height,
-                    matrix, false);
-        } else return bm;
+            if (newHeight > 0 && newWidth > 0) {
+                int width = bm.getWidth();
+                int height = bm.getHeight();
+                float scaleWidth = newWidth / width;
+                float scaleHeight = newHeight / height;
+                Matrix matrix = new Matrix();
+                matrix.postScale(scaleWidth, scaleHeight);
+                return Bitmap.createBitmap(bm, 0, 0, width, height,
+                        matrix, false);
+            } else return bm;
     }
 }

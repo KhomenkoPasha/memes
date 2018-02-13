@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -178,7 +179,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
                                     @Override
                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, (float) (linearLayoutCard.getWidth() / 2));
+                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap,
+                                                (float) (linearLayoutCard.getWidth() / 2));
                                         iv_piture.setImageBitmap(originalPhoto);
                                     }
 
@@ -230,6 +232,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             case android.R.id.home:
                 this.onBackPressed();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -264,6 +267,14 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     }
 
     private void postComment() {
+
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
         final String uid = getUid();
         FirebaseDatabase.getInstance().getReference().child("users").child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {

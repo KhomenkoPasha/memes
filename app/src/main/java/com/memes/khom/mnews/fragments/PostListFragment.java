@@ -48,7 +48,6 @@ public abstract class PostListFragment extends Fragment {
     public FirebaseRecyclerAdapter<Post, PostViewHolder> getmAdapter() {
         return mAdapter;
     }
-
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
 

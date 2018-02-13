@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -73,8 +74,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     private ImageView mIVpicture;
     private File mTempPhoto;
-    private String mImageUri = "";
-    private Uri imageUri;
+    private String mImageUriPath = "";
+    private Uri imageUriToUpload;
     private String mReference = "";
 
     private DatabaseReference mDatabase;
@@ -122,7 +123,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         catSpinner.setTitle(getString(R.string.select_cat));
         catSpinner.setPositiveButton(getString(R.string.chose));
-       // catSpinner.setBackgroundColor(getColor(R.color.white));
+        // catSpinner.setBackgroundColor(getColor(R.color.white));
 
         mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_submit_post);
@@ -191,6 +192,15 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 builder.show();
             }
         });
+
+
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
 
     }
 
@@ -261,7 +271,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             return;
         }
 
-        if (imageUri == null) {
+        if (imageUriToUpload == null) {
             Toast.makeText(this, R.string.add_image, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -320,7 +330,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
         mDatabase.updateChildren(childUpdates);
         mReference = key;
-        uploadFileInFireBaseStorage(imageUri);
+        uploadFileInFireBaseStorage(imageUriToUpload);
     }
 
 
@@ -362,11 +372,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    mImageUri = (FileProvider.getUriForFile(NewPostActivity.this,
+                    mImageUriPath = (FileProvider.getUriForFile(NewPostActivity.this,
                             NewPostActivity.this.getPackageName() + ".fileProv", mTempPhoto)).getPath();
 
                 } else {
-                    mImageUri = mTempPhoto.getAbsolutePath();
+                    mImageUriPath = mTempPhoto.getAbsolutePath();
                 }
                 //Создаём лист с интентами для работы с изображениями
 
@@ -434,21 +444,28 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
 
-                        mImageUri = getRealPathFromURI(data.getData(), NewPostActivity.this);
-                        ImageUtils.compressAndRotatePhoto(mImageUri);
+                        mImageUriPath = getRealPathFromURI(data.getData(), NewPostActivity.this);
+
+                        ImageUtils.compressAndRotatePhotoTemp(mImageUriPath, mTempPhoto.getAbsolutePath());
 
                         Picasso.with(getBaseContext())
-                                .load(data.getData())
+                                .load(mTempPhoto)
                                 .into(mIVpicture);
 
-                        imageUri = data.getData();
-                    } else if (mImageUri != null) {
-                        mImageUri = Uri.fromFile(mTempPhoto).toString();
-                        ImageUtils.compressAndRotatePhoto(mImageUri);
+                        imageUriToUpload = Uri.fromFile(mTempPhoto);
+
+
+                    } else if (mImageUriPath != null) {
+
+                        mImageUriPath = Uri.fromFile(mTempPhoto).toString();
+                        ImageUtils.compressAndRotatePhoto(mTempPhoto.getAbsolutePath());
+
                         Picasso.with(this)
-                                .load(mImageUri)
+                                .load(mImageUriPath)
                                 .into(mIVpicture);
-                        imageUri = Uri.fromFile((mTempPhoto));
+                        imageUriToUpload = Uri.fromFile((mTempPhoto));
+
+
                     }
                 }
                 break;

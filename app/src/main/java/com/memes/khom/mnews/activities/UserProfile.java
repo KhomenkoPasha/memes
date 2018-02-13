@@ -217,24 +217,25 @@ public class UserProfile extends AppCompatActivity {
             case REQUEST_CODE_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
+
                         mImageUri = getRealPathFromURI(data.getData(), UserProfile.this);
-                        ImageUtils.compressAndRotatePhoto(mImageUri);
+                        ImageUtils.compressAndRotatePhotoTemp(mImageUri, mTempPhoto.getAbsolutePath());
+
                         Picasso.with(getBaseContext())
-                                .load(data.getData())
+                                .load(mTempPhoto)
                                 .into(imgPhoto);
-                        mageUri = data.getData();
-                        ImageUtils.compressAndRotatePhoto(mageUri.getEncodedPath());
+
+                        mageUri = Uri.fromFile(mTempPhoto);
                         btn_edit_save.setVisibility(View.VISIBLE);
 
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
-                        ImageUtils.compressAndRotatePhoto(mImageUri);
-
+                        ImageUtils.compressAndRotatePhoto(mTempPhoto.getAbsolutePath());
                         Picasso.with(this)
                                 .load(mImageUri)
                                 .into(imgPhoto);
+
                         mageUri = Uri.fromFile((mTempPhoto));
-                        ImageUtils.compressAndRotatePhoto(mageUri.getEncodedPath());
                         btn_edit_save.setVisibility(View.VISIBLE);
                     }
                 }
