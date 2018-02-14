@@ -11,6 +11,6 @@ public class MyTopPostsFragment extends PostListFragment {
     public Query getQuery(DatabaseReference databaseReference) {
         String myUserId = getUid();
         return databaseReference.child("user-posts").child(myUserId)
-                .orderByChild("starCount").limitToLast(10);
+                .orderByChild("likes_count").limitToFirst(10);
     }
 }

@@ -331,7 +331,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void writeNewPost(String userId, String username, String title, String body) {
-        for (int i = 0; i < 50; i++) {
             String key = mDatabase.child("posts").push().getKey();
             Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
             Map<String, Object> postValues = post.toMap();
@@ -341,7 +340,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             mDatabase.updateChildren(childUpdates);
             mReference = key;
             uploadFileInFireBaseStorage(imageUriToUpload);
-        }
+
     }
 
 

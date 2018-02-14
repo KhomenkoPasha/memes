@@ -9,7 +9,7 @@ import android.util.Log;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
-    // before loading more.
+// before loading more.
     private int visibleThreshold = 5;
     // The current offset index of data you have loaded
     private int currentPage = 0;
@@ -61,8 +61,8 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
 
     // This happens many times a second during a scroll, so be wary of the code you place here.
-    // We are given a few useful parameters to help us work out if we need to load some more data,
-    // but first we check if we are waiting for the previous load to finish.
+// We are given a few useful parameters to help us work out if we need to load some more data,
+// but first we check if we are waiting for the previous load to finish.
     @Override
     public void onScrolled(final RecyclerView view, int dx, int dy) {
 
@@ -176,11 +176,13 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
 
     // set FooterView type
-    // if don't use footview loadmore  default: -1
-    public abstract int getFooterViewType(int defaultNoFooterViewType);
+// if don't use footview loadmore  default: -1
+    public int getFooterViewType(int defaultNoFooterViewType) {
+        return -1;
+    }
 
     // Defines the process for actually loading more data based on page
-    public abstract void onLoadMore(int page, int totalItemsCount);
+    public abstract boolean onLoadMore(int page, int totalItemsCount);
 
     //set visibleThreshold   default: 5
     public int getVisibleThreshold() {

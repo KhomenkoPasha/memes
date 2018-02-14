@@ -19,6 +19,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +49,7 @@ public abstract class PostListFragment extends Fragment {
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private int fragment = 0;
 
     public FirebaseRecyclerAdapter<Post, PostViewHolder> getmAdapter() {
         return mAdapter;
@@ -72,8 +74,9 @@ public abstract class PostListFragment extends Fragment {
         return rootView;
     }
 
-    public void loadNextDataFromApi(int offset) {
-        Toast.makeText(getActivity(),String.valueOf(offset),Toast.LENGTH_LONG).show();
+    public void loadNextDataFromApi(int offset, int totalItemsCount) {
+        Log.d("page - ", String.valueOf(offset));
+        //  Toast.makeText(getActivity(),String.valueOf(offset),Toast.LENGTH_LONG).show();
     }
 
     public void refreshFragment(Query postsQuery) {
@@ -192,26 +195,67 @@ public abstract class PostListFragment extends Fragment {
 
     }
 
+
+    public void loadNextPosts() {
+
+        int starCount = mAdapter.getItem(mAdapter.getItemCount() - 1).likes_count;
+        if (fragment == 0) {
+            // int i = mAdapter.getItemCount(); getReference().child("posts").orderByChild("title").startAt(query)
+            //  .endAt(query + "\uf8ff")
+            //  .limitToFirst(50)
+            Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
+                    .orderByChild("likes_count").endAt(starCount - 1);
+
+            ChildEventListener childEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post != null) {
+                        Log.d("post_likes", String.valueOf(post.likes_count));
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            imagesQuery.addChildEventListener(childEventListener);
+        }
+    }
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Set up Layout Manager, reverse layout
         LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
-     //   mManager.setReverseLayout(true);
-      //  mManager.setStackFromEnd(true);
+        // mManager.setReverseLayout(true);
+        // mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
         scrollListener = new EndlessRecyclerViewScrollListener(mManager) {
-            @Override
-            public int getFooterViewType(int defaultNoFooterViewType) {
-                return 0;
-            }
 
             @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                loadNextDataFromApi(page);
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                loadNextPosts();
+                return false;
             }
-
         };
         // Adds the scroll listener to RecyclerView
         mRecycler.addOnScrollListener(scrollListener);
@@ -265,4 +309,5 @@ public abstract class PostListFragment extends Fragment {
 
     public abstract Query getQuery(DatabaseReference databaseReference);
 
+    // public abstract RecyclerView getQuery(RecyclerView recyclerView);
 }
