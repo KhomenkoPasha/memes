@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +34,8 @@ import com.memes.khom.mnews.activities.PostDetailActivity;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.utils.ImageUtils;
+import com.memes.khom.mnews.viewholder.EndlessRecyclerViewScrollListener;
+import com.memes.khom.mnews.viewholder.EndlessScrollListener;
 import com.memes.khom.mnews.viewholder.PostViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -44,10 +47,12 @@ public abstract class PostListFragment extends Fragment {
 
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public FirebaseRecyclerAdapter<Post, PostViewHolder> getmAdapter() {
         return mAdapter;
     }
+
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
 
@@ -63,11 +68,13 @@ public abstract class PostListFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
         mRecycler = rootView.findViewById(R.id.messages_list);
-        mRecycler.setHasFixedSize(true);
-
+        //mRecycler.setHasFixedSize(true);
         return rootView;
     }
 
+    public void loadNextDataFromApi(int offset) {
+        Toast.makeText(getActivity(),String.valueOf(offset),Toast.LENGTH_LONG).show();
+    }
 
     public void refreshFragment(Query postsQuery) {
 
@@ -147,20 +154,20 @@ public abstract class PostListFragment extends Fragment {
 
                 FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        if (snapshot.getValue() != null) {
-                            String str = snapshot.getValue().toString();
-                            if (str != null && !str.isEmpty()) {
-                                Picasso.with(getContext()).load(str).into(viewHolder.post_author_photo);
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                if (snapshot.getValue() != null) {
+                                    String str = snapshot.getValue().toString();
+                                    if (str != null && !str.isEmpty()) {
+                                        Picasso.with(getContext()).load(str).into(viewHolder.post_author_photo);
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.likes.containsKey(getUid())) {
@@ -190,9 +197,26 @@ public abstract class PostListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // Set up Layout Manager, reverse layout
         LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
+     //   mManager.setReverseLayout(true);
+      //  mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(mManager) {
+            @Override
+            public int getFooterViewType(int defaultNoFooterViewType) {
+                return 0;
+            }
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadNextDataFromApi(page);
+            }
+
+        };
+        // Adds the scroll listener to RecyclerView
+        mRecycler.addOnScrollListener(scrollListener);
+
+
         refreshFragment(getQuery(mDatabase));
     }
 

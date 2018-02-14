@@ -7,9 +7,10 @@ public class AllTopPostsFragment extends PostListFragment {
 
     public AllTopPostsFragment() {}
 
+
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
         return databaseReference.child("posts").orderByChild("starCount")
-                .limitToFirst(10);
+                .limitToFirst(20);
     }
 }
