@@ -70,7 +70,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private TextView datePost;
     private ImageView post_author_photo;
     private TextView mTitleView;
-    private TextView mBodyView,categ;
+    private TextView mBodyView, categ;
     private ImageView iv_piture;
     private EmojiconEditText mCommentField;
     private LinearLayout linearLayoutCard;
@@ -160,7 +160,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                                 public void onDataChange(DataSnapshot snapshot) {
                                     if (snapshot.getValue() != null) {
                                         String str = snapshot.getValue().toString();
-                                        if (str != null) {
+                                        if (str != null && !str.isEmpty()) {
                                             Picasso.with(PostDetailActivity.this).load(str).into(post_author_photo);
                                         }
                                     }
@@ -268,6 +268,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         int i = v.getId();
         switch (i) {
             case R.id.button_post_comment:
+              //  mCommentField.getText().toString().trim();
                 if (!mCommentField.getText().toString().isEmpty()) postComment();
                 else
                     Toast.makeText(this, R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
@@ -281,7 +282,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
