@@ -103,7 +103,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -115,6 +114,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             public void afterTextChanged(Editable text) {
                 if (text.length() == 0)
                     text.append(getResources().getString(R.string.tag_symbol));
+                if (text.length() > 0 && text.toString().contains(" ")) {
+                    final String newText = text.toString().replace(" ", "");
+                    mTitleField.setText(newText);
+                    mTitleField.setSelection(newText.length());
+                }
             }
         });
 
@@ -331,17 +335,17 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void writeNewPost(String userId, String username, String title, String body) {
-      //  for (int i = 0; i < 10; i++) {
-            String key = mDatabase.child("posts").push().getKey();
-            Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
-            Map<String, Object> postValues = post.toMap();
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put("/posts/" + key, postValues);
-            childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-            mDatabase.updateChildren(childUpdates);
-            mReference = key;
-            uploadFileInFireBaseStorage(imageUriToUpload);
-     //   }
+        //  for (int i = 0; i < 10; i++) {
+        String key = mDatabase.child("posts").push().getKey();
+        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
+        Map<String, Object> postValues = post.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/posts/" + key, postValues);
+        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+        mDatabase.updateChildren(childUpdates);
+        mReference = key;
+        uploadFileInFireBaseStorage(imageUriToUpload);
+        //   }
     }
 
 

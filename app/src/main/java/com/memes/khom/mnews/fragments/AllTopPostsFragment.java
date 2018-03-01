@@ -11,6 +11,6 @@ public class AllTopPostsFragment extends PostListFragment {
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
         return databaseReference.child("posts")
-                .orderByChild("likes_count").limitToFirst(2);
+                .orderByChild("likes_count").limitToLast(5);
     }
 }

@@ -50,9 +50,11 @@ public abstract class PostListFragment extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
                 if (post != null) {
-                    fbadapt.getPosts().add(post);
-                    fbadapt.getKeys().add(dataSnapshot.getKey());
-                    fbadapt.notifyItemInserted(fbadapt.getItemCount());
+                    if (!fbadapt.getPosts().contains(post)) {
+                        fbadapt.getPosts().addFirst(post);
+                        fbadapt.getKeys().addFirst(dataSnapshot.getKey());
+                        fbadapt.notifyItemInserted(fbadapt.getItemCount());
+                    }
                 }
             }
 
@@ -92,31 +94,35 @@ public abstract class PostListFragment extends Fragment {
     }
 
 
-    public void loadNextPosts(int page) {
+    public void loadNextPostsStarsCount(int page) {
 
         int starCount = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).likes_count;
-        // int i = mAdapter.getItemCount(); getReference().child("posts").orderByChild("title").startAt(query)
-        //  .endAt(query + "\uf8ff")
-        //  .limitToFirst(50)
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("likes_count").endAt(starCount - 1).limitToLast(page * 2);
+                .orderByChild("likes_count").endAt(starCount).limitToFirst(page * 5);
 
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Post post = dataSnapshot.getValue(Post.class);
-                    if (post != null) {
-                        fbadapt.getPosts().add(post);
-                        fbadapt.getKeys().add(dataSnapshot.getKey());
+                Post post = dataSnapshot.getValue(Post.class);
+                if (post != null) {
+                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
+                        fbadapt.getPosts().addLast(post);
+                        fbadapt.getKeys().addLast(dataSnapshot.getKey());
                         fbadapt.notifyItemInserted(fbadapt.getItemCount());
                         Log.d("post_likes", String.valueOf(post.likes_count));
                     }
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                Post post = dataSnapshot.getValue(Post.class);
+                if (post != null) {
+                        int pos = fbadapt.getKeys().indexOf(dataSnapshot.getKey());
+                        fbadapt.getPosts().set(pos, post);
+                        fbadapt.notifyItemChanged(pos);
+                }
             }
 
             @Override
@@ -139,20 +145,77 @@ public abstract class PostListFragment extends Fragment {
     }
 
 
+    public void loadNextPostsOldest(int page) {
+
+        String create_date = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).create_date;
+        Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts").
+                orderByChild("create_date")
+                .endAt(create_date).limitToFirst(page * 5);
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
+                if (post != null) {
+                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
+                        fbadapt.getPosts().addLast(post);
+                        fbadapt.getKeys().addLast(dataSnapshot.getKey());
+                        fbadapt.notifyItemInserted(fbadapt.getItemCount());
+                        Log.d("create_date", "");
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
+                if (post != null) {
+                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
+                        int pos = fbadapt.getKeys().indexOf(dataSnapshot.getKey());
+                        fbadapt.getPosts().set(pos, post);
+                        fbadapt.notifyItemChanged(pos);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        imagesQuery.addChildEventListener(childEventListener);
+
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Set up Layout Manager, reverse layout
         LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
-         //mManager.setReverseLayout(true);
-         //mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(mManager) {
 
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                loadNextPosts(page);
+                if (PostListFragment.this instanceof AllTopPostsFragment) {
+                    loadNextPostsStarsCount(page);
+                }
+
+                if (PostListFragment.this instanceof RecentPostsFragment) {
+                    loadNextPostsOldest(page);
+                }
+
                 return false;
             }
         };

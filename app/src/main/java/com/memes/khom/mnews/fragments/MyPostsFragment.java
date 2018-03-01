@@ -11,6 +11,7 @@ public class MyPostsFragment extends PostListFragment {
     public Query getQuery(DatabaseReference databaseReference) {
         // All my posts
         return databaseReference.child("user-posts")
-                .child(getUid());
+                .child(getUid()).orderByChild("create_date")
+                        .limitToLast(20);
     }
 }
