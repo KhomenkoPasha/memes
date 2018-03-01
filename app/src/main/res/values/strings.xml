@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Memes</string>
+    <string name="app_name">Memes Time</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Почта</string>
     <string name="prompt_password">Пароль (optional)</string>

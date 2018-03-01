@@ -1,5 +1,6 @@
 package com.memes.khom.mnews.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -73,6 +74,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         signUpButton = findViewById(R.id.signUpBtn);
         login = findViewById(R.id.already_user);
         terms_conditions = findViewById(R.id.terms_conditions);
+        @SuppressLint("ResourceType")
         XmlResourceParser xrp = getResources().getXml(R.drawable.text_selector);
         try {
             ColorStateList csl = ColorStateList.createFromXml(getResources(), xrp);

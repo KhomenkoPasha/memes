@@ -12,18 +12,18 @@
 
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/ic_launcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:src="@drawable/firebase_lockup_400" />
+        android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:id="@+id/layout_email_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/icon"
+        android:layout_below="@+id/ic_launcher"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
@@ -43,7 +43,6 @@
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:textSize="16sp" />
-
 
         <View
             android:layout_width="fill_parent"

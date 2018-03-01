@@ -268,8 +268,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         int i = v.getId();
         switch (i) {
             case R.id.button_post_comment:
-              //  mCommentField.getText().toString().trim();
-                if (!mCommentField.getText().toString().isEmpty()) postComment();
+                String post = mCommentField.getText().toString().trim();
+                if (!post.isEmpty())
+                    postComment();
                 else
                     Toast.makeText(this, R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
                 break;

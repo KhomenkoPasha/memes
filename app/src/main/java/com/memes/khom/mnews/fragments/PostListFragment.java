@@ -50,7 +50,7 @@ public abstract class PostListFragment extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
                 if (post != null) {
-                    if (!fbadapt.getPosts().contains(post)) {
+                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
                         fbadapt.getPosts().addFirst(post);
                         fbadapt.getKeys().addFirst(dataSnapshot.getKey());
                         fbadapt.notifyItemInserted(fbadapt.getItemCount());
@@ -170,11 +170,9 @@ public abstract class PostListFragment extends Fragment {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
                 if (post != null) {
-                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
-                        int pos = fbadapt.getKeys().indexOf(dataSnapshot.getKey());
-                        fbadapt.getPosts().set(pos, post);
-                        fbadapt.notifyItemChanged(pos);
-                    }
+                    int pos = fbadapt.getKeys().indexOf(dataSnapshot.getKey());
+                    fbadapt.getPosts().set(pos, post);
+                    fbadapt.notifyItemChanged(pos);
                 }
             }
 

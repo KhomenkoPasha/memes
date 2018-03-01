@@ -62,6 +62,7 @@ public class StartActivity extends AppCompatActivity
     private ImageView imageClearSpinner;
    // private String[] arrayOfSelectSpinner = {"", "", "", ""};
    // private int currentFrag;
+    //key mem4ik -  pavlik228
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
