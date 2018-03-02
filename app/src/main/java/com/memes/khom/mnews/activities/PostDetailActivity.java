@@ -152,7 +152,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         categ.setVisibility(View.VISIBLE);
                     }
 
-                    datePost.setText(Convert.printDifference(Long.parseLong(post.create_date),
+                    datePost.setText(Convert.printDifference(post.create_date,
                             Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
                     FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
                             addListenerForSingleValueEvent(new ValueEventListener() {

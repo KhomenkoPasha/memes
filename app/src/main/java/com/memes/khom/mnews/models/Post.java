@@ -13,7 +13,7 @@ public class Post {
     public String author;
     public String title;
     public String body;
-    public String create_date;
+    public long create_date;
     public String category;
     public int likes_count = 0;
     public Map<String, Boolean> likes = new HashMap<>();
@@ -28,7 +28,7 @@ public class Post {
         this.title = title;
         this.body = body;
         this.category = cat;
-        this.create_date = String.valueOf(System.currentTimeMillis());
+        this.create_date = System.currentTimeMillis();
     }
 
     @Exclude

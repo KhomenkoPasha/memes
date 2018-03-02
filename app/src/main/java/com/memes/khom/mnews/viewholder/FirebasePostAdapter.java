@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +51,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     }
 
 
+    @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_post, parent, false);
@@ -61,10 +61,11 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
 
-        holder.iv_piture.setImageResource(android.R.color.transparent);
-
+        holder.iv_piture.setImageResource(R.drawable.image_no);
         final Post model = posts.get(position);
         final String postKey = keys.get(position);
+        final boolean[] like = {false};
+        final int[] likes = {model.likes_count};
 
         holder.lvHeaderPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +92,6 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                     @Override
                     public void onSuccess(final Uri uri) {
                         Target target = new Target() {
-
                             @Override
                             public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                                 Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, holder.itemView.getWidth());
@@ -125,11 +125,10 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.i("Load", "" + e);
+                //    Log.i("Load", "" + e);
 
             }
         });
-
 
         FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -150,8 +149,11 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
         // Determine if the current user has liked this post and set UI accordingly
         if (model.likes.containsKey(getUid())) {
+            like[0] = true;
             holder.likeView.setImageResource(R.drawable.ic_toggle_star_24);
+
         } else {
+            like[0] = false;
             holder.likeView.setImageResource(R.drawable.ic_toggle_star_outline_24);
         }
         // Bind Post to ViewHolder, setting OnClickListener for the star button
@@ -161,8 +163,19 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                 // Need to write to both places the post is stored
                 DatabaseReference globalPostRef = mDatabase.child("posts").child(postKey);
                 DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postKey);
-                onStarClicked(globalPostRef);
-                onStarClicked(userPostRef);
+                onLikeClicked(globalPostRef);
+                onLikeClicked(userPostRef);
+                if (like[0]) {
+                    holder.likeView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                    like[0] = false;
+                    likes[0]--;
+                    holder.numStarsView.setText(String.valueOf(likes[0]));
+                } else {
+                    likes[0]++;
+                    holder.likeView.setImageResource(R.drawable.ic_toggle_star_24);
+                    holder.numStarsView.setText(String.valueOf(likes[0]));
+                    like[0] = true;
+                }
 
             }
         }, cnx);
@@ -171,7 +184,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
 
     // [START post_stars_transaction]
-    private void onStarClicked(DatabaseReference postRef) {
+    private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -213,20 +226,20 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         return posts;
     }
 
+/*
+    @Override
+    public int getItemViewType(int position) {
+        return posts.get(position).hashCode();
+    }
+*/
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    public void setPosts(LinkedList<Post> posts) {
-        this.posts = posts;
-    }
 
     public LinkedList<String> getKeys() {
         return keys;
     }
 
-    public void setKeys(LinkedList<String> keys) {
-        this.keys = keys;
-    }
 }

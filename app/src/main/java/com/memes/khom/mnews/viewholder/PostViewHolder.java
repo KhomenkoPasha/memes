@@ -19,7 +19,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     private TextView titleView;
     private TextView authorView;
-    private TextView numStarsView;
+    public TextView numStarsView;
     private TextView bodyView;
     private TextView post_date;
     private TextView categ;
@@ -54,7 +54,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             bodyView.setText(post.body);
             bodyView.setVisibility(View.VISIBLE);
         }
-        post_date.setText(Convert.printDifference(Long.parseLong(post.create_date),
+        post_date.setText(Convert.printDifference(post.create_date,
                 Calendar.getInstance().getTime().getTime(), cnx));
         // categ.setText(String.format(cnx.getString(R.string.categ), post.category));
         categ.setText(post.category);

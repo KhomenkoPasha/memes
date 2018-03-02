@@ -42,7 +42,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private TextView login;
     private LinearLayout lay_reg;
     private Button signUpButton;
-    private CheckBox terms_conditions;
     public static final String regEx = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}\\b";
 
     @Override
@@ -73,13 +72,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         confirmPassword = findViewById(R.id.confirmPassword);
         signUpButton = findViewById(R.id.signUpBtn);
         login = findViewById(R.id.already_user);
-        terms_conditions = findViewById(R.id.terms_conditions);
+      //  terms_conditions = findViewById(R.id.terms_conditions);
         @SuppressLint("ResourceType")
         XmlResourceParser xrp = getResources().getXml(R.drawable.text_selector);
         try {
             ColorStateList csl = ColorStateList.createFromXml(getResources(), xrp);
             login.setTextColor(csl);
-            terms_conditions.setTextColor(csl);
+         //   terms_conditions.setTextColor(csl);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,9 +131,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     "Both password doesn't match.");
 
             // Make sure user should check Terms and Conditions checkbox
-        else if (!terms_conditions.isChecked())
-            new CustomToast().Show_Toast(this, lay_reg,
-                    "Please select Terms and Conditions.");
+     //   else if (!terms_conditions.isChecked())
+     //       new CustomToast().Show_Toast(this, lay_reg,
+      //              "Please select Terms and Conditions.");
 
             // Else do signup or do your stuff
         else {
