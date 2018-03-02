@@ -37,7 +37,7 @@ public abstract class PostListFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
         mRecycler = rootView.findViewById(R.id.messages_list);
-       // mRecycler.setHasFixedSize(true);
+        // mRecycler.setHasFixedSize(true);
         return rootView;
     }
 
@@ -48,18 +48,18 @@ public abstract class PostListFragment extends Fragment {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-             //  try {
-                   Post post = dataSnapshot.getValue(Post.class);
-                   if (post != null) {
-                       if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
-                           fbadapt.getPosts().addFirst(post);
-                           fbadapt.getKeys().addFirst(dataSnapshot.getKey());
-                           fbadapt.notifyItemInserted(fbadapt.getItemCount());
-                       }
-                   }
-             //  }catch (Exception ex){
-             //      ex.printStackTrace();
-            //   }
+                //  try {
+                Post post = dataSnapshot.getValue(Post.class);
+                if (post != null) {
+                    if (!fbadapt.getKeys().contains(dataSnapshot.getKey())) {
+                        fbadapt.getPosts().addFirst(post);
+                        fbadapt.getKeys().addFirst(dataSnapshot.getKey());
+                        fbadapt.notifyItemInserted(fbadapt.getItemCount());
+                    }
+                }
+                //  }catch (Exception ex){
+                //      ex.printStackTrace();
+                //   }
             }
 
             @Override
@@ -97,10 +97,10 @@ public abstract class PostListFragment extends Fragment {
         int LikeCount = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).likes_count;
 
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + 1).limitToFirst(5*page);
+                .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + 1).limitToFirst(5 * page);
 
-       // Log.d("LikeCount", String.valueOf(LikeCount));
-       // Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
+        // Log.d("LikeCount", String.valueOf(LikeCount));
+        // Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -142,12 +142,12 @@ public abstract class PostListFragment extends Fragment {
 
     public void loadNextPostsOldest(int page) {
 
-       // Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-       //         .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + 1).limitToFirst(5*page);
+        // Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
+        //         .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + 1).limitToFirst(5*page);
 
         long create_date = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).create_date;
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("create_date").startAt(create_date - page*86400000).endAt(create_date + page*86400000)
+                .orderByChild("create_date").startAt(create_date - page * 86400000).endAt(create_date + page * 86400000)
                 .limitToFirst(page * 5);
 
         ChildEventListener childEventListener = new ChildEventListener() {
