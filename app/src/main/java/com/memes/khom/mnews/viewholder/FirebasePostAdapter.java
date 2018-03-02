@@ -53,13 +53,15 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
 
     @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_post, parent, false);
         return new PostViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final PostViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
+
+        holder.iv_piture.setImageResource(android.R.color.transparent);
 
         final Post model = posts.get(position);
         final String postKey = keys.get(position);
@@ -209,6 +211,11 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     public LinkedList<Post> getPosts() {
         return posts;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public void setPosts(LinkedList<Post> posts) {

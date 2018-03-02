@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
         android:background="#10d1d9ff"
+        android:orientation="vertical"
         android:padding="10dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/relativ_header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
@@ -27,9 +26,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_margin="6dp"
-                android:text="12.12.12"
                 android:layout_marginBottom="6dp"
                 android:gravity="center_vertical"
+                android:text="12.12.12"
                 tools:ignore="RelativeOverlap" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -58,22 +57,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:paddingLeft="6dp"
                 android:layout_margin="6dp"
-                android:textColor="@color/colorPrimary"
                 android:layout_marginLeft="16dp"
                 android:layout_toEndOf="@+id/post_author_photo"
                 android:layout_toRightOf="@+id/post_author_photo"
                 android:gravity="center_vertical"
+                android:paddingLeft="6dp"
+                android:textColor="@color/colorPrimary"
                 tools:text="someauthor@email.com" />
 
             <TextView
                 android:id="@+id/post_title"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="6dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/post_author"
                 android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginLeft="6dp"
                 android:layout_toEndOf="@+id/categ"
                 android:layout_toRightOf="@+id/categ"
                 android:background="@drawable/rectangle_bg"
@@ -89,9 +88,9 @@
             android:id="@+id/viewLineTop"
             android:layout_width="fill_parent"
             android:layout_height="1px"
-            android:visibility="visible"
             android:layout_margin="4dp"
-            android:background="#303C515C" />
+            android:background="#303C515C"
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -121,7 +120,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:contentDescription="@string/post_itemTag" />
+                android:contentDescription="@string/post_itemTag"
+                android:src="@drawable/image_no" />
         </LinearLayout>
 
         <View
@@ -217,9 +217,9 @@
                     android:layout_height="25dp"
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
-                    android:contentDescription="@string/shareimgtag"
                     android:alpha=".75"
                     android:background="?attr/selectableItemBackground"
+                    android:contentDescription="@string/shareimgtag"
                     android:src="@drawable/ic_share_black_24dp" />
 
                 <TextView
