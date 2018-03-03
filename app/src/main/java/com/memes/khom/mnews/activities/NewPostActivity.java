@@ -45,11 +45,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Category;
+import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
-import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
@@ -309,7 +309,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.username, title, body);
+                            writeNewPost(userId, user.username, title, body, 0);
                         }
                         // Finish this Activity, back to the stream
                         setEditingEnabled(true);
@@ -334,10 +334,10 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void writeNewPost(String userId, String username, String title, String body) {
+    private void writeNewPost(String userId, String username, String title, String body, int type) {
         //  for (int i = 0; i < 10; i++) {
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString());
+        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString(), type,"");
         Map<String, Object> postValues = post.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/posts/" + key, postValues);
@@ -461,23 +461,32 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
                         mImageUriPath = getRealPathFromURI(data.getData(), NewPostActivity.this);
 
-                        ImageUtils.compressAndRotatePhotoTemp(mImageUriPath, mTempPhoto.getAbsolutePath());
+                        if (!mImageUriPath.contains("gif")) {
+                            ImageUtils.compressAndRotatePhotoTemp(mImageUriPath, mTempPhoto.getAbsolutePath());
+                            GlideApp.with(getBaseContext())
+                                    .load(mTempPhoto)
+                                    .into(mIVpicture);
 
-                        Picasso.with(getBaseContext())
-                                .load(mTempPhoto)
-                                .into(mIVpicture);
+                            imageUriToUpload = Uri.fromFile(mTempPhoto);
+                        } else {
+                            GlideApp.with(getBaseContext())
+                                    .asGif()
+                                    .centerCrop()
+                                    .load(mImageUriPath)
+                                    .into(mIVpicture);
 
-                        imageUriToUpload = Uri.fromFile(mTempPhoto);
-
+                            imageUriToUpload = Uri.fromFile(new File(mImageUriPath));
+                        }
 
                     } else if (mImageUriPath != null) {
 
                         mImageUriPath = Uri.fromFile(mTempPhoto).toString();
                         ImageUtils.compressAndRotatePhoto(mTempPhoto.getAbsolutePath());
 
-                        Picasso.with(this)
+                        GlideApp.with(getBaseContext())
                                 .load(mImageUriPath)
                                 .into(mIVpicture);
+
                         imageUriToUpload = Uri.fromFile((mTempPhoto));
 
 

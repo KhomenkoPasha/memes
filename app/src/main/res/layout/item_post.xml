@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -121,7 +122,36 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/post_itemTag"
-                android:src="@drawable/image_no" />
+                android:src="@drawable/image_no"
+                android:visibility="visible" />
+
+            <RelativeLayout
+                android:id="@+id/youtube"
+                android:layout_width="match_parent"
+                android:background="@color/black"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.youtube.player.YouTubeThumbnailView
+                    android:id="@+id/youtube_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:src="@drawable/image_no" />
+
+                <ImageView
+                    android:id="@+id/imageViewPlay"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"
+                    app:srcCompat="@drawable/play_but" />
+            </RelativeLayout>
+
         </LinearLayout>
 
         <View

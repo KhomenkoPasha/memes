@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.utils.Convert;
@@ -28,6 +29,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView iv_piture;
     public ImageView likeView;
     public RelativeLayout lvHeaderPost;
+    public RelativeLayout youtube;
+    public YouTubeThumbnailView youtube_thumbnail;
 
     public PostViewHolder(View itemView) {
         super(itemView);
@@ -35,6 +38,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         titleView = itemView.findViewById(R.id.post_title);
         authorView = itemView.findViewById(R.id.post_author);
         likeView = itemView.findViewById(R.id.like);
+        youtube = itemView.findViewById(R.id.youtube);
         numStarsView = itemView.findViewById(R.id.post_num_stars);
         iv_piture = itemView.findViewById(R.id.iv_piture);
         bodyView = itemView.findViewById(R.id.post_body);
@@ -42,6 +46,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         post_date = itemView.findViewById(R.id.post_date);
         post_author_photo = itemView.findViewById(R.id.post_author_photo);
         categ = itemView.findViewById(R.id.categ);
+        youtube_thumbnail = itemView.findViewById(R.id.youtube_thumbnail);
         lvHeaderPost = itemView.findViewById(R.id.relativ_header);
     }
 

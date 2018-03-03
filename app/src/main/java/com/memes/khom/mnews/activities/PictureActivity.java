@@ -1,22 +1,18 @@
 package com.memes.khom.mnews.activities;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.memes.khom.mnews.R;
-import com.memes.khom.mnews.utils.ImageUtils;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.memes.khom.mnews.models.GlideApp;
+
 
 
 public class PictureActivity extends AppCompatActivity {
@@ -43,26 +39,9 @@ public class PictureActivity extends AppCompatActivity {
             }
             if (mImageView != null && uri != null) {
 
-                Target target = new Target() {
-
-                    @Override
-                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, 800);
-                        mImageView.setImageBitmap(originalPhoto);
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    }
-                };
-                Picasso.with(this)
+                GlideApp.with(this)
                         .load(uri)
-                        .into(target);
-                mImageView.setTag(target);
+                        .into(mImageView);
 
                 if (getSupportActionBar() != null)
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);

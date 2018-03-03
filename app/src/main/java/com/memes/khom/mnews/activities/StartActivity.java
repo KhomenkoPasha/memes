@@ -44,8 +44,8 @@ import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.memes.khom.mnews.models.Category;
+import com.memes.khom.mnews.models.GlideApp;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
@@ -99,8 +99,9 @@ public class StartActivity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
-            if (user.getPhotoUrl() != null)
-                Picasso.with(this).load(user.getPhotoUrl()).into(avat);
+            if (user.getPhotoUrl() != null)  GlideApp.with(this)
+                    .load(user.getPhotoUrl())
+                    .into(avat);
             ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
             ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
         }
@@ -309,6 +310,9 @@ public class StartActivity extends AppCompatActivity
             case R.id.my_profile:
                 Intent about = new Intent(StartActivity.this, UserProfile.class);
                 startActivity(about);
+                break;
+
+            case R.id.youtube:
                 break;
 
             case R.id.nav_log_out:

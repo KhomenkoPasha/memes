@@ -37,13 +37,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Comment;
+import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
 import com.memes.khom.mnews.utils.ImageUtils;
-import com.rilixtech.materialfancybutton.MaterialFancyButton;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 
 import java.util.ArrayList;
@@ -161,7 +159,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                                     if (snapshot.getValue() != null) {
                                         String str = snapshot.getValue().toString();
                                         if (str != null && !str.isEmpty()) {
-                                            Picasso.with(PostDetailActivity.this).load(str).into(post_author_photo);
+                                            GlideApp.with(PostDetailActivity.this)
+                                                    .load(str)
+                                                    .into(post_author_photo);
                                         }
                                     }
                                 }
@@ -176,37 +176,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(final Uri uri) {
-                                Target target = new Target() {
-
-                                    @Override
-                                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap,
-                                                (float) (linearLayoutCard.getWidth() / 1.8));
-                                        iv_piture.setImageBitmap(originalPhoto);
-
-                                        iv_piture.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                Intent myIntent = new Intent(PostDetailActivity.this, PictureActivity.class);
-                                                myIntent.putExtra("photo_url", uri);
-                                                PostDetailActivity.this.startActivity(myIntent);
-                                            }
-                                        });
-
-                                    }
-
-                                    @Override
-                                    public void onBitmapFailed(Drawable errorDrawable) {
-                                    }
-
-                                    @Override
-                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    }
-                                };
-                                Picasso.with(PostDetailActivity.this)
+                                GlideApp.with(PostDetailActivity.this)
                                         .load(uri)
-                                        .into(target);
-                                iv_piture.setTag(target);
+                                        .into(iv_piture);
                             }
 
                         }).addOnFailureListener(new OnFailureListener() {
@@ -415,7 +387,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View view = inflater.inflate(R.layout.item_comment, parent, false);
             return new CommentViewHolder(view);
@@ -432,7 +404,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                             if (snapshot.getValue() != null) {
                                 String str = snapshot.getValue().toString();
                                 if (str != null && !str.isEmpty()) {
-                                    Picasso.with(mContext).load(str).into(holder.comment_photo);
+                                    GlideApp.with(mContext)
+                                            .load(str)
+                                            .into(holder.comment_photo);
                                 }
                             }
                         }

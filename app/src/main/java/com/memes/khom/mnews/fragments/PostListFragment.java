@@ -57,9 +57,6 @@ public abstract class PostListFragment extends Fragment {
                         fbadapt.notifyItemInserted(fbadapt.getItemCount());
                     }
                 }
-                //  }catch (Exception ex){
-                //      ex.printStackTrace();
-                //   }
             }
 
             @Override
@@ -147,8 +144,8 @@ public abstract class PostListFragment extends Fragment {
 
         long create_date = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).create_date;
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("create_date").startAt(create_date - page * 86400000).endAt(create_date + page * 86400000)
-                .limitToFirst(page * 5);
+                .orderByChild("create_date").startAt(create_date - page * 86400000).endAt(create_date)
+                .limitToLast(page * 5);
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -166,12 +163,6 @@ public abstract class PostListFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Post post = dataSnapshot.getValue(Post.class);
-                if (post != null) {
-                    int pos = fbadapt.getKeys().indexOf(dataSnapshot.getKey());
-                    fbadapt.getPosts().set(pos, post);
-                    fbadapt.notifyItemChanged(pos);
-                }
             }
 
             @Override

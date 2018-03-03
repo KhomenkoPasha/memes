@@ -35,9 +35,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
 import com.memes.khom.mnews.R;
+import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
-import com.squareup.picasso.Picasso;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -111,8 +112,9 @@ public class UserProfile extends AppCompatActivity {
             oldUserName = user.getDisplayName();
             email.setText(user.getEmail());
             number.setText(user.getPhoneNumber());
-            if (user.getPhotoUrl() != null)
-                Picasso.with(this).load(user.getPhotoUrl()).into(imgPhoto);
+            if (user.getPhotoUrl() != null) GlideApp.with(this)
+                    .load(user.getPhotoUrl())
+                    .into(imgPhoto);
             nameView.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -221,7 +223,7 @@ public class UserProfile extends AppCompatActivity {
                         mImageUri = getRealPathFromURI(data.getData(), UserProfile.this);
                         ImageUtils.compressAndRotatePhotoTemp(mImageUri, mTempPhoto.getAbsolutePath());
 
-                        Picasso.with(getBaseContext())
+                        GlideApp.with(this)
                                 .load(mTempPhoto)
                                 .into(imgPhoto);
 
@@ -231,9 +233,11 @@ public class UserProfile extends AppCompatActivity {
                     } else if (mImageUri != null) {
                         mImageUri = Uri.fromFile(mTempPhoto).toString();
                         ImageUtils.compressAndRotatePhoto(mTempPhoto.getAbsolutePath());
-                        Picasso.with(this)
+
+                        GlideApp.with(this)
                                 .load(mImageUri)
                                 .into(imgPhoto);
+
 
                         mageUri = Uri.fromFile((mTempPhoto));
                         btn_edit_save.setVisibility(View.VISIBLE);

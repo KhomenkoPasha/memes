@@ -3,8 +3,7 @@ package com.memes.khom.mnews.viewholder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeThumbnailLoader;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,12 +28,14 @@ import com.google.firebase.storage.StorageReference;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.activities.PictureActivity;
 import com.memes.khom.mnews.activities.PostDetailActivity;
+import com.memes.khom.mnews.activities.StartActivity;
+import com.memes.khom.mnews.activities.YouToubeActivity;
+import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
-import com.memes.khom.mnews.utils.ImageUtils;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.LinkedList;
+
+import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
@@ -77,6 +80,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
             }
         });
 
+
         holder.comments_lay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,48 +91,71 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
             }
         });
 
-        mStorageRef.child("images/" + postKey).getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(final Uri uri) {
-                        Target target = new Target() {
-                            @Override
-                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                Bitmap originalPhoto = ImageUtils.getResizeFile(bitmap, holder.itemView.getWidth());
-                                holder.iv_piture.setImageBitmap(originalPhoto);
-                                holder.iv_piture.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (cnx != null) {
-                                            Intent myIntent = new Intent(cnx, PictureActivity.class);
-                                            myIntent.putExtra("photo_url", uri);
-                                            cnx.startActivity(myIntent);
-                                        }
-                                    }
-                                });
+        if (model.postType == 0) {
+
+            mStorageRef.child("images/" + postKey).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(final Uri uri) {
+                    GlideApp.with(cnx)
+                            .load(uri)
+                            //.apply(centerCropTransform())
+                            // .centerCrop()
+                            //  .placeholder(R.drawable.image_no).crossFade()
+                            .into(holder.iv_piture);
+
+                    holder.iv_piture.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (cnx != null) {
+                                Intent myIntent = new Intent(cnx, PictureActivity.class);
+                                myIntent.putExtra("photo_url", uri);
+                                cnx.startActivity(myIntent);
                             }
+                        }
+                    });
+                }
+            });
+        }
+        //video
+        else {
+            holder.iv_piture.setVisibility(View.GONE);
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                            }
+            final YouTubeThumbnailLoader.OnThumbnailLoadedListener  onThumbnailLoadedListener = new YouTubeThumbnailLoader.OnThumbnailLoadedListener(){
+                @Override
+                public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
 
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            }
-                        };
-                        Picasso.with(cnx)
-                                .load(uri)
-                                .into(target);
-                        holder.iv_piture.setTag(target);
-                    }
+                }
 
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //    Log.i("Load", "" + e);
+                @Override
+                public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
+                    youTubeThumbnailView.setVisibility(View.VISIBLE);
+                    holder.youtube.setVisibility(View.VISIBLE);
+                }
+            };
 
-            }
-        });
+
+            holder.youtube_thumbnail.initialize("44267967193-5tr8kfuangbssq4sf5dkdmimfogis72t.apps.googleusercontent.com", new YouTubeThumbnailView.OnInitializedListener() {
+                @Override
+                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
+                    youTubeThumbnailLoader.setVideo(model.videoid);
+                    youTubeThumbnailLoader.setOnThumbnailLoadedListener(onThumbnailLoadedListener);
+                    holder.youtube.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(cnx, YouToubeActivity.class);
+                            intent.putExtra(YouToubeActivity.VIDEOTAG, model.videoid);
+                            cnx.startActivity(intent);
+                        }
+                    });
+                }
+
+                @Override
+                public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
+                    //write something for failure
+                }
+            });
+
+        }
 
         FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -137,7 +164,9 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                         if (snapshot.getValue() != null) {
                             String str = snapshot.getValue().toString();
                             if (str != null && !str.isEmpty()) {
-                                Picasso.with(cnx).load(str).into(holder.post_author_photo);
+                                GlideApp.with(cnx)
+                                        .load(str)
+                                        .into(holder.post_author_photo);
                             }
                         }
                     }
@@ -226,12 +255,12 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         return posts;
     }
 
-/*
-    @Override
-    public int getItemViewType(int position) {
-        return posts.get(position).hashCode();
-    }
-*/
+    /*
+        @Override
+        public int getItemViewType(int position) {
+            return posts.get(position).hashCode();
+        }
+    */
     @Override
     public long getItemId(int position) {
         return position;
