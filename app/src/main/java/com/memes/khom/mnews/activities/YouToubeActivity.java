@@ -1,7 +1,6 @@
 package com.memes.khom.mnews.activities;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;

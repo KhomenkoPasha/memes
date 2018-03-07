@@ -32,7 +32,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public RelativeLayout youtube;
     public YouTubeThumbnailView youtube_thumbnail;
 
-    public PostViewHolder(View itemView) {
+    PostViewHolder(View itemView) {
         super(itemView);
 
         titleView = itemView.findViewById(R.id.post_title);
@@ -50,12 +50,12 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         lvHeaderPost = itemView.findViewById(R.id.relativ_header);
     }
 
-    public void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {
+    void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {
         titleView.setText(post.title);
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.likes_count));
 
-        if (post.body != null) {
+        if (post.body != null && !post.body.isEmpty()) {
             bodyView.setText(post.body);
             bodyView.setVisibility(View.VISIBLE);
         }

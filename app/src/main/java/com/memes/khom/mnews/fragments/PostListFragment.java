@@ -3,12 +3,14 @@ package com.memes.khom.mnews.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -23,10 +25,11 @@ import com.memes.khom.mnews.viewholder.EndlessRecyclerViewScrollListener;
 import com.memes.khom.mnews.viewholder.FirebasePostAdapter;
 
 
-public abstract class PostListFragment extends Fragment {
+public abstract class PostListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecycler;
     private FirebasePostAdapter fbadapt;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public PostListFragment() {
     }
@@ -38,6 +41,10 @@ public abstract class PostListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
         mRecycler = rootView.findViewById(R.id.messages_list);
         // mRecycler.setHasFixedSize(true);
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
+
         return rootView;
     }
 
@@ -83,6 +90,22 @@ public abstract class PostListFragment extends Fragment {
         mRecycler.setAdapter(fbadapt);
     }
 
+    @Override
+    public void onRefresh() {
+        // говорим о том, что собираемся начать
+       // Toast.makeText(getActivity(), "start refresh", Toast.LENGTH_SHORT).show();
+        // начинаем показывать прогресс
+        mSwipeRefreshLayout.setRefreshing(true);
+        refreshFragment(getQuery(FirebaseDatabase.getInstance().getReference()));
+        // ждем 3 секунды и прячем прогресс
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+               // Toast.makeText(getActivity(), "finish refresh", Toast.LENGTH_SHORT).show();
+            }
+        }, 3000);
+    }
 
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -144,8 +167,8 @@ public abstract class PostListFragment extends Fragment {
 
         long create_date = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).create_date;
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("create_date").startAt(create_date - page * 86400000).endAt(create_date)
-                .limitToLast(page * 5);
+                .orderByChild("create_date").startAt(create_date - page * 106400000).endAt(create_date)
+                .limitToLast(page * 7);
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override

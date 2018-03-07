@@ -48,6 +48,7 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:maxLines="1"
                 android:padding="6dp"
+                android:visibility="gone"
                 android:text="@string/cats_t"
                 android:textColor="@color/white" />
 
@@ -78,6 +79,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:padding="6dp"
+                android:visibility="gone"
                 android:textColor="@color/white"
                 tools:text="fdhgfh" />
 
@@ -103,7 +105,8 @@
         <ImageView
             android:id="@+id/iv_piture"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
+            android:maxHeight="300dp"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/post_itemTag" />
 

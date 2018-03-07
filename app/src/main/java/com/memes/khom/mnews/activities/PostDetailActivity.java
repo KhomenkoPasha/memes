@@ -141,7 +141,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         mBodyView.setVisibility(View.VISIBLE);
                     }
 
-                    if (!post.title.isEmpty()) {
+                    if (!post.title.isEmpty() || !(post.title.length() < 2)) {
                         mTitleView.setText(post.title);
                         mTitleView.setVisibility(View.VISIBLE);
                     }
@@ -149,6 +149,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         categ.setText(post.category);
                         categ.setVisibility(View.VISIBLE);
                     }
+
 
                     datePost.setText(Convert.printDifference(post.create_date,
                             Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
@@ -386,6 +387,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             mChildEventListener = childEventListener;
         }
 
+        @NonNull
         @Override
         public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -394,7 +396,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public void onBindViewHolder(final CommentViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final CommentViewHolder holder, int position) {
             final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
             FirebaseDatabase.getInstance().getReference().child("users/" + comment.uid + "/uriPhoto").

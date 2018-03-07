@@ -5,11 +5,18 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/messages_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_post" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messages_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_post" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </FrameLayout>

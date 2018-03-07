@@ -70,6 +70,8 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         final boolean[] like = {false};
         final int[] likes = {model.likes_count};
 
+        holder.youtube.setVisibility(View.GONE);
+
         holder.lvHeaderPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,8 +100,9 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                 public void onSuccess(final Uri uri) {
                     GlideApp.with(cnx)
                             .load(uri)
+                           // .override(800, 400)
                             //.apply(centerCropTransform())
-                            // .centerCrop()
+                             .centerCrop()
                             //  .placeholder(R.drawable.image_no).crossFade()
                             .into(holder.iv_piture);
 
@@ -211,6 +214,11 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     }
 
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     // [START post_stars_transaction]
     private void onLikeClicked(DatabaseReference postRef) {

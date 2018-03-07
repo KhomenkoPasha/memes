@@ -273,16 +273,16 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         final String body = mBodyField.getText().toString();
 
         // Title is required
-        if (title.length() < 2) {
-            mTitleField.setError(REQUIRED);
-            return;
-        }
+        // if (title.length() < 2) {
+        //     mTitleField.setError(REQUIRED);
+        //     return;
+        //  }
 
         // Cat is required
-        if (catSpinner.getSelectedItem() == null) {
-            Toast.makeText(this, R.string.need_add_cat, Toast.LENGTH_SHORT).show();
-            return;
-        }
+        //if (catSpinner.getSelectedItem() == null) {
+        //   //  Toast.makeText(this, R.string.need_add_cat, Toast.LENGTH_SHORT).show();
+        //      return;
+        //   }
 
         if (imageUriToUpload == null) {
             Toast.makeText(this, R.string.add_image, Toast.LENGTH_SHORT).show();
@@ -337,7 +337,12 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private void writeNewPost(String userId, String username, String title, String body, int type) {
         //  for (int i = 0; i < 10; i++) {
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body, catSpinner.getSelectedItem().toString(), type,"");
+
+        String cat = "";
+        if (catSpinner.getSelectedItem() != null) cat = catSpinner.getSelectedItem().toString();
+        if (title.length() < 2)
+            title = "";
+        Post post = new Post(userId, username, title, body, cat, type, "");
         Map<String, Object> postValues = post.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/posts/" + key, postValues);
