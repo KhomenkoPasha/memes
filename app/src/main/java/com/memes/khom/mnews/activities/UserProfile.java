@@ -39,12 +39,12 @@ import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.memes.khom.mnews.utils.ImageUtils.getRealPathFromURI;
 
@@ -123,7 +123,7 @@ public class UserProfile extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    setNewNameEqualsOld = oldUserName.equals(charSequence);
+                    setNewNameEqualsOld = oldUserName.contentEquals(charSequence);
                     if (!setNewNameEqualsOld) btn_edit_save.setVisibility(View.VISIBLE);
                     else
                         btn_edit_save.setVisibility(View.GONE);
@@ -179,10 +179,10 @@ public class UserProfile extends AppCompatActivity {
                 List<Intent> intentList = new ArrayList<>();
                 mTempPhoto = NewPostActivity.createTempImageFile(getExternalCacheDir());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    try{
+                    try {
                         Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
                         m.invoke(null);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     mImageUri = (FileProvider.getUriForFile(UserProfile.this,
@@ -201,7 +201,7 @@ public class UserProfile extends AppCompatActivity {
                 intentList = NewPostActivity.addIntentsToList(this, intentList, takePhotoIntent);
 
                 if (!intentList.isEmpty()) {
-                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),getString(R.string.chose_img));
+                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), getString(R.string.chose_img));
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
                 }
                 startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);
@@ -280,29 +280,35 @@ public class UserProfile extends AppCompatActivity {
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri donwoldUri = taskSnapshot.getMetadata().getDownloadUrl();
-                    if (donwoldUri != null) {
-                        FirebaseDatabase.getInstance().getReference().child("users")
-                                .child(user.getUid()).child("uriPhoto").setValue(donwoldUri.toString());
+                    Task<Uri> result = Objects.requireNonNull(Objects.requireNonNull(taskSnapshot.getMetadata()).getReference()).getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            if (uri != null) {
+                                FirebaseDatabase.getInstance().getReference().child("users")
+                                        .child(user.getUid()).child("uriPhoto").setValue(uri.getPath());
 
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setPhotoUri(donwoldUri)
-                                .setDisplayName(nameView.getText().toString())
-                                .build();
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        .setPhotoUri(uri)
+                                        .setDisplayName(nameView.getText().toString())
+                                        .build();
 
-                        user.updateProfile(profileUpdates)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(UserProfile.this, R.string.update_us_name, Toast.LENGTH_SHORT).show();
-                                            btn_edit_save.setVisibility(View.GONE);
-                                            loadIndic.setVisibility(View.GONE);
-                                            nameView.setEnabled(false);
-                                        }
-                                    }
-                                });
-                    }
+                                user.updateProfile(profileUpdates)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(UserProfile.this, R.string.update_us_name, Toast.LENGTH_SHORT).show();
+                                                    btn_edit_save.setVisibility(View.GONE);
+                                                    loadIndic.setVisibility(View.GONE);
+                                                    nameView.setEnabled(false);
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+                    });
+
                 }
             });
         }

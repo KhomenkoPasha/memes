@@ -36,7 +36,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lapism.searchview.SearchView;
+import com.lapism.searchview.Search;
+import com.lapism.searchview.widget.SearchView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
@@ -60,8 +61,8 @@ public class StartActivity extends AppCompatActivity
     private SearchView mSearchView;
     private SearchableSpinner catSpinner;
     private ImageView imageClearSpinner;
-   // private String[] arrayOfSelectSpinner = {"", "", "", ""};
-   // private int currentFrag;
+    // private String[] arrayOfSelectSpinner = {"", "", "", ""};
+    // private int currentFrag;
     //key mem4ik -  pavlik228
 
     @Override
@@ -78,7 +79,7 @@ public class StartActivity extends AppCompatActivity
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(4);
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
-       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         catSpinner.setTitle(getString(R.string.select_cat));
@@ -99,7 +100,7 @@ public class StartActivity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
             View header = navigationView.getHeaderView(0);
             CircleImageView avat = header.findViewById(R.id.profile_image);
-            if (user.getPhotoUrl() != null)  GlideApp.with(this)
+            if (user.getPhotoUrl() != null) GlideApp.with(this)
                     .load(user.getPhotoUrl())
                     .into(avat);
             ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
@@ -116,7 +117,7 @@ public class StartActivity extends AppCompatActivity
         v.setBackgroundColor(Color.parseColor("#3C515C"));
 
         if (mSearchView != null) {
-            mSearchView.setVersionMargins(SearchView.VersionMargins.TOOLBAR_SMALL);
+            //mSearchView.setVersionMargins(SearchView);
             mSearchView.setHint(R.string.find_by_tag);
             // mSearchView.setTextOnly(R.string.tag_symbol);
             // mSearchView.setSele(mSearchView.getTextOnly().length());
@@ -144,17 +145,16 @@ public class StartActivity extends AppCompatActivity
                 });
             }
 
-            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            mSearchView.setOnQueryTextListener(new Search.OnQueryTextListener() {
                 @Override
-                public boolean onQueryTextSubmit(String query) {
-                    // mSearchView.setQuery("#"+ query, false);
+                public boolean onQueryTextSubmit(CharSequence query) {
                     try {
-                        mSearchView.close(false);
+                        mSearchView.close();
                         ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                 refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts").orderByChild("title").startAt(query)
+                                        getReference().child("posts").orderByChild("title").startAt(query.toString())
                                         .endAt(query + "\uf8ff")
-                                        .limitToFirst(50));
+                                        .limitToFirst(10));
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -163,10 +163,10 @@ public class StartActivity extends AppCompatActivity
                 }
 
                 @Override
-                public boolean onQueryTextChange(String newText) {
+                public void onQueryTextChange(CharSequence newText) {
                     try {
-                        if (newText.isEmpty()) {
-                            mSearchView.close(false);
+                        if (newText.toString().isEmpty()) {
+                            mSearchView.close();
                             ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                     refreshFragment(FirebaseDatabase.getInstance().
                                             getReference().child("posts")
@@ -175,13 +175,34 @@ public class StartActivity extends AppCompatActivity
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    return false;
+                }
+
+
+            });
+
+
+            // mSearchView.ico
+            mSearchView.setOnOpenCloseListener(new Search.OnOpenCloseListener() {
+                @Override
+                public void onOpen() {
+                }
+
+                @Override
+                public void onClose() {
+
                 }
             });
 
-            mSearchView.setOnNavigationIconClickListener(new SearchView.OnNavigationIconClickListener() {
+            mSearchView.setOnMenuClickListener(new Search.OnMenuClickListener() {
                 @Override
-                public void onNavigationIconClick(float state) {
+                public void onMenuClick() {
+                }
+            });
+
+
+            mSearchView.setOnLogoClickListener(new Search.OnLogoClickListener() {
+                @Override
+                public void onLogoClick() {
                     DrawerLayout drawer = findViewById(R.id.drawer_layout);
                     if (!drawer.isDrawerOpen(GravityCompat.START)) {
                         drawer.openDrawer(GravityCompat.START);
@@ -190,23 +211,13 @@ public class StartActivity extends AppCompatActivity
             });
 
 
-            mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+            mSearchView.setOnOpenCloseListener(new Search.OnOpenCloseListener() {
                 @Override
-                public boolean onOpen() {
-                    return true;
+                public void onOpen() {
                 }
 
                 @Override
-                public boolean onClose() {
-                    return true;
-                }
-            });
-
-            mSearchView.setVoiceText("Set permission on Android 6.0+ !");
-            mSearchView.setOnVoiceIconClickListener(new SearchView.OnVoiceIconClickListener() {
-                @Override
-                public void onVoiceIconClick() {
-                    // permission
+                public void onClose() {
                 }
             });
 
@@ -233,7 +244,7 @@ public class StartActivity extends AppCompatActivity
             FirebaseDatabase.getInstance().getReference().child("categ")
                     .addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot snapshot) {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                 Category ct = postSnapshot.getValue(Category.class);
                                 if (ct != null)
@@ -242,7 +253,7 @@ public class StartActivity extends AppCompatActivity
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
 
@@ -254,26 +265,45 @@ public class StartActivity extends AppCompatActivity
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TextView textView = (TextView) parent.getChildAt(0);
                     textView.setTextColor(Color.WHITE);
-                   // textView.setTextSize(16);
                     String item = textView.getText().toString();
                     if (!item.equals(StartActivity.this.getResources().getString(R.string.all_cats))) {
-                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||
-                                mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment)
+
+
+                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
+
                             ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                     refreshFragment(FirebaseDatabase.getInstance().
                                             getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
                                             .endAt(textView.getText().toString() + "\uf8ff")
-                                            .limitToFirst(50));
-                       // arrayOfSelectSpinner[currentFrag] = textView.getText().toString();
-                    } else {
-                       // arrayOfSelectSpinner[currentFrag] = "";
-                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment ||
-                                mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment)
+                                            .orderByChild("likes_count").limitToFirst(10));
+
+                        } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
                             ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                     refreshFragment(FirebaseDatabase.getInstance().
-                                            getReference().child("posts")
-                                            .limitToFirst(50));
+                                            getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
+                                            .endAt(textView.getText().toString() + "\uf8ff")
+                                            .orderByChild("create_date").limitToFirst(10));
+                        }
+
+                    } else {
+
+                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
+
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts").orderByChild("likes_count").limitToLast(10));
+
+
+                        } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                    refreshFragment(FirebaseDatabase.getInstance().
+                                            getReference().child("posts").orderByChild("create_date")
+                                            .limitToLast(10));
+                        }
+
                     }
+
+
                 }
 
                 @Override
@@ -281,9 +311,13 @@ public class StartActivity extends AppCompatActivity
 
                 }
             });
-            catSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            catSpinner.getBackground().
 
-            imageClearSpinner.setOnClickListener(new View.OnClickListener() {
+                    setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+
+            imageClearSpinner.setOnClickListener(new View.OnClickListener()
+
+            {
                 @Override
                 public void onClick(View v) {
                     catSpinner.setSelection(0);

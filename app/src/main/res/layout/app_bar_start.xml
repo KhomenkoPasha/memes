@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <com.lapism.searchview.SearchView
+        <com.lapism.searchview.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
