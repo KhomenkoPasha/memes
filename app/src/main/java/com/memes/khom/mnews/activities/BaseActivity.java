@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.memes.khom.mnews.R;
 
+import java.util.Objects;
+
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
@@ -30,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }
 
 

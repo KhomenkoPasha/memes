@@ -6,6 +6,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,10 +22,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,7 @@ import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
+import com.memes.khom.mnews.fragments.RandomPostFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.memes.khom.mnews.models.Category;
 import com.memes.khom.mnews.models.GlideApp;
@@ -61,9 +65,9 @@ public class StartActivity extends AppCompatActivity
     private SearchView mSearchView;
     private SearchableSpinner catSpinner;
     private ImageView imageClearSpinner;
-    // private String[] arrayOfSelectSpinner = {"", "", "", ""};
-    // private int currentFrag;
-    //key mem4ik -  pavlik228
+    private RelativeLayout relLayStart;
+    private FloatingActionButton fab_new_post;
+    private View viewLineTop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +81,18 @@ public class StartActivity extends AppCompatActivity
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(4);
+        mViewPager.setOffscreenPageLimit(5);
+        relLayStart = findViewById(R.id.relLayStart);
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
-        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         catSpinner.setTitle(getString(R.string.select_cat));
         catSpinner.setPositiveButton(getString(R.string.chose));
         // Button launches NewPostActivity
-        findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
+        viewLineTop = findViewById(R.id.viewLineTop);
+        fab_new_post = findViewById(R.id.fab_new_post);
+        fab_new_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(StartActivity.this, NewPostActivity.class));
@@ -166,11 +173,18 @@ public class StartActivity extends AppCompatActivity
                 public void onQueryTextChange(CharSequence newText) {
                     try {
                         if (newText.toString().isEmpty()) {
-                            mSearchView.close();
-                            ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                    refreshFragment(FirebaseDatabase.getInstance().
-                                            getReference().child("posts")
-                                            .limitToFirst(50));
+                            if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
+                                ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                        refreshFragment(FirebaseDatabase.getInstance().
+                                                getReference().child("posts").orderByChild("likes_count").limitToLast(10));
+
+
+                            } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
+                                ((PostListFragment) mPagerAdapter.getCurrentFragment()).
+                                        refreshFragment(FirebaseDatabase.getInstance().
+                                                getReference().child("posts").orderByChild("create_date")
+                                                .limitToLast(10));
+                            }
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -275,14 +289,14 @@ public class StartActivity extends AppCompatActivity
                                     refreshFragment(FirebaseDatabase.getInstance().
                                             getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
                                             .endAt(textView.getText().toString() + "\uf8ff")
-                                            .orderByChild("likes_count").limitToFirst(10));
+                                            .limitToFirst(10));// .orderByChild("likes_count")
 
                         } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
                             ((PostListFragment) mPagerAdapter.getCurrentFragment()).
                                     refreshFragment(FirebaseDatabase.getInstance().
                                             getReference().child("posts").orderByChild("category").startAt(textView.getText().toString())
                                             .endAt(textView.getText().toString() + "\uf8ff")
-                                            .orderByChild("create_date").limitToFirst(10));
+                                            .limitToFirst(10));// .orderByChild("create_date")
                         }
 
                     } else {
@@ -435,12 +449,14 @@ public class StartActivity extends AppCompatActivity
 
             switch (position) {
                 case 0:
-                    return new AllTopPostsFragment();
+                    return new RandomPostFragment();
                 case 1:
                     return new RecentPostsFragment();
                 case 2:
-                    return new MyPostsFragment();
+                    return new AllTopPostsFragment();
                 case 3:
+                    return new MyPostsFragment();
+                case 4:
                     return new MyTopPostsFragment();
             }
             return null;
@@ -448,8 +464,8 @@ public class StartActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            // Show 4 total pages.
-            return 4;
+            // Show 5 total pages.
+            return 5;
         }
 
         @Override
@@ -459,12 +475,29 @@ public class StartActivity extends AppCompatActivity
             }
             switch (position) {
                 case 0:
+                    relLayStart.setVisibility(View.GONE);
+                    fab_new_post.setVisibility(View.GONE);
+                    viewLineTop.setVisibility(View.GONE);
                     break;
                 case 1:
+                    relLayStart.setVisibility(View.VISIBLE);
+                    fab_new_post.setVisibility(View.VISIBLE);
+                    viewLineTop.setVisibility(View.VISIBLE);
                     break;
                 case 2:
+                    relLayStart.setVisibility(View.VISIBLE);
+                    fab_new_post.setVisibility(View.VISIBLE);
+                    viewLineTop.setVisibility(View.VISIBLE);
                     break;
                 case 3:
+                    relLayStart.setVisibility(View.VISIBLE);
+                    fab_new_post.setVisibility(View.VISIBLE);
+                    viewLineTop.setVisibility(View.VISIBLE);
+                    break;
+                case 4:
+                    relLayStart.setVisibility(View.VISIBLE);
+                    fab_new_post.setVisibility(View.VISIBLE);
+                    viewLineTop.setVisibility(View.VISIBLE);
                     break;
             }
 
@@ -476,12 +509,14 @@ public class StartActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getString(R.string.heading_all_top);
+                    return getString(R.string.ranmom_mem);
                 case 1:
                     return getString(R.string.heading_recent);
                 case 2:
-                    return getString(R.string.heading_my_posts);
+                    return getString(R.string.heading_all_top);
                 case 3:
+                    return getString(R.string.heading_my_posts);
+                case 4:
                     return getString(R.string.heading_my_top_posts);
             }
             return null;
@@ -494,12 +529,12 @@ public class StartActivity extends AppCompatActivity
 
         @Override
         public void onPageSelected(int position) {
-            // Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
+            //  Toast.makeText(StartActivity.this, String.valueOf(position), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-
+            // Toast.makeText(StartActivity.this, String.valueOf(state), Toast.LENGTH_LONG).show();
         }
     }
 

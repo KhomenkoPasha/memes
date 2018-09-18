@@ -1,9 +1,6 @@
-package com.memes.khom.mnews.activities;
+package com.memes.khom.mnews.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,13 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,8 +35,6 @@ import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
-import com.memes.khom.mnews.utils.ImageUtils;
-
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,17 +44,18 @@ import java.util.Objects;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
+import static com.rilixtech.materialfancybutton.MaterialFancyButton.TAG;
 
-public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String TAG = "PostDetailActivity";
+public class RandomPostFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+
     public static final String EXTRA_POST_KEY = "post_key";
 
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
     private ValueEventListener mPostListener;
     private String mPostKey;
-    private CommentAdapter mAdapter;
+    private RandomPostFragment.CommentAdapter mAdapter;
     private StorageReference mStorageRef;
     EmojIconActions emojIcon;
     private TextView mAuthorView;
@@ -75,159 +68,162 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
 
+    public RandomPostFragment() {
+        // Required empty public constructor
+    }
+
+    public static RandomPostFragment newInstance() {
+        RandomPostFragment fragment = new RandomPostFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_detail);
+    }
 
-        // Get post key from intent
-        mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
-        if (mPostKey == null) {
-            throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
-        }
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        // Initialize Database
-        mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("posts").child(mPostKey);
-        mCommentsReference = FirebaseDatabase.getInstance().getReference()
-                .child("post-comments").child(mPostKey);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
 
-        datePost = findViewById(R.id.post_date);
-        post_author_photo = findViewById(R.id.post_author_photo);
-        mAuthorView = findViewById(R.id.post_author);
-        mTitleView = findViewById(R.id.post_title);
-        categ = findViewById(R.id.categ);
-        mBodyView = findViewById(R.id.post_body);
-        mCommentField = findViewById(R.id.field_comment_text);
-        ImageView mCommentButton = findViewById(R.id.button_post_comment);
-        mCommentsRecycler = findViewById(R.id.recycler_comments);
-        iv_piture = findViewById(R.id.iv_piture);
-        LinearLayout linearLayoutCard = findViewById(R.id.linearLayoutInfo);
+        super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_random_post, container, false);
+
+        datePost = rootView.findViewById(R.id.post_date);
+        post_author_photo = rootView.findViewById(R.id.post_author_photo);
+        mAuthorView = rootView.findViewById(R.id.post_author);
+        mTitleView = rootView.findViewById(R.id.post_title);
+        categ = rootView.findViewById(R.id.categ);
+        mBodyView = rootView.findViewById(R.id.post_body);
+        mCommentField = rootView.findViewById(R.id.field_comment_text);
+        ImageView mCommentButton = rootView.findViewById(R.id.button_post_comment);
+        mCommentsRecycler = rootView.findViewById(R.id.recycler_comments);
+        iv_piture = rootView.findViewById(R.id.iv_piture);
+        LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
-        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.devider)));
-        mCommentsRecycler.addItemDecoration(itemDecorator);
-        this.setTitle(getString(R.string.info_post));
 
-        emojiButton = findViewById(R.id.emoji_btn);
-        emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
+        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getActivity(), R.drawable.devider)));
+        mCommentsRecycler.addItemDecoration(itemDecorator);
+
+        emojiButton = rootView.findViewById(R.id.emoji_btn);
+        emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
         emojIcon.ShowEmojIcon();
         emojIcon.setUseSystemEmoji(false);
 
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mAdapter = new RandomPostFragment.CommentAdapter(getActivity(), mCommentsReference);
+        mCommentsRecycler.setAdapter(mAdapter);
 
+        return rootView;
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        try {
 
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                // [START_EXCLUDE]
-                if (post != null) {
-                    mAuthorView.setText(post.author);
+            mPostKey = "-LMcb3AZXxIb0PcIfe1R";
+            if (mPostKey == null) {
+                throw new IllegalArgumentException("L6X0chkIXdFu0SAn2WP");
+            }
+            mStorageRef = FirebaseStorage.getInstance().getReference();
+            // Initialize Database
+            mPostReference = FirebaseDatabase.getInstance().getReference()
+                    .child("posts").child(mPostKey);
+            mCommentsReference = FirebaseDatabase.getInstance().getReference()
+                    .child("post-comments").child(mPostKey);
 
-                    if (!post.body.isEmpty()) {
-                        mBodyView.setText(post.body);
-                        mBodyView.setVisibility(View.VISIBLE);
-                    }
+            ValueEventListener postListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get Post object and use the values to update the UI
+                    Post post = dataSnapshot.getValue(Post.class);
+                    // [START_EXCLUDE]
+                    if (post != null) {
+                        mAuthorView.setText(post.author);
 
-                    if (!post.title.isEmpty() || !(post.title.length() < 2)) {
-                        mTitleView.setText(post.title);
-                        mTitleView.setVisibility(View.VISIBLE);
-                    }
-                    if (!post.category.isEmpty()) {
-                        categ.setText(post.category);
-                        categ.setVisibility(View.VISIBLE);
-                    }
+                        if (!post.body.isEmpty()) {
+                            mBodyView.setText(post.body);
+                            mBodyView.setVisibility(View.VISIBLE);
+                        }
+
+                        if (!post.title.isEmpty()) {
+                            mTitleView.setText(post.title);
+                            mTitleView.setVisibility(View.VISIBLE);
+                        }
+                        if (!post.category.isEmpty()) {
+                            categ.setText(post.category);
+                            categ.setVisibility(View.VISIBLE);
+                        }
 
 
-                    datePost.setText(Convert.printDifference(post.create_date,
-                            Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
-                    FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
-                            addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        String str = snapshot.getValue().toString();
-                                        if (str != null && !str.isEmpty()) {
-                                            GlideApp.with(PostDetailActivity.this)
-                                                    .load(str)
-                                                    .into(post_author_photo);
+                        datePost.setText(Convert.printDifference(post.create_date,
+                                Calendar.getInstance().getTime().getTime(), getActivity()));
+                        FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.getValue() != null) {
+                                            String str = snapshot.getValue().toString();
+                                            if (str != null && !str.isEmpty()) {
+                                                GlideApp.with(Objects.requireNonNull(getActivity()))
+                                                        .load(str)
+                                                        .into(post_author_photo);
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
-
-                }
-                mStorageRef.child("images/" + mPostKey).getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(final Uri uri) {
-                                GlideApp.with(PostDetailActivity.this)
-                                        .load(uri)
-                                        .into(iv_piture);
-                            }
-
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Load", "" + e);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
 
                     }
-                });
-            }
+                    mStorageRef.child("images/" + mPostKey).getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(final Uri uri) {
+                                    GlideApp.with(Objects.requireNonNull(getActivity()))
+                                            .load(uri)
+                                            .into(iv_piture);
+                                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // [START_EXCLUDE]
-                Toast.makeText(PostDetailActivity.this, "Failed to load post.",
-                        Toast.LENGTH_SHORT).show();
-                // [END_EXCLUDE]
-            }
-        };
-        mPostReference.addValueEventListener(postListener);
-        // Keep copy of post listener so we can remove it when app stops
-        mPostListener = postListener;
-        // Listen for comments
-        mAdapter = new CommentAdapter(this, mCommentsReference);
-        mCommentsRecycler.setAdapter(mAdapter);
-    }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i("Load", "" + e);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+                        }
+                    });
+                }
 
-            case android.R.id.home:
-                this.onBackPressed();
-                return true;
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                }
+            };
 
-            default:
-                return super.onOptionsItemSelected(item);
+            mPostReference.addValueEventListener(postListener);
+            // Keep copy of post listener so we can remove it when app stops
+            mPostListener = postListener;
+            // Listen for comments
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
-
     @Override
-    public void onStop() {
-        super.onStop();
-
-        // Remove post value event listener
+    public void onDetach() {
+        super.onDetach();
         if (mPostListener != null) {
             mPostReference.removeEventListener(mPostListener);
         }
@@ -245,7 +241,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 if (!post.isEmpty())
                     postComment();
                 else
-                    Toast.makeText(this, R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -254,14 +250,14 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private void postComment() {
 
-        View view = this.getCurrentFocus();
+        View view = Objects.requireNonNull(getActivity()).getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
-        final String uid = getUid();
+        final String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         FirebaseDatabase.getInstance().getReference().child("users").child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -304,7 +300,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     }
 
 
-    private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
+    private static class CommentAdapter extends RecyclerView.Adapter<RandomPostFragment.CommentViewHolder> {
 
         private Context mContext;
         private DatabaseReference mDatabaseReference;
@@ -322,7 +318,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             ChildEventListener childEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
 
                     // A new comment has been added, add it to the displayed list
                     Comment comment = dataSnapshot.getValue(Comment.class);
@@ -337,7 +332,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
 
                     // A comment has changed, use the key to determine if we are displaying this
                     // comment and if so displayed the changed comment.
@@ -389,14 +383,14 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
         @NonNull
         @Override
-        public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RandomPostFragment.CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View view = inflater.inflate(R.layout.item_comment, parent, false);
-            return new CommentViewHolder(view);
+            return new RandomPostFragment.CommentViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final CommentViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final RandomPostFragment.CommentViewHolder holder, int position) {
             final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
             FirebaseDatabase.getInstance().getReference().child("users/" + comment.uid + "/uriPhoto").

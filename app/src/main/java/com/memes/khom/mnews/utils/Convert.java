@@ -63,9 +63,9 @@ public class Convert {
         //milliseconds
         long different = endDate - startDate;
 
-        System.out.println("startDate : " + startDate);
-        System.out.println("endDate : " + endDate);
-        System.out.println("different : " + different);
+        //System.out.println("startDate : " + startDate);
+        //System.out.println("endDate : " + endDate);
+       // System.out.println("different : " + different);
 
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;

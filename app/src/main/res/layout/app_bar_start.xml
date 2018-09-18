@@ -23,6 +23,8 @@
             android:theme="@style/AppTheme.AppBarOverlay" />
 
         <RelativeLayout
+            android:id="@+id/relLayStart"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -98,6 +100,7 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_post"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

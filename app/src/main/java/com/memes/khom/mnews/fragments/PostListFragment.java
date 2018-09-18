@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +22,8 @@ import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.viewholder.EndlessRecyclerViewScrollListener;
 import com.memes.khom.mnews.viewholder.FirebasePostAdapter;
+
+import java.util.Objects;
 
 
 public abstract class PostListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -67,21 +68,21 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
@@ -93,7 +94,7 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
     @Override
     public void onRefresh() {
         // говорим о том, что собираемся начать
-       // Toast.makeText(getActivity(), "start refresh", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getActivity(), "start refresh", Toast.LENGTH_SHORT).show();
         // начинаем показывать прогресс
         mSwipeRefreshLayout.setRefreshing(true);
         refreshFragment(getQuery(FirebaseDatabase.getInstance().getReference()));
@@ -102,13 +103,13 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(false);
-               // Toast.makeText(getActivity(), "finish refresh", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "finish refresh", Toast.LENGTH_SHORT).show();
             }
         }, 3000);
     }
 
     public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }
 
 
@@ -117,10 +118,11 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
         int LikeCount = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).likes_count;
 
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + 1).limitToFirst(5 * page);
+                .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + fbadapt.getItemCount()).limitToLast(5 * page);
 
-        // Log.d("LikeCount", String.valueOf(LikeCount));
-        // Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
+
+         Log.d("LikeCount", String.valueOf(LikeCount));
+         Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -137,21 +139,21 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
@@ -185,21 +187,21 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
