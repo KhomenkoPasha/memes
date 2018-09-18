@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,6 +36,7 @@ import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
+import com.rilixtech.materialfancybutton.MaterialFancyButton;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,7 +55,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
-    private ValueEventListener mPostListener;
+    private ChildEventListener mPostListener;
     private String mPostKey;
     private RandomPostFragment.CommentAdapter mAdapter;
     private StorageReference mStorageRef;
@@ -66,6 +68,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView iv_piture;
     private EmojiconEditText mCommentField;
     ImageView emojiButton;
+    private MaterialFancyButton newMem;
     private RecyclerView mCommentsRecycler;
 
     public RandomPostFragment() {
@@ -106,6 +109,9 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
+        newMem = rootView.findViewById(R.id.btn_add_picture);
+        newMem.setOnClickListener(this);
+
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         DividerItemDecoration itemDecorator = new DividerItemDecoration(Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL);
@@ -117,9 +123,6 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         emojIcon.ShowEmojIcon();
         emojIcon.setUseSystemEmoji(false);
 
-        mAdapter = new RandomPostFragment.CommentAdapter(getActivity(), mCommentsReference);
-        mCommentsRecycler.setAdapter(mAdapter);
-
         return rootView;
     }
 
@@ -130,40 +133,46 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
         try {
 
-            mPostKey = "-LMcb3AZXxIb0PcIfe1R";
-            if (mPostKey == null) {
-                throw new IllegalArgumentException("L6X0chkIXdFu0SAn2WP");
-            }
+            mPostKey = "";
             mStorageRef = FirebaseStorage.getInstance().getReference();
             // Initialize Database
-            mPostReference = FirebaseDatabase.getInstance().getReference()
-                    .child("posts").child(mPostKey);
-            mCommentsReference = FirebaseDatabase.getInstance().getReference()
-                    .child("post-comments").child(mPostKey);
+            int a = 0; // Начальное значение диапазона - "от"
+            int b = 200; // Конечное значение диапазона - "до"
 
-            ValueEventListener postListener = new ValueEventListener() {
+            int random_number1 = a + (int) (Math.random() * b); // Генерация 1-го числа
+            System.out.println("1-ое случайное число: " + random_number1);
+
+            int random_number2 = a + (int) (Math.random() * b); // Генерация 2-го числа
+            System.out.println("2-ое случайное число: " + random_number2);
+
+
+            Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
+                    .orderByChild("likes_count").startAt(0).endAt(random_number2).limitToLast(1);
+
+            ChildEventListener childEventListener = new ChildEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // Get Post object and use the values to update the UI
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Post post = dataSnapshot.getValue(Post.class);
-                    // [START_EXCLUDE]
+
                     if (post != null) {
                         mAuthorView.setText(post.author);
+                        if (post.body != null)
+                            if (!post.body.isEmpty()) {
+                                mBodyView.setText(post.body);
+                                mBodyView.setVisibility(View.VISIBLE);
+                            }
+                        if (post.body != null)
+                            if (!post.title.isEmpty()) {
+                                mTitleView.setText(post.title);
+                                mTitleView.setVisibility(View.VISIBLE);
+                            }
+                        if (post.category != null)
+                            if (!post.category.isEmpty()) {
+                                categ.setText(post.category);
+                                categ.setVisibility(View.VISIBLE);
+                            }
 
-                        if (!post.body.isEmpty()) {
-                            mBodyView.setText(post.body);
-                            mBodyView.setVisibility(View.VISIBLE);
-                        }
-
-                        if (!post.title.isEmpty()) {
-                            mTitleView.setText(post.title);
-                            mTitleView.setVisibility(View.VISIBLE);
-                        }
-                        if (!post.category.isEmpty()) {
-                            categ.setText(post.category);
-                            categ.setVisibility(View.VISIBLE);
-                        }
-
+                        mPostKey = dataSnapshot.getKey();
 
                         datePost.setText(Convert.printDifference(post.create_date,
                                 Calendar.getInstance().getTime().getTime(), getActivity()));
@@ -186,6 +195,13 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                     }
                                 });
 
+
+                        mCommentsReference = FirebaseDatabase.getInstance().getReference()
+                                .child("post-comments").child(mPostKey);
+
+                        mAdapter = new RandomPostFragment.CommentAdapter(getActivity(), mCommentsReference);
+                        mCommentsRecycler.setAdapter(mAdapter);
+
                     }
                     mStorageRef.child("images/" + mPostKey).getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -203,17 +219,34 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                         }
                     });
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Getting Post failed, log a message
+
                 }
             };
+            imagesQuery.addChildEventListener(childEventListener);
 
-            mPostReference.addValueEventListener(postListener);
+
+           // mPostReference.addValueEventListener(postListener);
             // Keep copy of post listener so we can remove it when app stops
-            mPostListener = postListener;
+           // mPostListener = childEventListener;
             // Listen for comments
 
         } catch (Exception ex) {
@@ -242,6 +275,26 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                     postComment();
                 else
                     Toast.makeText(getActivity(), R.string.enter_tour_comment, Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_add_picture:
+
+                if (mPostListener != null) {
+                    mPostReference.removeEventListener(mPostListener);
+                }
+                mAdapter.cleanupListener();
+
+
+                int startIndex = (int) (Math.random() * 23 + 1);
+
+
+                mPostReference = FirebaseDatabase.getInstance().getReference()
+                        .child("posts")
+                        .orderByChild("index")
+                        .startAt(startIndex)
+                        .endAt(startIndex + 4).limitToLast(1).getRef();
+
+
                 break;
             default:
                 break;
@@ -321,9 +374,6 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                     // A new comment has been added, add it to the displayed list
                     Comment comment = dataSnapshot.getValue(Comment.class);
-
-                    // [START_EXCLUDE]
-                    // Update RecyclerView
                     mCommentIds.add(dataSnapshot.getKey());
                     mComments.add(comment);
                     notifyItemInserted(mComments.size() - 1);
