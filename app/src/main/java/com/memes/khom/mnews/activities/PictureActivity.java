@@ -28,10 +28,13 @@ public class PictureActivity extends AppCompatActivity {
             if (wm != null) {
                 wm.getDefaultDisplay().getMetrics(metrics);
             }
-            this.getWindow().setLayout(metrics.widthPixels - 60, (int)(metrics.heightPixels / 1.5));
+            this.getWindow().setLayout(metrics.widthPixels - 20, (int) (metrics.heightPixels / 1.3));
             Bundle extras = getIntent().getExtras();
+
             final ImageView mImageView = findViewById(R.id.imagePhotoView);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+
             this.setTitle("Picture");
             Uri uri = null;
             if (extras != null) {

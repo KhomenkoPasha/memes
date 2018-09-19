@@ -163,7 +163,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
         FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.getValue() != null) {
                             String str = snapshot.getValue().toString();
                             if (str != null && !str.isEmpty()) {
@@ -175,7 +175,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
 
@@ -223,8 +223,9 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     // [START post_stars_transaction]
     private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                 Post p = mutableData.getValue(Post.class);
                 if (p == null)
                     return Transaction.success(mutableData);

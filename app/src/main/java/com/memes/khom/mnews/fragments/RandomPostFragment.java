@@ -1,8 +1,10 @@
 package com.memes.khom.mnews.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +33,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.FileRequestListener;
+import com.krishna.fileloader.pojo.FileResponse;
+import com.krishna.fileloader.request.FileLoadRequest;
 import com.memes.khom.mnews.R;
+import com.memes.khom.mnews.activities.PictureActivity;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
@@ -38,6 +46,7 @@ import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -59,17 +68,18 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private String mPostKey;
     private RandomPostFragment.CommentAdapter mAdapter;
     private StorageReference mStorageRef;
-    EmojIconActions emojIcon;
+    private EmojIconActions emojIcon;
     private TextView mAuthorView;
     private TextView datePost;
     private ImageView post_author_photo;
     private TextView mTitleView;
-    private TextView mBodyView, categ;
+    private TextView mBodyView, categ, likesCount;
     private ImageView iv_piture;
+    private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
-    ImageView emojiButton;
-    private MaterialFancyButton newMem;
+    private ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
+    private Uri uriPhoto;
 
     public RandomPostFragment() {
         // Required empty public constructor
@@ -106,10 +116,14 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         ImageView mCommentButton = rootView.findViewById(R.id.button_post_comment);
         mCommentsRecycler = rootView.findViewById(R.id.recycler_comments);
         iv_piture = rootView.findViewById(R.id.iv_piture);
+        likesCount = rootView.findViewById(R.id.post_num_stars);
+        download = rootView.findViewById(R.id.download);
+        download.setOnClickListener(this);
+
         LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
-        newMem = rootView.findViewById(R.id.btn_add_picture);
+        MaterialFancyButton newMem = rootView.findViewById(R.id.btn_add_picture);
         newMem.setOnClickListener(this);
 
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -123,21 +137,30 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         emojIcon.ShowEmojIcon();
         emojIcon.setUseSystemEmoji(false);
 
+
+        iv_piture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getActivity() != null) {
+                    Intent myIntent = new Intent(getActivity(), PictureActivity.class);
+                    myIntent.putExtra("photo_url", uriPhoto);
+                    getActivity().startActivity(myIntent);
+                }
+            }
+        });
+
         return rootView;
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    private void randomMem() {
 
         try {
-
             mPostKey = "";
             mStorageRef = FirebaseStorage.getInstance().getReference();
             // Initialize Database
             int a = 0; // Начальное значение диапазона - "от"
-            int b = 200; // Конечное значение диапазона - "до"
+            int b = 100; // Конечное значение диапазона - "до"
 
             int random_number1 = a + (int) (Math.random() * b); // Генерация 1-го числа
             System.out.println("1-ое случайное число: " + random_number1);
@@ -148,6 +171,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
             Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
                     .orderByChild("likes_count").startAt(0).endAt(random_number2).limitToLast(1);
+
+            mPostReference = imagesQuery.getRef();
 
             ChildEventListener childEventListener = new ChildEventListener() {
                 @Override
@@ -172,6 +197,9 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                 categ.setVisibility(View.VISIBLE);
                             }
 
+                        likesCount.setText(String.valueOf(post.likes_count));
+
+
                         mPostKey = dataSnapshot.getKey();
 
                         datePost.setText(Convert.printDifference(post.create_date,
@@ -186,6 +214,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                                 GlideApp.with(Objects.requireNonNull(getActivity()))
                                                         .load(str)
                                                         .into(post_author_photo);
+
+
                                             }
                                         }
                                     }
@@ -210,6 +240,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                     GlideApp.with(Objects.requireNonNull(getActivity()))
                                             .load(uri)
                                             .into(iv_piture);
+
+                                    uriPhoto = uri;
                                 }
 
                             }).addOnFailureListener(new OnFailureListener() {
@@ -243,15 +275,23 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
             };
             imagesQuery.addChildEventListener(childEventListener);
 
-
-           // mPostReference.addValueEventListener(postListener);
-            // Keep copy of post listener so we can remove it when app stops
-           // mPostListener = childEventListener;
-            // Listen for comments
+            mPostListener = childEventListener;
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        // mPostReference.addValueEventListener(postListener);
+        // Keep copy of post listener so we can remove it when app stops
+
+        // Listen for comments
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        randomMem();
+
     }
 
     @Override
@@ -279,26 +319,44 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
             case R.id.btn_add_picture:
 
-                if (mPostListener != null) {
+                if (mPostListener != null)
                     mPostReference.removeEventListener(mPostListener);
-                }
-                mAdapter.cleanupListener();
+                if (mAdapter != null) mAdapter.cleanupListener();
 
-
-                int startIndex = (int) (Math.random() * 23 + 1);
-
-
-                mPostReference = FirebaseDatabase.getInstance().getReference()
-                        .child("posts")
-                        .orderByChild("index")
-                        .startAt(startIndex)
-                        .endAt(startIndex + 4).limitToLast(1).getRef();
-
+                randomMem();
 
                 break;
+
+            case R.id.download:
+                saveMemas();
+                break;
+
             default:
                 break;
         }
+    }
+
+
+    private void saveMemas() {
+        download.setDeterminate();
+
+        FileLoader.with(getActivity())
+                .load(uriPhoto.toString(), true)
+                .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
+                .asFile(new FileRequestListener<File>() {
+                    @Override
+                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                        File loadedFile = response.getBody();
+                        loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                        Toast.makeText(getActivity(), "Файс загружен в Downloads/" + loadedFile.getName() + ".jpg",
+                                Toast.LENGTH_LONG).show();
+                        download.setFinish();
+                    }
+
+                    @Override
+                    public void onError(FileLoadRequest request, Throwable t) {
+                    }
+                });
     }
 
     private void postComment() {
