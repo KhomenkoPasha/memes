@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -77,7 +78,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView iv_piture;
     private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
-    private ImageView emojiButton;
+   // private ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
     private Uri uriPhoto;
 
@@ -120,7 +121,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         download = rootView.findViewById(R.id.download);
         download.setOnClickListener(this);
 
-        LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
+       // LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
         MaterialFancyButton newMem = rootView.findViewById(R.id.btn_add_picture);
@@ -132,10 +133,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getActivity(), R.drawable.devider)));
         mCommentsRecycler.addItemDecoration(itemDecorator);
 
-        emojiButton = rootView.findViewById(R.id.emoji_btn);
-        emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
-        emojIcon.ShowEmojIcon();
-        emojIcon.setUseSystemEmoji(false);
+      //  emojiButton = rootView.findViewById(R.id.emoji_btn);
+       // emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
+       // emojIcon.ShowEmojIcon();
+       // emojIcon.setUseSystemEmoji(false);
 
 
         iv_piture.setOnClickListener(new View.OnClickListener() {
@@ -319,6 +320,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
             case R.id.btn_add_picture:
 
+                download.setIdle();
+
                 if (mPostListener != null)
                     mPostReference.removeEventListener(mPostListener);
                 if (mAdapter != null) mAdapter.cleanupListener();
@@ -338,25 +341,35 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
 
     private void saveMemas() {
-        download.setDeterminate();
 
-        FileLoader.with(getActivity())
-                .load(uriPhoto.toString(), true)
-                .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
-                .asFile(new FileRequestListener<File>() {
-                    @Override
-                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                        File loadedFile = response.getBody();
-                        loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
-                        Toast.makeText(getActivity(), "Файс загружен в Downloads/" + loadedFile.getName() + ".jpg",
-                                Toast.LENGTH_LONG).show();
-                        download.setFinish();
-                    }
+        download.setIndeterminate();
 
-                    @Override
-                    public void onError(FileLoadRequest request, Throwable t) {
-                    }
-                });
+        Handler handler = new Handler();
+        Runnable r = new Runnable() {
+            public void run() {
+                download.setProgress(50);
+                FileLoader.with(getActivity())
+                        .load(uriPhoto.toString(), true)
+                        .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
+                        .asFile(new FileRequestListener<File>() {
+                            @Override
+                            public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                File loadedFile = response.getBody();
+                                loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                                Toast.makeText(getActivity(), "Файс загружен в Downloads/" + loadedFile.getName() + ".jpg",
+                                        Toast.LENGTH_LONG).show();
+                                download.setFinish();
+                            }
+
+                            @Override
+                            public void onError(FileLoadRequest request, Throwable t) {
+                            }
+                        });
+            }
+        };
+        handler.postDelayed(r, 300);
+
+
     }
 
     private void postComment() {

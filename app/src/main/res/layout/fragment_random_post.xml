@@ -227,13 +227,6 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/emoji_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="4dp"
-            android:src="@drawable/ic_emoji" />
 
         <ImageView
             android:id="@+id/button_post_comment"

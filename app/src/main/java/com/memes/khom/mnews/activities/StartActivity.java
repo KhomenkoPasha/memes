@@ -68,6 +68,8 @@ public class StartActivity extends AppCompatActivity
     private RelativeLayout relLayStart;
     private FloatingActionButton fab_new_post;
     private View viewLineTop;
+    private EditText mSearchEditText;
+    private boolean needFind = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class StartActivity extends AppCompatActivity
         mViewPager.setOffscreenPageLimit(5);
         relLayStart = findViewById(R.id.relLayStart);
         SmartTabLayout tabLayout = findViewById(R.id.tabs);
-         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         tabLayout.setViewPager(mViewPager);
         catSpinner = findViewById(R.id.searchableSpinnerCat);
         catSpinner.setTitle(getString(R.string.select_cat));
@@ -125,11 +127,10 @@ public class StartActivity extends AppCompatActivity
 
         if (mSearchView != null) {
             //mSearchView.setVersionMargins(SearchView);
-            mSearchView.setHint(R.string.find_by_tag);
             // mSearchView.setTextOnly(R.string.tag_symbol);
             // mSearchView.setSele(mSearchView.getTextOnly().length());
 
-            EditText mSearchEditText = findViewById(com.lapism.searchview.R.id.search_searchEditText);
+            mSearchEditText = findViewById(com.lapism.searchview.R.id.search_searchEditText);
             if (mSearchEditText != null) {
                 // mSearchEditText.setText("#");
                 mSearchEditText.addTextChangedListener(new TextWatcher() {
@@ -162,6 +163,9 @@ public class StartActivity extends AppCompatActivity
                                         getReference().child("posts").orderByChild("title").startAt(query.toString())
                                         .endAt(query + "\uf8ff")
                                         .limitToFirst(10));
+
+                        needFind = false;
+                        catSpinner.setSelection(0);
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -280,8 +284,10 @@ public class StartActivity extends AppCompatActivity
                     TextView textView = (TextView) parent.getChildAt(0);
                     textView.setTextColor(Color.WHITE);
                     String item = textView.getText().toString();
-                    if (!item.equals(StartActivity.this.getResources().getString(R.string.all_cats))) {
+                    if (!item.equals(StartActivity.this.getResources().getString(R.string.all_cats)) && needFind) {
 
+                        mSearchView.setHint(item);
+                        needFind = true;
 
                         if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
 
@@ -299,7 +305,7 @@ public class StartActivity extends AppCompatActivity
                                             .limitToFirst(10));// .orderByChild("create_date")
                         }
 
-                    } else {
+                    } else if (needFind) {
 
                         if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
 
@@ -316,7 +322,7 @@ public class StartActivity extends AppCompatActivity
                         }
 
                     }
-
+                    if (!needFind) needFind = true;
 
                 }
 
@@ -326,7 +332,6 @@ public class StartActivity extends AppCompatActivity
                 }
             });
             catSpinner.getBackground().
-
                     setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
             imageClearSpinner.setOnClickListener(new View.OnClickListener()
@@ -334,6 +339,7 @@ public class StartActivity extends AppCompatActivity
             {
                 @Override
                 public void onClick(View v) {
+                    needFind = true;
                     catSpinner.setSelection(0);
                 }
             });
@@ -478,26 +484,47 @@ public class StartActivity extends AppCompatActivity
                     relLayStart.setVisibility(View.GONE);
                     fab_new_post.setVisibility(View.GONE);
                     viewLineTop.setVisibility(View.GONE);
+                    mSearchEditText.setEnabled(false);
+                    mSearchView.setClickable(false);
+                    mSearchView.setHint("Рандомный)");
                     break;
                 case 1:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
+                    mSearchEditText.setEnabled(true);
+                    mSearchView.setClickable(true);
+                    mSearchView.setHint(R.string.find_by_tag);
+
                     break;
                 case 2:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
+                    mSearchEditText.setEnabled(true);
+                    mSearchView.setClickable(true);
+                    mSearchView.setHint(R.string.find_by_tag);
+                    // needFind = false;
+                    // catSpinner.setSelection(0);
                     break;
                 case 3:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
+                    mSearchEditText.setEnabled(false);
+                    mSearchView.setClickable(false);
+                    mSearchView.setHint("Все мои)");
+                    // needFind = false;
+                    // catSpinner.setSelection(0);
                     break;
                 case 4:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
+                    mSearchEditText.setEnabled(false);
+                    mSearchView.setClickable(false);
+                    mSearchView.setHint("Мои в топчике)");
+
                     break;
             }
 
