@@ -30,7 +30,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -78,7 +80,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView iv_piture;
     private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
-   // private ImageView emojiButton;
+    // private ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
     private Uri uriPhoto;
 
@@ -121,7 +123,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         download = rootView.findViewById(R.id.download);
         download.setOnClickListener(this);
 
-       // LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
+        // LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
         MaterialFancyButton newMem = rootView.findViewById(R.id.btn_add_picture);
@@ -133,10 +135,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getActivity(), R.drawable.devider)));
         mCommentsRecycler.addItemDecoration(itemDecorator);
 
-      //  emojiButton = rootView.findViewById(R.id.emoji_btn);
-       // emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
-       // emojIcon.ShowEmojIcon();
-       // emojIcon.setUseSystemEmoji(false);
+        //  emojiButton = rootView.findViewById(R.id.emoji_btn);
+        // emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
+        // emojIcon.ShowEmojIcon();
+        // emojIcon.setUseSystemEmoji(false);
 
 
         iv_piture.setOnClickListener(new View.OnClickListener() {
@@ -331,6 +333,49 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                 break;
 
             case R.id.download:
+/*
+                final int a = 0; // Начальное значение диапазона - "от"
+                final int b = 200; // Конечное значение диапазона - "до"
+
+                FirebaseDatabase.getInstance().getReference().child("posts")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                    snapshot.getRef().runTransaction(new Transaction.Handler() {
+                                        @NonNull
+                                        @Override
+                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                            Post p = mutableData.getValue(Post.class);
+                                            if (p != null) {
+
+                                                int random_number2 = a + (int) (Math.random() * b); // Генерация 2-го числа
+                                                System.out.println("2-ое случайное число: " + random_number2);
+
+                                                p.likes_count = random_number2;
+                                                mutableData.setValue(p);
+                                            }
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b,
+                                                               DataSnapshot dataSnapshot) {
+                                            // Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+                                        }
+                                    });
+
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+*/
+
                 saveMemas();
                 break;
 
@@ -343,31 +388,35 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private void saveMemas() {
 
         download.setIndeterminate();
+        try {
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
+                public void run() {
+                    download.setProgress(50);
+                    if (uriPhoto != null)
+                        FileLoader.with(getActivity())
+                                .load(uriPhoto.toString(), true)
+                                .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
+                                .asFile(new FileRequestListener<File>() {
+                                    @Override
+                                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                        File loadedFile = response.getBody();
+                                        loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                                        Toast.makeText(getActivity(), "Файл загружен в Downloads/" + loadedFile.getName() + ".jpg",
+                                                Toast.LENGTH_LONG).show();
+                                        download.setFinish();
+                                    }
 
-        Handler handler = new Handler();
-        Runnable r = new Runnable() {
-            public void run() {
-                download.setProgress(50);
-                FileLoader.with(getActivity())
-                        .load(uriPhoto.toString(), true)
-                        .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
-                        .asFile(new FileRequestListener<File>() {
-                            @Override
-                            public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                File loadedFile = response.getBody();
-                                loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
-                                Toast.makeText(getActivity(), "Файс загружен в Downloads/" + loadedFile.getName() + ".jpg",
-                                        Toast.LENGTH_LONG).show();
-                                download.setFinish();
-                            }
-
-                            @Override
-                            public void onError(FileLoadRequest request, Throwable t) {
-                            }
-                        });
-            }
-        };
-        handler.postDelayed(r, 300);
+                                    @Override
+                                    public void onError(FileLoadRequest request, Throwable t) {
+                                    }
+                                });
+                }
+            };
+            handler.postDelayed(r, 300);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
 
     }

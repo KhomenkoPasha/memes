@@ -118,7 +118,7 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
         int LikeCount = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).likes_count;
 
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("likes_count").startAt(LikeCount - 1).endAt(LikeCount + fbadapt.getItemCount()).limitToLast(5 * page);
+                .orderByChild("likes_count").startAt(LikeCount - 20).endAt(LikeCount + 20).limitToFirst(5 * page);
 
 
          Log.d("LikeCount", String.valueOf(LikeCount));
