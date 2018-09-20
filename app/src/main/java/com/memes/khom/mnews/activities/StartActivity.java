@@ -75,50 +75,54 @@ public class StartActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        imageClearSpinner = findViewById(R.id.imageClearSpinner);
-        navigationView.setNavigationItemSelectedListener(this);
-        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        ViewPager mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(5);
-        relLayStart = findViewById(R.id.relLayStart);
-        SmartTabLayout tabLayout = findViewById(R.id.tabs);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        tabLayout.setViewPager(mViewPager);
-        catSpinner = findViewById(R.id.searchableSpinnerCat);
-        catSpinner.setTitle(getString(R.string.select_cat));
-        catSpinner.setPositiveButton(getString(R.string.chose));
-        // Button launches NewPostActivity
-        viewLineTop = findViewById(R.id.viewLineTop);
-        fab_new_post = findViewById(R.id.fab_new_post);
-        fab_new_post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(StartActivity.this, NewPostActivity.class));
-            }
-        });
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-
-            Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
-            // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        try {
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            imageClearSpinner = findViewById(R.id.imageClearSpinner);
             navigationView.setNavigationItemSelectedListener(this);
-            View header = navigationView.getHeaderView(0);
-            CircleImageView avat = header.findViewById(R.id.profile_image);
-            if (user.getPhotoUrl() != null) GlideApp.with(this)
-                    .load(user.getPhotoUrl())
-                    .into(avat);
-            ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
-            ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
-        }
+            mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+            ViewPager mViewPager = findViewById(R.id.container);
+            mViewPager.setAdapter(mPagerAdapter);
+            mViewPager.setOffscreenPageLimit(5);
+            relLayStart = findViewById(R.id.relLayStart);
+            SmartTabLayout tabLayout = findViewById(R.id.tabs);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            tabLayout.setViewPager(mViewPager);
+            catSpinner = findViewById(R.id.searchableSpinnerCat);
+            catSpinner.setTitle(getString(R.string.select_cat));
+            catSpinner.setPositiveButton(getString(R.string.chose));
+            // Button launches NewPostActivity
+            viewLineTop = findViewById(R.id.viewLineTop);
+            fab_new_post = findViewById(R.id.fab_new_post);
+            fab_new_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(StartActivity.this, NewPostActivity.class));
+                }
+            });
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        mSearchView = findViewById(R.id.searchView);
-        initSearcher();
-        fillSpinnerCat();
+            if (user != null) {
+
+                Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
+                // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                navigationView.setNavigationItemSelectedListener(this);
+                View header = navigationView.getHeaderView(0);
+                CircleImageView avat = header.findViewById(R.id.profile_image);
+                if (user.getPhotoUrl() != null) GlideApp.with(this)
+                        .load(user.getPhotoUrl())
+                        .into(avat);
+                ((TextView) header.findViewById(R.id.textViewUserName)).setText(user.getDisplayName());
+                ((TextView) header.findViewById(R.id.textViewEmail)).setText(user.getEmail());
+            }
+
+            mSearchView = findViewById(R.id.searchView);
+            initSearcher();
+            fillSpinnerCat();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void initSearcher() {

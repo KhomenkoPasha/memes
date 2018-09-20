@@ -40,12 +40,15 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
-        mRecycler = rootView.findViewById(R.id.messages_list);
-        // mRecycler.setHasFixedSize(true);
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
-
+        try {
+            mRecycler = rootView.findViewById(R.id.messages_list);
+            // mRecycler.setHasFixedSize(true);
+            mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+            mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return rootView;
     }
 
@@ -118,11 +121,11 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
         int LikeCount = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).likes_count;
 
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("likes_count").startAt(LikeCount - 20).endAt(LikeCount + 20).limitToFirst(5 * page);
+                .orderByChild("likes_count").startAt(LikeCount - 10).endAt(LikeCount + 10).limitToFirst(5 * page);
 
 
-         Log.d("LikeCount", String.valueOf(LikeCount));
-         Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
+        Log.d("LikeCount", String.valueOf(LikeCount));
+        Log.d("LikeCountAD", String.valueOf(fbadapt.getItemCount()));
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override

@@ -29,44 +29,47 @@ public class FaceebookRegAct extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_faceebook_reg);
+        try {
+            callbackManager = CallbackManager.Factory.create();
+            accessTokenTracker = new AccessTokenTracker() {
+                @Override
+                protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
+                }
+            };
 
-        callbackManager = CallbackManager.Factory.create();
-        accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
-            }
-        };
-
-        profileTracker = new ProfileTracker() {
-            @Override
-            protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
-                nextActivity(newProfile);
-            }
-        };
-        accessTokenTracker.startTracking();
-        profileTracker.startTracking();
+            profileTracker = new ProfileTracker() {
+                @Override
+                protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
+                    nextActivity(newProfile);
+                }
+            };
+            accessTokenTracker.startTracking();
+            profileTracker.startTracking();
 
 
-        LoginButton loginButton = findViewById(R.id.login_button);
-        FacebookCallback<LoginResult> callback =
-                new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Profile profile = Profile.getCurrentProfile();
-                nextActivity(profile);
-                Toast.makeText(getApplicationContext(), R.string.logging, Toast.LENGTH_SHORT).show();
-            }
+            LoginButton loginButton = findViewById(R.id.login_button);
+            FacebookCallback<LoginResult> callback =
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            Profile profile = Profile.getCurrentProfile();
+                            nextActivity(profile);
+                            Toast.makeText(getApplicationContext(), R.string.logging, Toast.LENGTH_SHORT).show();
+                        }
 
-            @Override
-            public void onCancel() {
-            }
+                        @Override
+                        public void onCancel() {
+                        }
 
-            @Override
-            public void onError(FacebookException e) {
-            }
-        };
-        loginButton.setReadPermissions("user_friends");
-        loginButton.registerCallback(callbackManager, callback);
+                        @Override
+                        public void onError(FacebookException e) {
+                        }
+                    };
+            loginButton.setReadPermissions("user_friends");
+            loginButton.registerCallback(callbackManager, callback);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -97,12 +100,12 @@ public class FaceebookRegAct extends AppCompatActivity {
 
     }
 
-    private void nextActivity(Profile profile){
-        if(profile != null){
+    private void nextActivity(Profile profile) {
+        if (profile != null) {
             Intent main = new Intent(FaceebookRegAct.this, UserProfile.class);
             main.putExtra("name", profile.getFirstName());
             main.putExtra("surname", profile.getLastName());
-            main.putExtra("imageUrl", profile.getProfilePictureUri(200,200).toString());
+            main.putExtra("imageUrl", profile.getProfilePictureUri(200, 200).toString());
             startActivity(main);
         }
     }

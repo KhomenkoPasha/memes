@@ -43,41 +43,44 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
+        try {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mAuth = FirebaseAuth.getInstance();
 
-        // Views
-        mEmailField = findViewById(R.id.field_email);
-        mPasswordField = findViewById(R.id.field_password);
-        MaterialFancyButton mSignInButton = findViewById(R.id.button_sign_in);
-        MaterialFancyButton mSignUpButton = findViewById(R.id.button_sign_up);
+            // Views
+            mEmailField = findViewById(R.id.field_email);
+            mPasswordField = findViewById(R.id.field_password);
+            MaterialFancyButton mSignInButton = findViewById(R.id.button_sign_in);
+            MaterialFancyButton mSignUpButton = findViewById(R.id.button_sign_up);
 
-        // Click listeners
-        mSignInButton.setOnClickListener(this);
-        mSignUpButton.setOnClickListener(this);
+            // Click listeners
+            mSignInButton.setOnClickListener(this);
+            mSignUpButton.setOnClickListener(this);
 
 
-        mCallbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = findViewById(R.id.login_button_facebook);
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+            mCallbackManager = CallbackManager.Factory.create();
+            LoginButton loginButton = findViewById(R.id.login_button_facebook);
+            loginButton.setReadPermissions("email", "public_profile");
+            loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                    handleFacebookAccessToken(loginResult.getAccessToken());
+                }
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-            }
+                @Override
+                public void onCancel() {
+                    Log.d(TAG, "facebook:onCancel");
+                }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-            }
-        });
-
+                @Override
+                public void onError(FacebookException error) {
+                    Log.d(TAG, "facebook:onError", error);
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
     }
 
@@ -125,30 +128,34 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
 
     private void signIn() {
-        Log.d(TAG, "signIn");
-        if (!validateForm()) {
-            return;
-        }
+        try {
+            Log.d(TAG, "signIn");
+            if (!validateForm()) {
+                return;
+            }
 
-        showProgressDialog();
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
+            showProgressDialog();
+            String email = mEmailField.getText().toString();
+            String password = mPasswordField.getText().toString();
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                            hideProgressDialog();
 
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign In Failed",
-                                    Toast.LENGTH_SHORT).show();
+                            if (task.isSuccessful()) {
+                                onAuthSuccess(task.getResult().getUser());
+                            } else {
+                                Toast.makeText(SignInActivity.this, "Sign In Failed",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void signUp() {

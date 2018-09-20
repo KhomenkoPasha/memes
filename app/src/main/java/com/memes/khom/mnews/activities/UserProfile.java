@@ -68,72 +68,76 @@ public class UserProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        try {
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );
+            getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+            );
 
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        nameView = findViewById(R.id.nameAndSurname);
-        loadIndic = findViewById(R.id.spin_kit);
-        TextView email = findViewById(R.id.email);
-        TextView number = findViewById(R.id.number);
-        MaterialFancyButton btn_edit_picture = findViewById(R.id.btn_edit_picture);
-        imgPhoto = findViewById(R.id.profileImage);
-        btn_edit_save = findViewById(R.id.btn_edit_save);
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            nameView = findViewById(R.id.nameAndSurname);
+            loadIndic = findViewById(R.id.spin_kit);
+            TextView email = findViewById(R.id.email);
+            TextView number = findViewById(R.id.number);
+            MaterialFancyButton btn_edit_picture = findViewById(R.id.btn_edit_picture);
+            imgPhoto = findViewById(R.id.profileImage);
+            btn_edit_save = findViewById(R.id.btn_edit_save);
 
-        btn_edit_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addPhoto();
-            }
-        });
-        btn_edit_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadIndic.setVisibility(View.VISIBLE);
-                btn_edit_save.setVisibility(View.GONE);
-                if (mageUri != null)
-                    uploadFileInFireBaseStorage(mageUri);
-                else if (!setNewNameEqualsOld) updateUserName();
-            }
-        });
-
-
-        if (user != null) {
-            this.setTitle(user.getDisplayName());
-            nameView.setText(user.getDisplayName());
-            oldUserName = user.getDisplayName();
-            email.setText(user.getEmail());
-            number.setText(user.getPhoneNumber());
-            if (user.getPhotoUrl() != null) GlideApp.with(this)
-                    .load(user.getPhotoUrl())
-                    .into(imgPhoto);
-            nameView.addTextChangedListener(new TextWatcher() {
+            btn_edit_picture.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    setNewNameEqualsOld = oldUserName.contentEquals(charSequence);
-                    if (!setNewNameEqualsOld) btn_edit_save.setVisibility(View.VISIBLE);
-                    else
-                        btn_edit_save.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
+                public void onClick(View view) {
+                    addPhoto();
                 }
             });
+            btn_edit_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadIndic.setVisibility(View.VISIBLE);
+                    btn_edit_save.setVisibility(View.GONE);
+                    if (mageUri != null)
+                        uploadFileInFireBaseStorage(mageUri);
+                    else if (!setNewNameEqualsOld) updateUserName();
+                }
+            });
+
+
+            if (user != null) {
+                this.setTitle(user.getDisplayName());
+                nameView.setText(user.getDisplayName());
+                oldUserName = user.getDisplayName();
+                email.setText(user.getEmail());
+                number.setText(user.getPhoneNumber());
+                if (user.getPhotoUrl() != null) GlideApp.with(this)
+                        .load(user.getPhotoUrl())
+                        .into(imgPhoto);
+                nameView.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        setNewNameEqualsOld = oldUserName.contentEquals(charSequence);
+                        if (!setNewNameEqualsOld) btn_edit_save.setVisibility(View.VISIBLE);
+                        else
+                            btn_edit_save.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -55,7 +52,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 import static com.rilixtech.materialfancybutton.MaterialFancyButton.TAG;
@@ -63,15 +59,12 @@ import static com.rilixtech.materialfancybutton.MaterialFancyButton.TAG;
 
 public class RandomPostFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    public static final String EXTRA_POST_KEY = "post_key";
-
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
     private ChildEventListener mPostListener;
     private String mPostKey;
     private RandomPostFragment.CommentAdapter mAdapter;
     private StorageReference mStorageRef;
-    private EmojIconActions emojIcon;
     private TextView mAuthorView;
     private TextView datePost;
     private ImageView post_author_photo;
@@ -80,20 +73,11 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView iv_piture;
     private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
-    // private ImageView emojiButton;
     private RecyclerView mCommentsRecycler;
     private Uri uriPhoto;
 
     public RandomPostFragment() {
         // Required empty public constructor
-    }
-
-    public static RandomPostFragment newInstance() {
-        RandomPostFragment fragment = new RandomPostFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @Override
@@ -135,12 +119,6 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getActivity(), R.drawable.devider)));
         mCommentsRecycler.addItemDecoration(itemDecorator);
 
-        //  emojiButton = rootView.findViewById(R.id.emoji_btn);
-        // emojIcon = new EmojIconActions(getActivity(), rootView.findViewById(R.id.comment_form), mCommentField, emojiButton);
-        // emojIcon.ShowEmojIcon();
-        // emojIcon.setUseSystemEmoji(false);
-
-
         iv_piture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,19 +139,14 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         try {
             mPostKey = "";
             mStorageRef = FirebaseStorage.getInstance().getReference();
-            // Initialize Database
-            int a = 0; // Начальное значение диапазона - "от"
-            int b = 100; // Конечное значение диапазона - "до"
+            int a = 0;
+            int b = 200;
 
-            int random_number1 = a + (int) (Math.random() * b); // Генерация 1-го числа
-            System.out.println("1-ое случайное число: " + random_number1);
-
-            int random_number2 = a + (int) (Math.random() * b); // Генерация 2-го числа
+            int random_number2 = a + (int) (Math.random() * b);
             System.out.println("2-ое случайное число: " + random_number2);
 
-
             Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                    .orderByChild("likes_count").startAt(0).endAt(random_number2).limitToLast(1);
+                    .orderByChild("likes_count").startAt(random_number2 - 5).endAt(random_number2 + 5).limitToFirst(1);
 
             mPostReference = imagesQuery.getRef();
 
@@ -188,17 +161,17 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                             if (!post.body.isEmpty()) {
                                 mBodyView.setText(post.body);
                                 mBodyView.setVisibility(View.VISIBLE);
-                            }
+                            } else mBodyView.setText("");
                         if (post.body != null)
                             if (!post.title.isEmpty()) {
                                 mTitleView.setText(post.title);
                                 mTitleView.setVisibility(View.VISIBLE);
-                            }
+                            } else mTitleView.setText("");
                         if (post.category != null)
                             if (!post.category.isEmpty()) {
                                 categ.setText(post.category);
                                 categ.setVisibility(View.VISIBLE);
-                            }
+                            } else categ.setText("");
 
                         likesCount.setText(String.valueOf(post.likes_count));
 
@@ -401,9 +374,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                     @Override
                                     public void onLoad(FileLoadRequest request, FileResponse<File> response) {
                                         File loadedFile = response.getBody();
-                                        loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
-                                        Toast.makeText(getActivity(), "Файл загружен в Downloads/" + loadedFile.getName() + ".jpg",
-                                                Toast.LENGTH_LONG).show();
+                                        boolean ileane = loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                                        if (ileane)
+                                            Toast.makeText(getActivity(), "Файл загружен в Downloads/" + loadedFile.getName() + ".jpg",
+                                                    Toast.LENGTH_LONG).show();
                                         download.setFinish();
                                     }
 

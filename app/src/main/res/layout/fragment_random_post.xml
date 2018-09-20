@@ -36,14 +36,14 @@
 
                     <TextView
                         android:id="@+id/post_author"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:baselineAligned="false"
                         android:gravity="center_vertical"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        tools:text="ewrewr" />
+                        tools:text="" />
 
 
                 </LinearLayout>
@@ -173,12 +173,11 @@
 
             <TextView
                 android:id="@+id/post_date"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:gravity="center_vertical"
-                android:text="34234"
                 android:textSize="12sp" />
 
             <com.github.abdularis.buttonprogress.DownloadButtonProgress

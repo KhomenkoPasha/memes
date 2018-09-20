@@ -31,14 +31,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -90,122 +88,125 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_post);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mIVpicture = findViewById(R.id.iv_piture);
-        MaterialFancyButton mBTNadaPicture = findViewById(R.id.btn_add_picture);
+        try {
+            setContentView(R.layout.activity_new_post);
+            mStorageRef = FirebaseStorage.getInstance().getReference();
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mIVpicture = findViewById(R.id.iv_piture);
+            MaterialFancyButton mBTNadaPicture = findViewById(R.id.btn_add_picture);
 
-        mBTNadaPicture.setOnClickListener(this);
-        mTitleField = findViewById(R.id.field_title);
-        mTitleField.setText(R.string.tag_symbol);
-        mTitleField.setSelection(mTitleField.getText().length());
-        mTitleField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            mBTNadaPicture.setOnClickListener(this);
+            mTitleField = findViewById(R.id.field_title);
+            mTitleField.setText(R.string.tag_symbol);
+            mTitleField.setSelection(mTitleField.getText().length());
+            mTitleField.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count,
+                                              int after) {
+                }
 
-            @Override
-            public void afterTextChanged(Editable text) {
-                if (text.length() == 0)
-                    text.append(getResources().getString(R.string.tag_symbol));
-                if (text.length() > 0 && text.toString().contains(" ")) {
-                    final String newText = text.toString().replace(" ", "");
-                    mTitleField.setText(newText);
-                    mTitleField.setSelection(newText.length());
+                @Override
+                public void afterTextChanged(Editable text) {
+                    if (text.length() == 0)
+                        text.append(getResources().getString(R.string.tag_symbol));
+                    if (text.length() > 0 && text.toString().contains(" ")) {
+                        final String newText = text.toString().replace(" ", "");
+                        mTitleField.setText(newText);
+                        mTitleField.setSelection(newText.length());
+                    }
+                }
+            });
+
+            catSpinner = findViewById(R.id.searchableSpinnerCat);
+            MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
+
+            catSpinner.setTitle(getString(R.string.select_cat));
+            catSpinner.setPositiveButton(getString(R.string.chose));
+            // catSpinner.setBackgroundColor(getColor(R.color.white));
+
+            mBodyField = findViewById(R.id.field_body);
+            mSubmitButton = findViewById(R.id.fab_submit_post);
+            mStorageRef = FirebaseStorage.getInstance().getReference();
+            categRef = FirebaseDatabase.getInstance().getReference().child("categ");
+            fillSpinnerCat();
+
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            mSubmitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    submitPost();
+                }
+            });
+
+            this.setTitle(getString(R.string.create_post));
+
+            add_cat_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
+                    builder.setTitle(R.string.add_cat);
+                    // I'm using fragment here so I'm using getView() to provide ViewGroup
+                    // but you can provide here any other instance of ViewGroup from your Fragment / Activity
+                    View viewInflated = LayoutInflater.from(NewPostActivity.this)
+                            .inflate(R.layout.text_input_string,
+                                    (ViewGroup) findViewById(android.R.id.content), false);
+                    // Set up the input
+                    final EditText input = viewInflated.findViewById(R.id.input);
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    builder.setView(viewInflated);
+
+                    // Set up the buttons
+                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String key = categRef.push().getKey();
+                            Category categ = new Category();
+                            categ.name = input.getText().toString();
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            childUpdates.put(key, categ);
+
+                            categRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                                    if (databaseError != null) {
+                                        Toast.makeText(NewPostActivity.this, R.string.error_add_cat, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+            });
+
+
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
-        });
-
-        catSpinner = findViewById(R.id.searchableSpinnerCat);
-        MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
-
-        catSpinner.setTitle(getString(R.string.select_cat));
-        catSpinner.setPositiveButton(getString(R.string.chose));
-        // catSpinner.setBackgroundColor(getColor(R.color.white));
-
-        mBodyField = findViewById(R.id.field_body);
-        mSubmitButton = findViewById(R.id.fab_submit_post);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        categRef = FirebaseDatabase.getInstance().getReference().child("categ");
-        fillSpinnerCat();
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitPost();
-            }
-        });
-
-        this.setTitle(getString(R.string.create_post));
-
-        add_cat_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
-                builder.setTitle(R.string.add_cat);
-                // I'm using fragment here so I'm using getView() to provide ViewGroup
-                // but you can provide here any other instance of ViewGroup from your Fragment / Activity
-                View viewInflated = LayoutInflater.from(NewPostActivity.this)
-                        .inflate(R.layout.text_input_string,
-                                (ViewGroup) findViewById(android.R.id.content), false);
-                // Set up the input
-                final EditText input = viewInflated.findViewById(R.id.input);
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                builder.setView(viewInflated);
-
-                // Set up the buttons
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String key = categRef.push().getKey();
-                        Category categ = new Category();
-                        categ.name = input.getText().toString();
-                        Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put(key, categ);
-
-                        categRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
-                                if (databaseError != null) {
-                                    Toast.makeText(NewPostActivity.this, R.string.error_add_cat, Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        });
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-            }
-        });
-
-
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
     }
 
     @Override
@@ -231,7 +232,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
@@ -298,7 +299,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         // Get user value
                         User user = dataSnapshot.getValue(User.class);
                         if (user == null) {
@@ -317,7 +318,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                         setEditingEnabled(true);
                     }
@@ -356,69 +357,72 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     //Метод для добавления фото
     private void addPhoto() {
+        try {
+            //Проверяем разрешение на работу с камерой
+            boolean isCameraPermissionGranted = ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+            //Проверяем разрешение на работу с внешнем хранилещем телефона
+            boolean isWritePermissionGranted = ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
-        //Проверяем разрешение на работу с камерой
-        boolean isCameraPermissionGranted = ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-        //Проверяем разрешение на работу с внешнем хранилещем телефона
-        boolean isWritePermissionGranted = ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+            //Если разрешения != true
+            if (!isCameraPermissionGranted || !isWritePermissionGranted) {
 
-        //Если разрешения != true
-        if (!isCameraPermissionGranted || !isWritePermissionGranted) {
+                String[] permissions;//Разрешения которые хотим запросить у пользователя
 
-            String[] permissions;//Разрешения которые хотим запросить у пользователя
-
-            if (!isCameraPermissionGranted && !isWritePermissionGranted) {
-                permissions = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            } else if (!isCameraPermissionGranted) {
-                permissions = new String[]{android.Manifest.permission.CAMERA};
-            } else {
-                permissions = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            }
-            //Запрашиваем разрешения у пользователя
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSION_RECEIVE_CAMERA);
-        } else {
-            //Если все разрешения получены
-            //StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            //  StrictMode.setVmPolicy(builder.build());
-            try {
-                List<Intent> intentList = new ArrayList<>();
-                mTempPhoto = createTempImageFile(getExternalCacheDir());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    try {
-                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                        m.invoke(null);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    mImageUriPath = (FileProvider.getUriForFile(NewPostActivity.this,
-                            NewPostActivity.this.getPackageName() + ".fileProv", mTempPhoto)).getPath();
-
+                if (!isCameraPermissionGranted && !isWritePermissionGranted) {
+                    permissions = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                } else if (!isCameraPermissionGranted) {
+                    permissions = new String[]{android.Manifest.permission.CAMERA};
                 } else {
-                    mImageUriPath = mTempPhoto.getAbsolutePath();
+                    permissions = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 }
-                //Создаём лист с интентами для работы с изображениями
+                //Запрашиваем разрешения у пользователя
+                ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_PERMISSION_RECEIVE_CAMERA);
+            } else {
+                //Если все разрешения получены
+                //StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                //  StrictMode.setVmPolicy(builder.build());
+                try {
+                    List<Intent> intentList = new ArrayList<>();
+                    mTempPhoto = createTempImageFile(getExternalCacheDir());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        try {
+                            Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                            m.invoke(null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        mImageUriPath = (FileProvider.getUriForFile(NewPostActivity.this,
+                                NewPostActivity.this.getPackageName() + ".fileProv", mTempPhoto)).getPath();
 
-                Intent chooserIntent = null;
-                Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                takePhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempPhoto));
-                intentList = addIntentsToList(this, intentList, pickIntent);
-                intentList = addIntentsToList(this, intentList, takePhotoIntent);
+                    } else {
+                        mImageUriPath = mTempPhoto.getAbsolutePath();
+                    }
+                    //Создаём лист с интентами для работы с изображениями
 
-                if (!intentList.isEmpty()) {
-                    chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), getString(R.string.chose_img));
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
-                }
+                    Intent chooserIntent = null;
+                    Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    takePhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempPhoto));
+                    intentList = addIntentsToList(this, intentList, pickIntent);
+                    intentList = addIntentsToList(this, intentList, takePhotoIntent);
+
+                    if (!intentList.isEmpty()) {
+                        chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), getString(R.string.chose_img));
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
+                    }
                 /*После того как пользователь закончит работу с приложеним(которое работает с изображениями)
                  будет вызван метод onActivityResult
                 */
-                startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);
-            } catch (IOException e) {
-                Log.e("ERROR", e.getMessage(), e);
+                    startActivityForResult(chooserIntent, REQUEST_CODE_TAKE_PHOTO);
+                } catch (IOException e) {
+                    Log.e("ERROR", e.getMessage(), e);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

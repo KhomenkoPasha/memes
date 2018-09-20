@@ -1,9 +1,6 @@
 package com.memes.khom.mnews.activities;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,8 +35,6 @@ import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.models.User;
 import com.memes.khom.mnews.utils.Convert;
-import com.memes.khom.mnews.utils.ImageUtils;
-
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -80,44 +72,48 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        // Get post key from intent
-        mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
-        if (mPostKey == null) {
-            throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
+        try {
+            // Get post key from intent
+            mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
+            if (mPostKey == null) {
+                throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
+            }
+            mStorageRef = FirebaseStorage.getInstance().getReference();
+            // Initialize Database
+            mPostReference = FirebaseDatabase.getInstance().getReference()
+                    .child("posts").child(mPostKey);
+            mCommentsReference = FirebaseDatabase.getInstance().getReference()
+                    .child("post-comments").child(mPostKey);
+
+            datePost = findViewById(R.id.post_date);
+            post_author_photo = findViewById(R.id.post_author_photo);
+            mAuthorView = findViewById(R.id.post_author);
+            mTitleView = findViewById(R.id.post_title);
+            categ = findViewById(R.id.categ);
+            mBodyView = findViewById(R.id.post_body);
+            mCommentField = findViewById(R.id.field_comment_text);
+            ImageView mCommentButton = findViewById(R.id.button_post_comment);
+            mCommentsRecycler = findViewById(R.id.recycler_comments);
+            iv_piture = findViewById(R.id.iv_piture);
+            //  LinearLayout linearLayoutCard = findViewById(R.id.linearLayoutInfo);
+            mCommentButton.setOnClickListener(this);
+            mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.devider)));
+            mCommentsRecycler.addItemDecoration(itemDecorator);
+            this.setTitle(getString(R.string.info_post));
+
+            emojiButton = findViewById(R.id.emoji_btn);
+            emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
+            emojIcon.ShowEmojIcon();
+            emojIcon.setUseSystemEmoji(false);
+
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        // Initialize Database
-        mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("posts").child(mPostKey);
-        mCommentsReference = FirebaseDatabase.getInstance().getReference()
-                .child("post-comments").child(mPostKey);
-
-        datePost = findViewById(R.id.post_date);
-        post_author_photo = findViewById(R.id.post_author_photo);
-        mAuthorView = findViewById(R.id.post_author);
-        mTitleView = findViewById(R.id.post_title);
-        categ = findViewById(R.id.categ);
-        mBodyView = findViewById(R.id.post_body);
-        mCommentField = findViewById(R.id.field_comment_text);
-        ImageView mCommentButton = findViewById(R.id.button_post_comment);
-        mCommentsRecycler = findViewById(R.id.recycler_comments);
-        iv_piture = findViewById(R.id.iv_piture);
-        LinearLayout linearLayoutCard = findViewById(R.id.linearLayoutInfo);
-        mCommentButton.setOnClickListener(this);
-        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.devider)));
-        mCommentsRecycler.addItemDecoration(itemDecorator);
-        this.setTitle(getString(R.string.info_post));
-
-        emojiButton = findViewById(R.id.emoji_btn);
-        emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
-        emojIcon.ShowEmojIcon();
-        emojIcon.setUseSystemEmoji(false);
-
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -141,7 +137,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         mBodyView.setVisibility(View.VISIBLE);
                     }
 
-                    if (!post.title.isEmpty() || !(post.title.length() < 2)) {
+                    if (!post.title.isEmpty()) {
                         mTitleView.setText(post.title);
                         mTitleView.setVisibility(View.VISIBLE);
                     }

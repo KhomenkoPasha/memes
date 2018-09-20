@@ -70,13 +70,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         confirmPassword = findViewById(R.id.confirmPassword);
         signUpButton = findViewById(R.id.signUpBtn);
         login = findViewById(R.id.already_user);
-      //  terms_conditions = findViewById(R.id.terms_conditions);
+        //  terms_conditions = findViewById(R.id.terms_conditions);
         @SuppressLint("ResourceType")
         XmlResourceParser xrp = getResources().getXml(R.drawable.text_selector);
         try {
             ColorStateList csl = ColorStateList.createFromXml(getResources(), xrp);
             login.setTextColor(csl);
-         //   terms_conditions.setTextColor(csl);
+            //   terms_conditions.setTextColor(csl);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,9 +129,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     "Both password doesn't match.");
 
             // Make sure user should check Terms and Conditions checkbox
-     //   else if (!terms_conditions.isChecked())
-     //       new CustomToast().Show_Toast(this, lay_reg,
-      //              "Please select Terms and Conditions.");
+            //   else if (!terms_conditions.isChecked())
+            //       new CustomToast().Show_Toast(this, lay_reg,
+            //              "Please select Terms and Conditions.");
 
             // Else do signup or do your stuff
         else {
@@ -145,7 +145,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             hideProgressDialog();
                             if (task.isSuccessful()) {
                                 FirebaseUser firebaseUser = task.getResult().getUser();
-                                writeNewUser(firebaseUser.getUid(),fullName.getText().toString(),
+                                writeNewUser(firebaseUser.getUid(), fullName.getText().toString(),
                                         firebaseUser.getEmail(), firebaseUser.getPhotoUrl() != null ?
                                                 firebaseUser.getPhotoUrl().toString() : "", firebaseUser);
                             } else {
@@ -159,23 +159,27 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
 
     private void writeNewUser(String userId, String name, String email, String uriPhoto, FirebaseUser fuser) {
-        User user = new User(name, email, uriPhoto);
-        FirebaseDatabase.getInstance().getReference().child("users").child(userId).setValue(user);
+        try {
+            User user = new User(name, email, uriPhoto);
+            FirebaseDatabase.getInstance().getReference().child("users").child(userId).setValue(user);
 
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build();
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .build();
 
-        fuser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            startActivity(new Intent(RegisterActivity.this, StartActivity.class));
-                            finish();
+            fuser.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(RegisterActivity.this, StartActivity.class));
+                                finish();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -214,15 +218,15 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                         (ViewGroup) view.findViewById(R.id.toast_root));
 
 
-            // Get TextView id and set error
-            TextView text = layout.findViewById(R.id.toast_error);
-            text.setText(error);
-            Toast toast = new Toast(context);// Get Toast Context
-            toast.setGravity(Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0);// Set
-            toast.setDuration(Toast.LENGTH_SHORT);// Set Duration
-            toast.setView(layout); // Set Custom View over toast
+                // Get TextView id and set error
+                TextView text = layout.findViewById(R.id.toast_error);
+                text.setText(error);
+                Toast toast = new Toast(context);// Get Toast Context
+                toast.setGravity(Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0);// Set
+                toast.setDuration(Toast.LENGTH_SHORT);// Set Duration
+                toast.setView(layout); // Set Custom View over toast
 
-            toast.show();// Finally show toast
+                toast.show();// Finally show toast
             }
         }
 
