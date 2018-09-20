@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,9 +21,6 @@ import android.widget.Toast;
 
 import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeThumbnailLoader;
-import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,8 +38,6 @@ import com.krishna.fileloader.request.FileLoadRequest;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.activities.PictureActivity;
 import com.memes.khom.mnews.activities.PostDetailActivity;
-import com.memes.khom.mnews.activities.YouToubeActivity;
-import com.memes.khom.mnews.models.Category;
 import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 
@@ -242,6 +236,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
             }
             //video
             else {
+                /*
                 holder.iv_piture.setVisibility(View.GONE);
 
                 final YouTubeThumbnailLoader.OnThumbnailLoadedListener onThumbnailLoadedListener = new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
@@ -278,7 +273,7 @@ public class FirebasePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
                         //write something for failure
                     }
                 });
-
+*/
             }
 
             FirebaseDatabase.getInstance().getReference().child("users/" + model.uid + "/uriPhoto")

@@ -26,7 +26,6 @@
                 android:layout_margin="6dp"
                 android:layout_marginBottom="6dp"
                 android:gravity="center_vertical"
-                android:text="12.12.12"
                 android:textColor="@color/white"
                 tools:ignore="RelativeOverlap" />
 
@@ -48,9 +47,9 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:maxLines="1"
                 android:padding="6dp"
-                android:visibility="gone"
                 android:text="@string/cats_t"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/post_author"
@@ -63,8 +62,7 @@
                 android:layout_toRightOf="@+id/post_author_photo"
                 android:gravity="center_vertical"
                 android:paddingLeft="6dp"
-                android:textColor="@color/white"
-                tools:text="someauthor@email.com" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/post_title"
@@ -73,15 +71,14 @@
                 android:layout_below="@+id/post_author"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginLeft="6dp"
-                android:layout_toEndOf="@+id/categ"
-                android:layout_toRightOf="@+id/categ"
+                android:layout_toEndOf="@+id/post_author_photo"
                 android:background="@drawable/rectangle_bg"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:padding="6dp"
-                android:visibility="gone"
                 android:textColor="@color/white"
-                tools:text="fdhgfh" />
+                android:visibility="gone"
+                tools:text="" />
 
         </RelativeLayout>
 
@@ -106,10 +103,10 @@
             android:id="@+id/iv_piture"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_marginTop="8dp"
-            android:maxHeight="300dp"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/post_itemTag" />
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/post_itemTag"
+            android:maxHeight="300dp" />
 
     </LinearLayout>
 

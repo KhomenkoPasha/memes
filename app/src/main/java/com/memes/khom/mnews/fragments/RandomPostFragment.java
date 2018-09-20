@@ -34,7 +34,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -68,6 +70,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private DatabaseReference mCommentsReference;
     private ChildEventListener mPostListener;
     private String mPostKey;
+    private String postUID;
     private RandomPostFragment.CommentAdapter mAdapter;
     private StorageReference mStorageRef;
     private TextView mAuthorView;
@@ -75,11 +78,13 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView post_author_photo;
     private TextView mTitleView;
     private TextView mBodyView, categ, likesCount;
-    private ImageView iv_piture, share;
+    private ImageView iv_piture, share, like;
     private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
     private RecyclerView mCommentsRecycler;
     private Uri uriPhoto;
+    private int likeCount;
+    private boolean likeActive;
 
     public RandomPostFragment() {
         // Required empty public constructor
@@ -109,11 +114,12 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         mCommentsRecycler = rootView.findViewById(R.id.recycler_comments);
         iv_piture = rootView.findViewById(R.id.iv_piture);
         likesCount = rootView.findViewById(R.id.post_num_stars);
+        like = rootView.findViewById(R.id.like);
+        like.setOnClickListener(this);
         download = rootView.findViewById(R.id.download);
         download.setOnClickListener(this);
         share = rootView.findViewById(R.id.share);
         share.setOnClickListener(this);
-        // LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
         MaterialFancyButton newMem = rootView.findViewById(R.id.btn_add_picture);
@@ -180,9 +186,19 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                             } else categ.setText("");
 
                         likesCount.setText(String.valueOf(post.likes_count));
+                        likeCount = post.likes_count;
 
+                        if (post.likes.containsKey(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                            like.setImageResource(R.drawable.ic_toggle_star_24);
+                            likeActive = true;
+
+                        } else {
+                            like.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                            likeActive = false;
+                        }
 
                         mPostKey = dataSnapshot.getKey();
+                        postUID = post.uid;
 
                         datePost.setText(Convert.printDifference(post.create_date,
                                 Calendar.getInstance().getTime().getTime(), getActivity()));
@@ -196,8 +212,6 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                                 GlideApp.with(Objects.requireNonNull(getActivity()))
                                                         .load(str)
                                                         .into(post_author_photo);
-
-
                                             }
                                         }
                                     }
@@ -311,6 +325,32 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                 break;
 
+
+            case R.id.like:
+
+                try {
+                    if (!postUID.isEmpty()) {
+                        DatabaseReference globalPostRef = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
+                        DatabaseReference userPostRef = FirebaseDatabase.getInstance().getReference().child("user-posts").child(postUID).child(mPostKey);
+                        onLikeClicked(globalPostRef);
+                        onLikeClicked(userPostRef);
+                        if (likeActive) {
+                            like.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                            likeActive = false;
+                            likeCount--;
+                            likesCount.setText(String.valueOf(likeCount));
+                        } else {
+                            likeCount++;
+                            like.setImageResource(R.drawable.ic_toggle_star_24);
+                            likesCount.setText(String.valueOf(likeCount));
+                            likeActive = true;
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                break;
+
             case R.id.share:
                 shareImage();
                 break;
@@ -365,6 +405,38 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
             default:
                 break;
         }
+    }
+
+
+    private void onLikeClicked(DatabaseReference postRef) {
+        postRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                Post p = mutableData.getValue(Post.class);
+                String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+                if (p == null)
+                    return Transaction.success(mutableData);
+
+                if (p.likes.containsKey(id)) {
+                    p.likes_count = p.likes_count - 1;
+                    p.likes.remove(id);
+                } else {
+                    p.likes_count = p.likes_count + 1;
+                    p.likes.put(id, true);
+                }
+                // Set value and report transaction success
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                // Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+            }
+        });
     }
 
 

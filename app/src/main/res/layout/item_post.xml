@@ -26,7 +26,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:gravity="center_vertical"
-                android:text="12.12.12"
+                android:text=""
                 tools:ignore="RelativeOverlap" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -57,8 +57,7 @@
                 android:layout_toEndOf="@+id/post_author_photo"
                 android:layout_toRightOf="@+id/post_author_photo"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorPrimary"
-                tools:text="someauthor@email.com" />
+                android:textColor="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/post_title"
@@ -73,7 +72,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/accent"
-                tools:text="fdhgfh" />
+                tools:text="" />
 
         </RelativeLayout>
 
@@ -91,29 +90,23 @@
             android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/post_body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/post_body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:gravity="center_horizontal"
-                    android:visibility="gone"
-                    tools:text="" />
-
-            </LinearLayout>
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+                tools:text="" />
 
             <ImageView
                 android:id="@+id/iv_piture"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
                 android:contentDescription="@string/post_itemTag"
                 android:maxHeight="300dp"
                 android:src="@drawable/image_no"
@@ -253,14 +246,14 @@
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="16dp"
                     android:padding="4dp"
-                    app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
-                    app:idleBackgroundDrawable="@drawable/bg_button_progress"
-                    app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
-                    app:progressIndeterminateColor="#5C6BC0"
                     app:determinateBackgroundDrawable="@drawable/bg_button_progress"
-                    app:progressDeterminateColor="#5C6BC0"
+                    app:finishBackgroundDrawable="@drawable/bg_button_progress"
                     app:finishIconDrawable="@drawable/ic_done_black_24dp"
-                    app:finishBackgroundDrawable="@drawable/bg_button_progress"/>
+                    app:idleBackgroundDrawable="@drawable/bg_button_progress"
+                    app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
+                    app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
+                    app:progressDeterminateColor="#5C6BC0"
+                    app:progressIndeterminateColor="#5C6BC0" />
 
             </LinearLayout>
 
