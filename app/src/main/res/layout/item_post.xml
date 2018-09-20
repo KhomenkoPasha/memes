@@ -67,9 +67,9 @@
                 android:layout_alignBaseline="@+id/categ"
                 android:layout_alignBottom="@+id/categ"
                 android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginLeft="4dp"
                 android:layout_toEndOf="@+id/categ"
                 android:layout_toRightOf="@+id/categ"
-                android:layout_marginLeft="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/accent"
@@ -113,17 +113,17 @@
                 android:id="@+id/iv_piture"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:maxHeight="300dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/post_itemTag"
+                android:maxHeight="300dp"
                 android:src="@drawable/image_no"
                 android:visibility="visible" />
 
             <RelativeLayout
                 android:id="@+id/youtube"
                 android:layout_width="match_parent"
-                android:background="@color/black"
                 android:layout_height="wrap_content"
+                android:background="@color/black"
                 android:visibility="gone">
 
                 <com.google.android.youtube.player.YouTubeThumbnailView
@@ -176,7 +176,6 @@
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
                     android:alpha=".75"
-                    android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/likesImg"
                     android:src="@drawable/ic_toggle_star_outline_24" />
 
@@ -212,7 +211,6 @@
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
                     android:alpha=".75"
-                    android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/commentsImg"
                     android:src="@drawable/ic_comment_black_24dp" />
 
@@ -230,10 +228,10 @@
                 android:id="@+id/share_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.3"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/share_img"
@@ -241,18 +239,28 @@
                     android:layout_height="25dp"
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
-                    android:alpha=".75"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/shareimgtag"
-                    android:src="@drawable/ic_share_black_24dp" />
+                    android:alpha=".90"
+                    android:background="@drawable/bg_button_progress"
+                    android:contentDescription="@string/likesImg"
+                    android:padding="4dp"
+                    android:paddingRight="6dp"
+                    android:src="@drawable/ic_share_purp_24dp" />
 
-                <TextView
-                    android:id="@+id/share"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:text="@string/share" />
+                <com.github.abdularis.buttonprogress.DownloadButtonProgress
+                    android:id="@+id/download"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="16dp"
+                    android:padding="4dp"
+                    app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
+                    app:idleBackgroundDrawable="@drawable/bg_button_progress"
+                    app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
+                    app:progressIndeterminateColor="#5C6BC0"
+                    app:determinateBackgroundDrawable="@drawable/bg_button_progress"
+                    app:progressDeterminateColor="#5C6BC0"
+                    app:finishIconDrawable="@drawable/ic_done_black_24dp"
+                    app:finishBackgroundDrawable="@drawable/bg_button_progress"/>
 
             </LinearLayout>
 

@@ -66,7 +66,6 @@ import static com.memes.khom.mnews.utils.ImageUtils.getRealPathFromURI;
 public class NewPostActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "NewPostActivity";
-    private static final String REQUIRED = "Required";
     private static final int REQUEST_CODE_PERMISSION_RECEIVE_CAMERA = 102;
     private static final int REQUEST_CODE_TAKE_PHOTO = 103;
 
@@ -336,9 +335,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void writeNewPost(String userId, String username, String title, String body, int type) {
-        //  for (int i = 0; i < 10; i++) {
-        String key = mDatabase.child("posts").push().getKey();
 
+        String key = mDatabase.child("posts").push().getKey();
         String cat = "";
         if (catSpinner.getSelectedItem() != null) cat = catSpinner.getSelectedItem().toString();
         if (title.length() < 2)
@@ -351,7 +349,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mDatabase.updateChildren(childUpdates);
         mReference = key;
         uploadFileInFireBaseStorage(imageUriToUpload);
-        //   }
+
     }
 
 

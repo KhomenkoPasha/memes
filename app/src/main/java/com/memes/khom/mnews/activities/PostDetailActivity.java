@@ -1,6 +1,7 @@
 package com.memes.khom.mnews.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -122,87 +123,101 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         super.onStart();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        try {
+            ValueEventListener postListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get Post object and use the values to update the UI
+                    Post post = dataSnapshot.getValue(Post.class);
+                    // [START_EXCLUDE]
+                    if (post != null) {
+                        mAuthorView.setText(post.author);
 
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                // [START_EXCLUDE]
-                if (post != null) {
-                    mAuthorView.setText(post.author);
+                        if (!post.body.isEmpty()) {
+                            mBodyView.setText(post.body);
+                            mBodyView.setVisibility(View.VISIBLE);
+                        }
 
-                    if (!post.body.isEmpty()) {
-                        mBodyView.setText(post.body);
-                        mBodyView.setVisibility(View.VISIBLE);
-                    }
-
-                    if (!post.title.isEmpty()) {
-                        mTitleView.setText(post.title);
-                        mTitleView.setVisibility(View.VISIBLE);
-                    }
-                    if (!post.category.isEmpty()) {
-                        categ.setText(post.category);
-                        categ.setVisibility(View.VISIBLE);
-                    }
+                        if (!post.title.isEmpty()) {
+                            mTitleView.setText(post.title);
+                            mTitleView.setVisibility(View.VISIBLE);
+                        }
+                        if (!post.category.isEmpty()) {
+                            categ.setText(post.category);
+                            categ.setVisibility(View.VISIBLE);
+                        }
 
 
-                    datePost.setText(Convert.printDifference(post.create_date,
-                            Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
-                    FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
-                            addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        String str = snapshot.getValue().toString();
-                                        if (str != null && !str.isEmpty()) {
-                                            GlideApp.with(PostDetailActivity.this)
-                                                    .load(str)
-                                                    .into(post_author_photo);
+                        datePost.setText(Convert.printDifference(post.create_date,
+                                Calendar.getInstance().getTime().getTime(), PostDetailActivity.this));
+                        FirebaseDatabase.getInstance().getReference().child("users/" + post.uid + "/uriPhoto").
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.getValue() != null) {
+                                            String str = snapshot.getValue().toString();
+                                            if (str != null && !str.isEmpty()) {
+                                                GlideApp.with(PostDetailActivity.this)
+                                                        .load(str)
+                                                        .into(post_author_photo);
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
-
-                }
-                mStorageRef.child("images/" + mPostKey).getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(final Uri uri) {
-                                GlideApp.with(PostDetailActivity.this)
-                                        .load(uri)
-                                        .into(iv_piture);
-                            }
-
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Load", "" + e);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
 
                     }
-                });
-            }
+                    mStorageRef.child("images/" + mPostKey).getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(final Uri uri) {
+                                    GlideApp.with(PostDetailActivity.this)
+                                            .load(uri)
+                                            .into(iv_piture);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // [START_EXCLUDE]
-                Toast.makeText(PostDetailActivity.this, "Failed to load post.",
-                        Toast.LENGTH_SHORT).show();
-                // [END_EXCLUDE]
-            }
-        };
-        mPostReference.addValueEventListener(postListener);
-        // Keep copy of post listener so we can remove it when app stops
-        mPostListener = postListener;
-        // Listen for comments
-        mAdapter = new CommentAdapter(this, mCommentsReference);
-        mCommentsRecycler.setAdapter(mAdapter);
+                                    iv_piture.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent myIntent = new Intent(PostDetailActivity.this, PictureActivity.class);
+                                            myIntent.putExtra("photo_url", uri);
+                                            PostDetailActivity.this.startActivity(myIntent);
+
+                                        }
+                                    });
+
+                                }
+
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i("Load", "" + e);
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    // [START_EXCLUDE]
+                    Toast.makeText(PostDetailActivity.this, "Failed to load post.",
+                            Toast.LENGTH_SHORT).show();
+                    // [END_EXCLUDE]
+                }
+            };
+            mPostReference.addValueEventListener(postListener);
+            // Keep copy of post listener so we can remove it when app stops
+            mPostListener = postListener;
+            // Listen for comments
+            mAdapter = new CommentAdapter(this, mCommentsReference);
+            mCommentsRecycler.setAdapter(mAdapter);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

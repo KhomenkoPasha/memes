@@ -3,6 +3,7 @@ package com.memes.khom.mnews.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -373,6 +374,14 @@ public class StartActivity extends AppCompatActivity
             case R.id.youtube:
                 break;
 
+            case  R.id.nav_rate_app:
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
+                break;
             case R.id.nav_log_out:
                 new MaterialDialog.Builder(this)
                         .title(R.string.attention)

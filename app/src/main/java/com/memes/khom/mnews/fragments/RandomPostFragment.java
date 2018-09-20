@@ -1,13 +1,18 @@
 package com.memes.khom.mnews.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -70,7 +75,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private ImageView post_author_photo;
     private TextView mTitleView;
     private TextView mBodyView, categ, likesCount;
-    private ImageView iv_piture;
+    private ImageView iv_piture, share;
     private DownloadButtonProgress download;
     private EmojiconEditText mCommentField;
     private RecyclerView mCommentsRecycler;
@@ -106,7 +111,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         likesCount = rootView.findViewById(R.id.post_num_stars);
         download = rootView.findViewById(R.id.download);
         download.setOnClickListener(this);
-
+        share = rootView.findViewById(R.id.share);
+        share.setOnClickListener(this);
         // LinearLayout linearLayoutCard = rootView.findViewById(R.id.linearLayoutInfo);
         mCommentButton.setOnClickListener(this);
 
@@ -305,6 +311,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                 break;
 
+            case R.id.share:
+                shareImage();
+                break;
+
             case R.id.download:
 /*
                 final int a = 0; // Начальное значение диапазона - "от"
@@ -358,7 +368,64 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     }
 
 
+    private void shareImage() {
+        try {
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                int permissionCheck = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    return;
+                }
+
+            }
+
+            if (uriPhoto != null)
+                FileLoader.with(getActivity())
+                        .load(uriPhoto.toString(), true)
+                        .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
+                        .asFile(new FileRequestListener<File>() {
+                            @Override
+                            public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                try {
+                                    File loadedFile = response.getBody();
+                                    boolean ileane = loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                                    if (ileane) {
+                                        Intent share = new Intent(Intent.ACTION_SEND);
+                                        share.setType("image/*");
+
+                                        Uri uri = (FileProvider.getUriForFile(getActivity(),
+                                                Objects.requireNonNull(getActivity()).getPackageName() + ".fileProv",
+                                                new File(loadedFile.getPath() + ".jpg")));
+
+                                        share.putExtra(Intent.EXTRA_STREAM, uri);
+                                        startActivity(Intent.createChooser(share, "Share Image!"));
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onError(FileLoadRequest request, Throwable t) {
+                            }
+                        });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void saveMemas() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            int permissionCheck = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+            }
+
+        }
 
         download.setIndeterminate();
         try {

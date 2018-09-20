@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.memes.khom.mnews.R;
 import com.memes.khom.mnews.models.Post;
@@ -27,9 +28,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView post_author_photo;
     public LinearLayout comments_lay;
     public ImageView iv_piture;
-    public ImageView likeView;
+    public ImageView likeView,share_img;
     public RelativeLayout lvHeaderPost;
     public RelativeLayout youtube;
+    public DownloadButtonProgress downloadButton;
     public YouTubeThumbnailView youtube_thumbnail;
 
     PostViewHolder(View itemView) {
@@ -48,6 +50,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         categ = itemView.findViewById(R.id.categ);
         youtube_thumbnail = itemView.findViewById(R.id.youtube_thumbnail);
         lvHeaderPost = itemView.findViewById(R.id.relativ_header);
+        share_img  = itemView.findViewById(R.id.share_img);
+        downloadButton = itemView.findViewById(R.id.download);
     }
 
     void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {
