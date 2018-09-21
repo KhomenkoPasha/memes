@@ -152,13 +152,16 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
             mPostKey = "";
             mStorageRef = FirebaseStorage.getInstance().getReference();
             int a = 0;
-            int b = 200;
+            int b = 400;
+            int c = 10;
+
+            int random = 1 + (int) (Math.random() * c);
 
             int random_number2 = a + (int) (Math.random() * b);
             System.out.println("2-ое случайное число: " + random_number2);
 
             Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                    .orderByChild("likes_count").startAt(random_number2 - 5).endAt(random_number2 + 5).limitToFirst(1);
+                    .orderByChild("likes_count").startAt(random_number2 - random).endAt(random_number2 + random).limitToLast(1);
 
             mPostReference = imagesQuery.getRef();
 
@@ -330,10 +333,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                 try {
                     if (!postUID.isEmpty()) {
-                        DatabaseReference globalPostRef = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
-                        DatabaseReference userPostRef = FirebaseDatabase.getInstance().getReference().child("user-posts").child(postUID).child(mPostKey);
-                        onLikeClicked(globalPostRef);
-                        onLikeClicked(userPostRef);
+                      //  DatabaseReference globalPostRef = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
+                      //  DatabaseReference userPostRef = FirebaseDatabase.getInstance().getReference().child("user-posts").child(postUID).child(mPostKey);
+                        //onLikeClicked(globalPostRef);
+                      //  onLikeClicked(userPostRef);
                         if (likeActive) {
                             like.setImageResource(R.drawable.ic_toggle_star_outline_24);
                             likeActive = false;
@@ -358,7 +361,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
             case R.id.download:
 /*
                 final int a = 0; // Начальное значение диапазона - "от"
-                final int b = 200; // Конечное значение диапазона - "до"
+                final int b = 400; // Конечное значение диапазона - "до"
 
                 FirebaseDatabase.getInstance().getReference().child("posts")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -397,8 +400,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-*/
 
+*/
                 saveMemas();
                 break;
 
