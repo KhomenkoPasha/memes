@@ -251,6 +251,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                         }
                     });
 
+                    if (mPostListener != null)
+                        mPostReference.removeEventListener(mPostListener);
                 }
 
                 @Override
@@ -333,10 +335,10 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
                 try {
                     if (!postUID.isEmpty()) {
-                      //  DatabaseReference globalPostRef = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
-                      //  DatabaseReference userPostRef = FirebaseDatabase.getInstance().getReference().child("user-posts").child(postUID).child(mPostKey);
-                        //onLikeClicked(globalPostRef);
-                      //  onLikeClicked(userPostRef);
+                        DatabaseReference globalPostRef = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
+                        DatabaseReference userPostRef = FirebaseDatabase.getInstance().getReference().child("user-posts").child(postUID).child(mPostKey);
+                        onLikeClicked(globalPostRef);
+                        onLikeClicked(userPostRef);
                         if (likeActive) {
                             like.setImageResource(R.drawable.ic_toggle_star_outline_24);
                             likeActive = false;
