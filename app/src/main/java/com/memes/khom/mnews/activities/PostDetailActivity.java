@@ -57,7 +57,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private String mPostKey;
     private CommentAdapter mAdapter;
     private StorageReference mStorageRef;
-    EmojIconActions emojIcon;
     private TextView mAuthorView;
     private TextView datePost;
     private ImageView post_author_photo;
@@ -106,7 +105,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
             this.setTitle(getString(R.string.info_post));
 
             emojiButton = findViewById(R.id.emoji_btn);
-            emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
+            EmojIconActions emojIcon = new EmojIconActions(this, findViewById(R.id.comment_form), mCommentField, emojiButton);
             emojIcon.ShowEmojIcon();
             emojIcon.setUseSystemEmoji(false);
 

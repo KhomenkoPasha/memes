@@ -3,7 +3,6 @@ package com.memes.khom.mnews.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,11 +25,11 @@ import com.memes.khom.mnews.viewholder.FirebasePostAdapter;
 import java.util.Objects;
 
 
-public abstract class PostListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public abstract class PostListFragment extends Fragment  {
 
     private RecyclerView mRecycler;
     private FirebasePostAdapter fbadapt;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+   // private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public PostListFragment() {
     }
@@ -43,9 +42,9 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
         try {
             mRecycler = rootView.findViewById(R.id.messages_list);
             // mRecycler.setHasFixedSize(true);
-            mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
-            mSwipeRefreshLayout.setOnRefreshListener(this);
-            mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
+          //  mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+          //  mSwipeRefreshLayout.setOnRefreshListener(this);
+         //   mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -94,6 +93,7 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
         mRecycler.setAdapter(fbadapt);
     }
 
+    /*
     @Override
     public void onRefresh() {
         // говорим о том, что собираемся начать
@@ -110,7 +110,7 @@ public abstract class PostListFragment extends Fragment implements SwipeRefreshL
             }
         }, 3000);
     }
-
+*/
     public String getUid() {
         return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }

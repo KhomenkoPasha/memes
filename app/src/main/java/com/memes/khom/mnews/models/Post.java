@@ -18,6 +18,7 @@ public class Post {
     public int likes_count = 0;
     public int postType = 0;
     public String videoid;
+    public String keyRec;
     public Map<String, Boolean> likes = new HashMap<>();
 
     public Post() {

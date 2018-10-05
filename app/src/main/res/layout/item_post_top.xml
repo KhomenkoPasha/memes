@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:id="@+id/relativ_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/post_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:text=""
+            tools:ignore="RelativeOverlap" />
+
+        <TextView
+            android:id="@+id/post_rate"
+            android:layout_width="40dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_button_circle_top" />
+
+
+        <TextView
+            android:id="@+id/categ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/post_author"
+            android:layout_alignStart="@+id/post_author"
+            android:layout_alignLeft="@+id/post_author"
+            android:gravity="center_vertical|center_horizontal"
+            android:maxLines="1"
+            android:text="@string/cats_t"
+            android:textColor="@color/accent" />
+
+        <TextView
+            android:id="@+id/post_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="16dp"
+            android:layout_toEndOf="@+id/post_rate"
+            android:layout_toRightOf="@+id/post_rate"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/post_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/categ"
+            android:layout_alignBottom="@+id/categ"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginLeft="4dp"
+            android:layout_toEndOf="@+id/categ"
+            android:layout_toRightOf="@+id/categ"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/accent"
+            tools:text="" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/viewLineTop"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_margin="4dp"
+        android:background="#103C515C"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/post_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            tools:text="" />
+
+        <ImageView
+            android:id="@+id/iv_piture"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/post_itemTag"
+            android:maxHeight="300dp"
+            android:src="@drawable/image_no"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/youtube"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:visibility="gone">
+
+            <com.google.android.youtube.player.YouTubeThumbnailView
+                android:id="@+id/youtube_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:src="@drawable/image_no" />
+
+            <ImageView
+                android:id="@+id/imageViewPlay"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="false"
+                app:srcCompat="@drawable/play_but" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/star_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/like"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:alpha=".75"
+                android:contentDescription="@string/likesImg"
+                android:src="@drawable/ic_toggle_star_outline_24" />
+
+            <TextView
+                android:id="@+id/post_num_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="7" />
+
+            <TextView
+                android:id="@+id/post_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:gravity="center"
+                android:text="@string/likes" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/comments_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/comment"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:alpha=".75"
+                android:contentDescription="@string/commentsImg"
+                android:src="@drawable/ic_comment_black_24dp" />
+
+            <TextView
+                android:id="@+id/comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/comments" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/share_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/share_img"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:alpha=".90"
+                android:background="@drawable/bg_button_progress"
+                android:contentDescription="@string/likesImg"
+                android:padding="4dp"
+                android:paddingRight="6dp"
+                android:src="@drawable/ic_share_purp_24dp" />
+
+            <com.github.abdularis.buttonprogress.DownloadButtonProgress
+                android:id="@+id/download"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="16dp"
+                android:padding="4dp"
+                app:determinateBackgroundDrawable="@drawable/bg_button_progress"
+                app:finishBackgroundDrawable="@drawable/bg_button_progress"
+                app:finishIconDrawable="@drawable/ic_done_black_24dp"
+                app:idleBackgroundDrawable="@drawable/bg_button_progress"
+                app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
+                app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
+                app:progressDeterminateColor="#5C6BC0"
+                app:progressIndeterminateColor="#5C6BC0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewLineBot"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_margin="4dp"
+        android:background="#203C515C" />
+
+</LinearLayout>
+

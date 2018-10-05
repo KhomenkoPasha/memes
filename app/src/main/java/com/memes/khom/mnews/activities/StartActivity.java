@@ -47,6 +47,7 @@ import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
 import com.memes.khom.mnews.fragments.MyTopPostsFragment;
 import com.memes.khom.mnews.fragments.PostListFragment;
+import com.memes.khom.mnews.fragments.PostTop10ListFragment;
 import com.memes.khom.mnews.fragments.RandomPostFragment;
 import com.memes.khom.mnews.fragments.RecentPostsFragment;
 import com.memes.khom.mnews.models.Category;
@@ -85,7 +86,7 @@ public class StartActivity extends AppCompatActivity
             mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
             ViewPager mViewPager = findViewById(R.id.container);
             mViewPager.setAdapter(mPagerAdapter);
-            mViewPager.setOffscreenPageLimit(5);
+            mViewPager.setOffscreenPageLimit(4);
             relLayStart = findViewById(R.id.relLayStart);
             SmartTabLayout tabLayout = findViewById(R.id.tabs);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -474,8 +475,10 @@ public class StartActivity extends AppCompatActivity
                 case 2:
                     return new AllTopPostsFragment();
                 case 3:
-                    return new MyPostsFragment();
+                    return new PostTop10ListFragment();
                 case 4:
+                    return new MyPostsFragment();
+                case 5:
                     return new MyTopPostsFragment();
             }
             return null;
@@ -484,7 +487,7 @@ public class StartActivity extends AppCompatActivity
         @Override
         public int getCount() {
             // Show 5 total pages.
-            return 5;
+            return 6;
         }
 
         @Override
@@ -520,7 +523,18 @@ public class StartActivity extends AppCompatActivity
                     // needFind = false;
                     // catSpinner.setSelection(0);
                     break;
+
                 case 3:
+                    relLayStart.setVisibility(View.VISIBLE);
+                    fab_new_post.setVisibility(View.VISIBLE);
+                    viewLineTop.setVisibility(View.VISIBLE);
+                    mSearchEditText.setEnabled(false);
+                    mSearchView.setClickable(false);
+                    mSearchView.setHint("Топчик 10 сегодня");
+                    // needFind = false;
+                    // catSpinner.setSelection(0);
+                    break;
+                case 4:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
@@ -530,7 +544,7 @@ public class StartActivity extends AppCompatActivity
                     // needFind = false;
                     // catSpinner.setSelection(0);
                     break;
-                case 4:
+                case 5:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     viewLineTop.setVisibility(View.VISIBLE);
@@ -555,8 +569,10 @@ public class StartActivity extends AppCompatActivity
                 case 2:
                     return getString(R.string.heading_all_top);
                 case 3:
-                    return getString(R.string.heading_my_posts);
+                    return getString(R.string.top10);
                 case 4:
+                    return getString(R.string.heading_my_posts);
+                case 5:
                     return getString(R.string.heading_my_top_posts);
             }
             return null;

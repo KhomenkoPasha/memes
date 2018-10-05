@@ -17,24 +17,24 @@ import com.memes.khom.mnews.utils.Convert;
 import java.util.Calendar;
 
 
-public class PostViewHolder extends RecyclerView.ViewHolder {
+public class PosTopViewHolder extends RecyclerView.ViewHolder {
 
     private TextView titleView;
     private TextView authorView;
-    public TextView numStarsView;
+    TextView numStarsView;
     private TextView bodyView;
     private TextView post_date;
     private TextView categ;
-    public ImageView post_author_photo;
+    public TextView post_rate;
     public LinearLayout comments_lay;
     public ImageView iv_piture;
-    public ImageView likeView,share_img;
-    public RelativeLayout lvHeaderPost;
+    ImageView likeView, share_img;
+    RelativeLayout lvHeaderPost;
     public RelativeLayout youtube;
-    public DownloadButtonProgress downloadButton;
+    DownloadButtonProgress downloadButton;
     public YouTubeThumbnailView youtube_thumbnail;
 
-    PostViewHolder(View itemView) {
+    PosTopViewHolder(View itemView) {
         super(itemView);
 
         titleView = itemView.findViewById(R.id.post_title);
@@ -46,17 +46,17 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         bodyView = itemView.findViewById(R.id.post_body);
         comments_lay = itemView.findViewById(R.id.comments_lay);
         post_date = itemView.findViewById(R.id.post_date);
-        post_author_photo = itemView.findViewById(R.id.post_author_photo);
+        post_rate = itemView.findViewById(R.id.post_rate);
         categ = itemView.findViewById(R.id.categ);
         youtube_thumbnail = itemView.findViewById(R.id.youtube_thumbnail);
         lvHeaderPost = itemView.findViewById(R.id.relativ_header);
-        share_img  = itemView.findViewById(R.id.share_img);
+        share_img = itemView.findViewById(R.id.share_img);
         downloadButton = itemView.findViewById(R.id.download);
     }
 
     void bindToPost(Post post, View.OnClickListener starClickListener, Context cnx) {
         titleView.setText(post.title);
-        authorView.setText(post.author);
+        authorView.setText("Опубликовал - " + post.author);
         numStarsView.setText(String.valueOf(post.likes_count));
 
         if (post.body != null && !post.body.isEmpty()) {
