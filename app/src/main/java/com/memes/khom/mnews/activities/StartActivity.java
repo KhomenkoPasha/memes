@@ -372,6 +372,12 @@ public class StartActivity extends AppCompatActivity
                 startActivity(about);
                 break;
 
+
+            case R.id.nav_draw:
+                Intent nav_draw = new Intent(StartActivity.this, DrawActivity.class);
+                startActivity(nav_draw);
+                break;
+
             case R.id.youtube:
                 break;
 

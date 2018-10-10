@@ -361,7 +361,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                 break;
 
             case R.id.download:
-
+/*
                 final int a = 0; // Начальное значение диапазона - "от"
                 final int b = 400; // Конечное значение диапазона - "до"
 
@@ -402,9 +402,9 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
+*/
 
-
-     //           saveMemas();
+                saveMemas();
                 break;
 
             default:

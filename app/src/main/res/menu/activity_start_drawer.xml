@@ -6,6 +6,12 @@
             android:id="@+id/nav_create"
             android:icon="@drawable/ic_image_edit"
             android:title="@string/create_pub" />
+
+        <item
+            android:id="@+id/nav_draw"
+            android:icon="@drawable/ic_image_edit"
+            android:title="Нарисовать" />
+
     </group>
     <group android:checkableBehavior="single">
         <item

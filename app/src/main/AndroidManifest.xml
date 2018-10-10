@@ -70,9 +70,25 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".widget.MyService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+
+        <receiver android:name=".widget.MyProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_metadata"></meta-data>
+        </receiver>
+
         <activity
             android:name=".activities.NewPostActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
@@ -93,12 +109,11 @@
             android:name=".activities.UserProfile"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".activities.RegisterActivity">
-        </activity>
-        <activity android:name=".activities.YouToubeActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout">
-        </activity>
+        <activity android:name=".activities.RegisterActivity"></activity>
+        <activity
+            android:name=".activities.YouToubeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"></activity>
+        <activity android:name=".activities.DrawActivity"></activity>
     </application>
 
 </manifest>
