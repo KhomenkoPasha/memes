@@ -13,7 +13,6 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -23,7 +22,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -34,7 +32,6 @@ import com.memes.khom.mnews.models.Post;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 
 public class MyProvider extends AppWidgetProvider {
 
@@ -91,7 +88,7 @@ public class MyProvider extends AppWidgetProvider {
 
         randomMem(context, rv, appWidgetId);
 
-        appWidgetManager.updateAppWidget(appWidgetId, rv);
+      // appWidgetManager.updateAppWidget(appWidgetId, rv);
 
 
 
