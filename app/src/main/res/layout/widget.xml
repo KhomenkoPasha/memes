@@ -14,10 +14,10 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge">
     </TextView>
-    <ListView
-        android:id="@+id/lvList"
+    <ImageView
+        android:id="@+id/mem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tvUpdate">
-    </ListView>
+    </ImageView>
 </RelativeLayout>

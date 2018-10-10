@@ -28,7 +28,7 @@ public class MyFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-        data = new ArrayList<String>();
+        data = new ArrayList<>();
     }
 
     @Override

@@ -515,6 +515,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(NewPostActivity.this, R.string.loaded, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(NewPostActivity.this, StartActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
     }

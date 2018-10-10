@@ -41,8 +41,13 @@ import net.margaritov.preference.colorpicker.ColorPickerDialog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
@@ -107,7 +112,7 @@ public class DrawingActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle((i.hasExtra(DrawingActivityBuilder.TITLE) && !i.getStringExtra(DrawingActivityBuilder.TITLE).equals("")) ? i.getStringExtra(DrawingActivityBuilder.TITLE) : getString(R.string.drawing));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         if(Build.VERSION.SDK_INT >= 21) getWindow().setStatusBarColor(darkenColor(res.getColor(R.color.colorPrimary)));
 
         //Initialize SlidingUpPanel
@@ -338,6 +343,25 @@ public class DrawingActivity extends AppCompatActivity {
         return true;
     }
 
+    /*
+   File storageDir -  абсолютный путь к каталогу конкретного приложения на
+   основном общем /внешнем устройстве хранения, где приложение может размещать
+   файлы кеша, которыми он владеет.
+  */
+    public static File createTempImageFile(File storageDir) throws IOException {
+
+        // Генерируем имя файла
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());//получаем время
+        String imageFileName = "photo_" + timeStamp;//состовляем имя файла
+
+        //Создаём файл
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -345,20 +369,19 @@ public class DrawingActivity extends AppCompatActivity {
             finishWarning();
         } else if(id == R.id.action_done) {
             Bitmap b = drawing_view.exportDrawing();
-
-            File file = new File(getCacheDir(), "drawing");
-            if (file.exists()) file.delete();
             try {
+                File file = createTempImageFile(getExternalCacheDir());
+
                 FileOutputStream out = new FileOutputStream(file);
                 b.compress(Bitmap.CompressFormat.JPEG, IMAGE_COMPRESSION_QUALITY, out);
                 out.flush();
                 out.close();
+                Intent i = new Intent();
+                i.putExtra(DRAWING_PATH, file.getAbsolutePath());
+                setResult(RESULT_OK, i);
+
             } catch (Exception e) {}
 
-            Intent i = new Intent();
-            i.putExtra(DRAWING_PATH, file.getAbsolutePath());
-
-            setResult(RESULT_OK, i);
             finish();
         } else if(id == R.id.action_undo) {
             drawing_view.undo();
