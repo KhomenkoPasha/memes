@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:44267967193:android:238fe56c2271ed3c",
+        "mobilesdk_app_id": "1:44267967193:android:fcfef757a832647b",
         "android_client_info": {
-          "package_name": "com.memes.khom.memsnews"
+          "package_name": "com.google.firebase.quickstart.database"
         }
       },
       "oauth_client": [
         {
-          "client_id": "44267967193-rbhpnr3dveoe091pnfqqa5dmuu4vitro.apps.googleusercontent.com",
+          "client_id": "44267967193-o470kvvdh6tku4rreu0qpglotgqrb23j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.memes.khom.memsnews",
+            "package_name": "com.google.firebase.quickstart.database",
             "certificate_hash": "f011c4c49b7df1a77d8a244ca5640f2444edc95c"
           }
         },
@@ -49,6 +49,59 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44267967193:android:238fe56c2271ed3c",
+        "android_client_info": {
+          "package_name": "com.memes.khom.memsnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44267967193-rbhpnr3dveoe091pnfqqa5dmuu4vitro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.memes.khom.memsnews",
+            "certificate_hash": "f011c4c49b7df1a77d8a244ca5640f2444edc95c"
+          }
+        },
+        {
+          "client_id": "44267967193-h8ggjj68tmosdm5ldb0jifvobo1nrqjv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.memes.khom.memsnews",
+            "certificate_hash": "516e1ab672369814d787c3a8e7f3a0ab42cf19d7"
+          }
+        },
+        {
+          "client_id": "44267967193-duffte5nlrcf70ttbmkoq999i5t9otjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDogd733xP2MmoozYGU_Go-a8INKpqcdYA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44267967193-duffte5nlrcf70ttbmkoq999i5t9otjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-7371958965084168~2541002975"
     }
   ],
   "configuration_version": "1"

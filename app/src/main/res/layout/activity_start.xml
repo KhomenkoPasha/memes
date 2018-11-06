@@ -28,4 +28,6 @@
         app:headerLayout="@layout/nav_header_start"
         app:menu="@menu/activity_start_drawer" />
 
+
+
 </android.support.v4.widget.DrawerLayout>

@@ -4,6 +4,7 @@
     xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/tools"
     android:layout_gravity="center_horizontal"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
@@ -174,6 +175,17 @@
         </LinearLayout>
     </ScrollView>
 
+
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-7371958965084168/1655011300" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_submit_post"

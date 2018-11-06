@@ -34,6 +34,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -69,15 +73,23 @@ public class StartActivity extends AppCompatActivity
     private ImageView imageClearSpinner;
     private RelativeLayout relLayStart;
     private FloatingActionButton fab_new_post;
-    private View viewLineTop;
+  //  private View viewLineTop;
     private EditText mSearchEditText;
     private boolean needFind = true;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
         try {
+            MobileAds.initialize(this, "ca-app-pub-7371958965084168~2541002975");
+            adView = findViewById(R.id.ad_view_start);
+
+            AdRequest ar = new AdRequest.Builder().build();
+            adView.loadAd(ar);
+
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             NavigationView navigationView = findViewById(R.id.nav_view);
@@ -95,7 +107,7 @@ public class StartActivity extends AppCompatActivity
             catSpinner.setTitle(getString(R.string.select_cat));
             catSpinner.setPositiveButton(getString(R.string.chose));
             // Button launches NewPostActivity
-            viewLineTop = findViewById(R.id.viewLineTop);
+          //  viewLineTop = findViewById(R.id.viewLineTop);
             fab_new_post = findViewById(R.id.fab_new_post);
             fab_new_post.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -125,6 +137,30 @@ public class StartActivity extends AppCompatActivity
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     private void initSearcher() {
@@ -381,7 +417,7 @@ public class StartActivity extends AppCompatActivity
             case R.id.youtube:
                 break;
 
-            case  R.id.nav_rate_app:
+            case R.id.nav_rate_app:
                 final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
@@ -505,7 +541,7 @@ public class StartActivity extends AppCompatActivity
                 case 0:
                     relLayStart.setVisibility(View.GONE);
                     fab_new_post.setVisibility(View.GONE);
-                    viewLineTop.setVisibility(View.GONE);
+                  //  viewLineTop.setVisibility(View.GONE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Рандомный)");
@@ -513,7 +549,7 @@ public class StartActivity extends AppCompatActivity
                 case 1:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                    viewLineTop.setVisibility(View.VISIBLE);
+                    //viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(true);
                     mSearchView.setClickable(true);
                     mSearchView.setHint(R.string.find_by_tag);
@@ -522,7 +558,7 @@ public class StartActivity extends AppCompatActivity
                 case 2:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                    viewLineTop.setVisibility(View.VISIBLE);
+                 //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(true);
                     mSearchView.setClickable(true);
                     mSearchView.setHint(R.string.find_by_tag);
@@ -533,7 +569,7 @@ public class StartActivity extends AppCompatActivity
                 case 3:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                    viewLineTop.setVisibility(View.VISIBLE);
+                 //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Топчик 10 сегодня");
@@ -543,7 +579,7 @@ public class StartActivity extends AppCompatActivity
                 case 4:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                    viewLineTop.setVisibility(View.VISIBLE);
+                  //  viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Все мои)");
@@ -553,7 +589,7 @@ public class StartActivity extends AppCompatActivity
                 case 5:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                    viewLineTop.setVisibility(View.VISIBLE);
+                 //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Мои в топчике)");

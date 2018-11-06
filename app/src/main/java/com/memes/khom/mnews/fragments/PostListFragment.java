@@ -41,10 +41,7 @@ public abstract class PostListFragment extends Fragment  {
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
         try {
             mRecycler = rootView.findViewById(R.id.messages_list);
-            // mRecycler.setHasFixedSize(true);
-          //  mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
-          //  mSwipeRefreshLayout.setOnRefreshListener(this);
-         //   mSwipeRefreshLayout.setColorScheme(R.color.accent, R.color.accent, R.color.accent, R.color.accent);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

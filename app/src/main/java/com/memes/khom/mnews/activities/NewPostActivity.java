@@ -31,6 +31,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -83,12 +85,19 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private EditText mBodyField;
     private SearchableSpinner catSpinner;
     private FloatingActionButton mSubmitButton;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
             setContentView(R.layout.activity_new_post);
+
+            adView = findViewById(R.id.ad_view);
+
+            AdRequest ar = new AdRequest.Builder().addTestDevice("7921CB2EDB6508B48496A3EBC6187CAC").build();
+            adView.loadAd(ar);
+
             mStorageRef = FirebaseStorage.getInstance().getReference();
             mDatabase = FirebaseDatabase.getInstance().getReference();
             mIVpicture = findViewById(R.id.iv_piture);
@@ -208,6 +217,27 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -264,6 +294,9 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
         super.onPause();
         removeSearchableDialog();
     }
@@ -515,6 +548,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(NewPostActivity.this, R.string.loaded, Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(NewPostActivity.this, StartActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

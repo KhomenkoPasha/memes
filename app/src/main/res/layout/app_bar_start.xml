@@ -22,6 +22,7 @@
             android:minHeight="60dp"
             android:theme="@style/AppTheme.AppBarOverlay" />
 
+
         <RelativeLayout
             android:id="@+id/relLayStart"
             android:visibility="gone"
@@ -52,15 +53,6 @@
                 app:srcCompat="@drawable/ic_action_clear" />
         </RelativeLayout>
 
-        <View
-            android:id="@+id/viewLineTop"
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="#30000000" />
-
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -89,6 +81,17 @@
                 app:stl_underlineThickness="0dp" />
         </RelativeLayout>
 
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad_view_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            android:layout_marginBottom="6dp"
+            ads:adUnitId="ca-app-pub-7371958965084168/5856873947" />
+
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
@@ -97,6 +100,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/tabs"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_post"
@@ -110,6 +114,9 @@
         android:src="@drawable/ic_image_edit"
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right" />
+
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 
