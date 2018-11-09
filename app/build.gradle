@@ -6,9 +6,9 @@ android {
         applicationId "com.memes.khom.memsnews"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 11
+        versionCode 12
         multiDexEnabled true
-        versionName "1.1.8"
+        versionName "1.1.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,8 +64,9 @@ android {
         implementation 'com.google.firebase:firebase-database:16.0.4'
         implementation 'com.google.firebase:firebase-messaging:17.3.4'
         implementation 'com.google.firebase:firebase-storage:16.0.4'
-        implementation 'com.google.android.gms:play-services-ads:17.0.0'
+        implementation 'com.google.firebase:firebase-core:16.0.4'
 
+        implementation  group: 'com.google.firebase', name: 'firebase-ads', version: '17.0.0'
 
         implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 

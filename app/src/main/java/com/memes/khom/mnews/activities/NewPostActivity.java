@@ -25,7 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -95,7 +97,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
             adView = findViewById(R.id.ad_view);
 
-            AdRequest ar = new AdRequest.Builder().addTestDevice("7921CB2EDB6508B48496A3EBC6187CAC").build();
+            AdRequest ar = new AdRequest.Builder().addTestDevice("6EC851088930A5060EB4B112825D3241").build();
             adView.loadAd(ar);
 
             mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -106,6 +108,8 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             mBTNadaPicture.setOnClickListener(this);
             mTitleField = findViewById(R.id.field_title);
             mTitleField.setText(R.string.tag_symbol);
+            mTitleField.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
             mTitleField.setSelection(mTitleField.getText().length());
             mTitleField.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -130,6 +134,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             });
 
             catSpinner = findViewById(R.id.searchableSpinnerCat);
+
             MaterialFancyButton add_cat_button = findViewById(R.id.add_cat_button);
 
             catSpinner.setTitle(getString(R.string.select_cat));
@@ -137,6 +142,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             // catSpinner.setBackgroundColor(getColor(R.color.white));
 
             mBodyField = findViewById(R.id.field_body);
+            mBodyField.setImeOptions(EditorInfo.IME_ACTION_DONE);
             mSubmitButton = findViewById(R.id.fab_submit_post);
             mStorageRef = FirebaseStorage.getInstance().getReference();
             categRef = FirebaseDatabase.getInstance().getReference().child("categ");
@@ -268,6 +274,26 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         categRef.addValueEventListener(valueEventListener);
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(NewPostActivity.this, R.layout.item_sp, cats);
         catSpinner.setAdapter(arrayAdapter);
+
+
+        catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                View view = NewPostActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
 
     }
 

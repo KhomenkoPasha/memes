@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
@@ -13,21 +13,23 @@
         android:orientation="vertical"
         android:padding="4dp">
 
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content">
+            android:gravity="center_vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_gravity="center_vertical"
                 android:layout_alignParentTop="true"
-                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="6dp"
                 android:layout_toEndOf="@+id/post_author_photo"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
+
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -70,9 +72,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
+                        android:layout_marginLeft="6dp"
                         android:baselineAligned="false"
                         android:ellipsize="end"
-                        android:layout_marginLeft="6dp"
                         android:maxLines="1"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -98,10 +100,10 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:baselineAligned="false"
-                android:paddingBottom="10dp"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp"
                 android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
                 android:text="@string/more"
                 fancy:mfb_borderColor="#90FFFFFF"
                 fancy:mfb_borderWidth="1dp"
@@ -117,13 +119,16 @@
 
         <TextView
             android:id="@+id/post_body"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
             android:layout_marginRight="6dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center_horizontal"
-            android:textSize="12sp"
             android:textColor="@color/white"
+            android:textSize="12sp"
             tools:text="" />
 
         <ImageView
@@ -155,10 +160,10 @@
 
             <TextView
                 android:id="@+id/post_num_stars"
-                android:textSize="13sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:textSize="13sp"
                 tools:text="0" />
 
             <TextView
@@ -167,16 +172,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:gravity="center"
-                android:textSize="14sp"
-                android:text="@string/likes" />
+                android:text="@string/likes"
+                android:textSize="14sp" />
 
 
             <TextView
                 android:id="@+id/post_date"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:textSize="13sp" />
 
@@ -185,12 +190,12 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="6dp"
-                android:padding="4dp"
-                android:paddingRight="6dp"
                 android:layout_marginRight="6dp"
                 android:alpha=".90"
                 android:background="@drawable/bg_button_progress"
                 android:contentDescription="@string/likesImg"
+                android:padding="4dp"
+                android:paddingRight="6dp"
                 android:src="@drawable/ic_share_purp_24dp" />
 
             <com.github.abdularis.buttonprogress.DownloadButtonProgress
@@ -200,14 +205,14 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="16dp"
                 android:padding="4dp"
-                app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
-                app:idleBackgroundDrawable="@drawable/bg_button_progress"
-                app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
-                app:progressIndeterminateColor="#5C6BC0"
                 app:determinateBackgroundDrawable="@drawable/bg_button_progress"
-                app:progressDeterminateColor="#5C6BC0"
+                app:finishBackgroundDrawable="@drawable/bg_button_progress"
                 app:finishIconDrawable="@drawable/ic_done_black_24dp"
-                app:finishBackgroundDrawable="@drawable/bg_button_progress"/>
+                app:idleBackgroundDrawable="@drawable/bg_button_progress"
+                app:idleIconDrawable="@drawable/ic_cloud_download_black_24dp"
+                app:indeterminateBackgroundDrawable="@drawable/bg_button_progress"
+                app:progressDeterminateColor="#5C6BC0"
+                app:progressIndeterminateColor="#5C6BC0" />
 
         </LinearLayout>
 
@@ -218,36 +223,62 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:padding="4dp"
-        android:background="@color/white"
-        android:weightSum="1.0">
+        android:weightSum="1.0"
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="0dp"
+
+
+
+        <LinearLayout
+            android:id="@+id/comment_form2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.9">
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:weightSum="1.0">
 
-            <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
-                android:id="@+id/field_comment_text"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:hint="@string/write_comment"
-                android:maxLines="1"
-                android:singleLine="true" />
+                android:layout_weight="0.9">
 
-        </RelativeLayout>
+                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                    android:id="@+id/field_comment_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:hint="@string/write_comment"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </RelativeLayout>
 
 
-        <ImageView
-            android:id="@+id/button_post_comment"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="0.1"
-            android:src="@drawable/ic_action_send" />
+            <ImageView
+                android:id="@+id/button_post_comment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_action_send" />
 
+        </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad_view_start"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-7371958965084168/2156429946"
+            app:layout_anchor="@+id/container"
+            app:layout_anchorGravity="bottom" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -255,12 +286,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/comment_form"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/linearLayoutInfo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:background="@color/white"
         android:visibility="visible"
         tools:listitem="@layout/item_comment">
     </android.support.v7.widget.RecyclerView>
+
 
 </RelativeLayout>

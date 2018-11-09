@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.abdularis.buttonprogress.DownloadButtonProgress;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,6 +87,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private Uri uriPhoto;
     private int likeCount;
     private boolean likeActive;
+    private AdView adView;
+
 
     public RandomPostFragment() {
         // Required empty public constructor
@@ -102,6 +106,12 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_random_post, container, false);
+
+
+        adView = rootView.findViewById(R.id.ad_view_start);
+
+        AdRequest ar = new AdRequest.Builder().addTestDevice("17E7C600E7DAEDDA830D5901FF625D10").build();
+        adView.loadAd(ar);
 
         datePost = rootView.findViewById(R.id.post_date);
         post_author_photo = rootView.findViewById(R.id.post_author_photo);
@@ -152,7 +162,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
             mPostKey = "";
             mStorageRef = FirebaseStorage.getInstance().getReference();
             int a = 0;
-            int b = 400;
+            int b = 1000;
             int c = 10;
 
             int random = 1 + (int) (Math.random() * c);
@@ -362,8 +372,9 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
             case R.id.download:
 
+                /*
                 final int a = 0; // Начальное значение диапазона - "от"
-                final int b = 400; // Конечное значение диапазона - "до"
+                final int b = 1000; // Конечное значение диапазона - "до"
 
                 FirebaseDatabase.getInstance().getReference().child("posts")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -403,8 +414,8 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                             }
                         });
 
-
-          //      saveMemas();
+*/
+                saveMemas();
                 break;
 
             default:

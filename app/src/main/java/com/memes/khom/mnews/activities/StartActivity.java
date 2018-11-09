@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -77,6 +79,8 @@ public class StartActivity extends AppCompatActivity
     private EditText mSearchEditText;
     private boolean needFind = true;
     private AdView adView;
+    private InterstitialAd mInterstitialAd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +88,28 @@ public class StartActivity extends AppCompatActivity
         setContentView(R.layout.activity_start);
 
         try {
-            MobileAds.initialize(this, "ca-app-pub-7371958965084168~2541002975");
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+
             adView = findViewById(R.id.ad_view_start);
 
-            AdRequest ar = new AdRequest.Builder().build();
+            AdRequest ar = new AdRequest.Builder().addTestDevice("6EC851088930A5060EB4B112825D3241").build();
             adView.loadAd(ar);
+
+            mInterstitialAd = new InterstitialAd(this);
+            mInterstitialAd.setAdUnitId("ca-app-pub-7371958965084168/4851833907");
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    // Load the next interstitial.
+                    mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                }
+
+            });
+
+
+            Toast.makeText(this, "Кликнув по рекламе ВЫ помогаете улучшить приложение и призываете новые МЕМЕСЫ =)", Toast.LENGTH_LONG).show();
 
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -134,6 +155,7 @@ public class StartActivity extends AppCompatActivity
             mSearchView = findViewById(R.id.searchView);
             initSearcher();
             fillSpinnerCat();
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -408,6 +430,14 @@ public class StartActivity extends AppCompatActivity
                 startActivity(about);
                 break;
 
+            case R.id.nav_ads:
+
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("TAG", "The interstitial wasn't loaded yet.");
+                }
+                break;
 
             case R.id.nav_draw:
                 Intent nav_draw = new Intent(StartActivity.this, DrawActivity.class);
@@ -543,6 +573,7 @@ public class StartActivity extends AppCompatActivity
                     fab_new_post.setVisibility(View.GONE);
                   //  viewLineTop.setVisibility(View.GONE);
                     mSearchEditText.setEnabled(false);
+                    adView.setVisibility(View.INVISIBLE);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Рандомный)");
                     break;
@@ -550,6 +581,7 @@ public class StartActivity extends AppCompatActivity
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     //viewLineTop.setVisibility(View.VISIBLE);
+                    adView.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(true);
                     mSearchView.setClickable(true);
                     mSearchView.setHint(R.string.find_by_tag);
@@ -561,6 +593,7 @@ public class StartActivity extends AppCompatActivity
                  //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(true);
                     mSearchView.setClickable(true);
+                    adView.setVisibility(View.VISIBLE);
                     mSearchView.setHint(R.string.find_by_tag);
                     // needFind = false;
                     // catSpinner.setSelection(0);
@@ -571,6 +604,7 @@ public class StartActivity extends AppCompatActivity
                     fab_new_post.setVisibility(View.VISIBLE);
                  //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
+                    adView.setVisibility(View.VISIBLE);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Топчик 10 сегодня");
                     // needFind = false;
@@ -581,6 +615,7 @@ public class StartActivity extends AppCompatActivity
                     fab_new_post.setVisibility(View.VISIBLE);
                   //  viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
+                    adView.setVisibility(View.VISIBLE);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Все мои)");
                     // needFind = false;
@@ -589,6 +624,7 @@ public class StartActivity extends AppCompatActivity
                 case 5:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
+                    adView.setVisibility(View.VISIBLE);
                  //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
