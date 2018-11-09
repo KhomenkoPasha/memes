@@ -101,7 +101,7 @@
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom"
         android:layout_marginBottom="13dp"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+        ads:adUnitId="ca-app-pub-7371958965084168/1655011300" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_post"

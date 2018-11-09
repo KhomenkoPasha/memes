@@ -6,9 +6,9 @@ android {
         applicationId "com.memes.khom.memsnews"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 12
+        versionCode 15
         multiDexEnabled true
-        versionName "1.1.9"
+        versionName "1.2.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
