@@ -1,5 +1,8 @@
 package com.mrgames13.jimdo.drawingactivity.HelpClasses;
 
+import static android.graphics.PixelFormat.OPAQUE;
+import static android.graphics.PixelFormat.TRANSLUCENT;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -23,10 +26,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.mrgames13.jimdo.drawingactivity.R.styleable;
 
@@ -82,13 +86,13 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             this.setScaleType(sScaleTypeArray[index]);
         }
 
-        this.mLeftTopCornerRadius = (float)a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_left_top_corner_radius, 0);
-        this.mRightTopCornerRadius = (float)a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_right_top_corner_radius, 0);
-        this.mLeftBottomCornerRadius = (float)a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_left_bottom_corner_radius, 0);
-        this.mRightBottomCornerRadius = (float)a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_right_bottom_corner_radius, 0);
+        this.mLeftTopCornerRadius = (float) a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_left_top_corner_radius, 0);
+        this.mRightTopCornerRadius = (float) a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_right_top_corner_radius, 0);
+        this.mLeftBottomCornerRadius = (float) a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_left_bottom_corner_radius, 0);
+        this.mRightBottomCornerRadius = (float) a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_right_bottom_corner_radius, 0);
         if (this.mLeftTopCornerRadius >= 0.0F && this.mRightTopCornerRadius >= 0.0F && this.mLeftBottomCornerRadius >= 0.0F && this.mRightBottomCornerRadius >= 0.0F) {
             this.mRadii = new float[]{this.mLeftTopCornerRadius, this.mLeftTopCornerRadius, this.mRightTopCornerRadius, this.mRightTopCornerRadius, this.mRightBottomCornerRadius, this.mRightBottomCornerRadius, this.mLeftBottomCornerRadius, this.mLeftBottomCornerRadius};
-            this.mBorderWidth = (float)a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_border_width, 0);
+            this.mBorderWidth = (float) a.getDimensionPixelSize(styleable.SelectableRoundedImageView_sriv_border_width, 0);
             if (this.mBorderWidth < 0.0F) {
                 throw new IllegalArgumentException("border width cannot be negative.");
             } else {
@@ -171,11 +175,11 @@ public class SelectableRoundedImageView extends AppCompatImageView {
 
     private void updateDrawable() {
         if (this.mDrawable != null) {
-            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable)this.mDrawable).setScaleType(this.mScaleType);
-            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable)this.mDrawable).setCornerRadii(this.mRadii);
-            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable)this.mDrawable).setBorderWidth(this.mBorderWidth);
-            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable)this.mDrawable).setBorderColor(this.mBorderColor);
-            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable)this.mDrawable).setOval(this.isOval);
+            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable) this.mDrawable).setScaleType(this.mScaleType);
+            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable) this.mDrawable).setCornerRadii(this.mRadii);
+            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable) this.mDrawable).setBorderWidth(this.mBorderWidth);
+            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable) this.mDrawable).setBorderColor(this.mBorderColor);
+            ((SelectableRoundedImageView.SelectableRoundedCornerDrawable) this.mDrawable).setOval(this.isOval);
         }
     }
 
@@ -246,22 +250,22 @@ public class SelectableRoundedImageView extends AppCompatImageView {
     static class SelectableRoundedCornerDrawable extends Drawable {
         private static final String TAG = "SelectableRoundedCornerDrawable";
         private static final int DEFAULT_BORDER_COLOR = -16777216;
-        private RectF mBounds = new RectF();
-        private RectF mBorderBounds = new RectF();
+        private final RectF mBounds = new RectF();
+        private final RectF mBorderBounds = new RectF();
         private final RectF mBitmapRect = new RectF();
         private final int mBitmapWidth;
         private final int mBitmapHeight;
         private final Paint mBitmapPaint;
         private final Paint mBorderPaint;
-        private BitmapShader mBitmapShader;
-        private float[] mRadii = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-        private float[] mBorderRadii = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+        private final BitmapShader mBitmapShader;
+        private final float[] mRadii = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+        private final float[] mBorderRadii = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
         private boolean mOval = false;
         private float mBorderWidth = 0.0F;
         private ColorStateList mBorderColor = ColorStateList.valueOf(-16777216);
         private ImageView.ScaleType mScaleType;
-        private Path mPath;
-        private Bitmap mBitmap;
+        private final Path mPath;
+        private final Bitmap mBitmap;
         private boolean mBoundsConfigured;
 
         public SelectableRoundedCornerDrawable(Bitmap bitmap, Resources r) {
@@ -277,7 +281,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
                 this.mBitmapWidth = this.mBitmapHeight = -1;
             }
 
-            this.mBitmapRect.set(0.0F, 0.0F, (float)this.mBitmapWidth, (float)this.mBitmapHeight);
+            this.mBitmapRect.set(0.0F, 0.0F, (float) this.mBitmapWidth, (float) this.mBitmapHeight);
             this.mBitmapPaint = new Paint(1);
             this.mBitmapPaint.setStyle(Style.FILL);
             this.mBitmapPaint.setShader(this.mBitmapShader);
@@ -298,10 +302,10 @@ public class SelectableRoundedImageView extends AppCompatImageView {
                 }
 
                 if (drawable instanceof LayerDrawable) {
-                    LayerDrawable ld = (LayerDrawable)drawable;
+                    LayerDrawable ld = (LayerDrawable) drawable;
                     int num = ld.getNumberOfLayers();
 
-                    for(int i = 0; i < num; ++i) {
+                    for (int i = 0; i < num; ++i) {
                         Drawable d = ld.getDrawable(i);
                         ld.setDrawableByLayerId(ld.getId(i), fromDrawable(d, r));
                     }
@@ -324,7 +328,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             if (drawable == null) {
                 return null;
             } else if (drawable instanceof BitmapDrawable) {
-                return ((BitmapDrawable)drawable).getBitmap();
+                return ((BitmapDrawable) drawable).getBitmap();
             } else {
                 int width = Math.max(drawable.getIntrinsicWidth(), 2);
                 int height = Math.max(drawable.getIntrinsicHeight(), 2);
@@ -387,7 +391,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             float[] values = new float[9];
             m.getValues(values);
 
-            for(int i = 0; i < this.mRadii.length; ++i) {
+            for (int i = 0; i < this.mRadii.length; ++i) {
                 this.mRadii[i] /= values[0];
             }
 
@@ -428,7 +432,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
         }
 
         private void setBorderRadii() {
-            for(int i = 0; i < this.mRadii.length; ++i) {
+            for (int i = 0; i < this.mRadii.length; ++i) {
                 if (this.mRadii[i] > 0.0F) {
                     this.mBorderRadii[i] = this.mRadii[i];
                     this.mRadii[i] -= this.mBorderWidth;
@@ -481,16 +485,15 @@ public class SelectableRoundedImageView extends AppCompatImageView {
                 if (radii.length != 8) {
                     throw new ArrayIndexOutOfBoundsException("radii[] needs 8 values");
                 } else {
-                    for(int i = 0; i < radii.length; ++i) {
-                        this.mRadii[i] = radii[i];
-                    }
+                    System.arraycopy(radii, 0, this.mRadii, 0, radii.length);
 
                 }
             }
         }
 
         public int getOpacity() {
-            return this.mBitmap != null && !this.mBitmap.hasAlpha() && this.mBitmapPaint.getAlpha() >= 255 ? -1 : -3;
+            return this.mBitmap != null && !this.mBitmap.hasAlpha()
+                    && this.mBitmapPaint.getAlpha() >= 255 ? OPAQUE : TRANSLUCENT;
         }
 
         public void setAlpha(int alpha) {

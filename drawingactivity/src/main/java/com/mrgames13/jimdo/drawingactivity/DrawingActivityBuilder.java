@@ -11,8 +11,8 @@ public class DrawingActivityBuilder {
     public static final String DEFAULT_UTILITY = "DefaultUtility";
 
     //Variables as objects
-    private Activity context;
-    private Intent intent;
+    private final Activity context;
+    private final Intent intent;
 
     //Variables
 

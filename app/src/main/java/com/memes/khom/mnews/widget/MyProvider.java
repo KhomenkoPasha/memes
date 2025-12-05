@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
 
@@ -56,7 +56,7 @@ public class MyProvider extends AppWidgetProvider {
                     context.getPackageName(), getClass().getName());
             AppWidgetManager appWidgetManager = AppWidgetManager
                     .getInstance(context);
-            int ids[] = appWidgetManager.getAppWidgetIds(thisAppWidget);
+            int[] ids = appWidgetManager.getAppWidgetIds(thisAppWidget);
             for (int appWidgetID : ids) {
                 updateWidget(context, appWidgetManager, appWidgetID);
             }

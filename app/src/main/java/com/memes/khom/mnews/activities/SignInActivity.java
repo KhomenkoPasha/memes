@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.User;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
 

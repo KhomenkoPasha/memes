@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.GlideApp;
 
 

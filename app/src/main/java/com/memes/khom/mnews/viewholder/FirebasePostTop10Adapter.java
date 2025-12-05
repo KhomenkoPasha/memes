@@ -9,15 +9,16 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,7 +35,7 @@ import com.krishna.fileloader.FileLoader;
 import com.krishna.fileloader.listener.FileRequestListener;
 import com.krishna.fileloader.pojo.FileResponse;
 import com.krishna.fileloader.request.FileLoadRequest;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.activities.PictureActivity;
 import com.memes.khom.mnews.activities.PostDetailActivity;
 import com.memes.khom.mnews.models.GlideApp;
@@ -48,12 +49,12 @@ import java.util.Objects;
 
 public class FirebasePostTop10Adapter extends RecyclerView.Adapter<PosTopViewHolder> {
 
-    private LayoutInflater inflater;
-    private LinkedList<Post> posts = new LinkedList<>();
-    private LinkedList<String> keys = new LinkedList<>();
-    private Context cnx;
-    private StorageReference mStorageRef;
-    private DatabaseReference mDatabase;
+    private final LayoutInflater inflater;
+    private final LinkedList<Post> posts = new LinkedList<>();
+    private final LinkedList<String> keys = new LinkedList<>();
+    private final Context cnx;
+    private final StorageReference mStorageRef;
+    private final DatabaseReference mDatabase;
 
     public FirebasePostTop10Adapter(Context context) {
         inflater = LayoutInflater.from(context);

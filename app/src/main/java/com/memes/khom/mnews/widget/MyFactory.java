@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;

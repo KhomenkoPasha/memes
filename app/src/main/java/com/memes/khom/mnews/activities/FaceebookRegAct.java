@@ -15,7 +15,7 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 
 
 public class FaceebookRegAct extends AppCompatActivity {

@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.viewholder.EndlessRecyclerViewScrollListener;
 import com.memes.khom.mnews.viewholder.FirebasePostAdapter;
@@ -169,7 +169,7 @@ public abstract class PostListFragment extends Fragment  {
 
         long create_date = fbadapt.getPosts().get(fbadapt.getItemCount() - 1).create_date;
         Query imagesQuery = FirebaseDatabase.getInstance().getReference().child("posts")
-                .orderByChild("create_date").startAt(create_date - page * 106400000).endAt(create_date)
+                .orderByChild("create_date").startAt(create_date - page * 106400000L).endAt(create_date)
                 .limitToLast(page * 7);
 
         ChildEventListener childEventListener = new ChildEventListener() {

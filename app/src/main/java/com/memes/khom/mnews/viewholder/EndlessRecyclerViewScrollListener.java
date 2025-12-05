@@ -1,11 +1,12 @@
 package com.memes.khom.mnews.viewholder;
 
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
@@ -22,11 +23,11 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private int startingPageIndex = 0;
 
     // Sets the  footerViewType
-    private int defaultNoFooterViewType = -1;
+    private final int defaultNoFooterViewType = -1;
     private int footerViewType = -1;
 
 
-    private String mTag = "scroll-listener";
+    private final String mTag = "scroll-listener";
 
 
     RecyclerView.LayoutManager mLayoutManager;

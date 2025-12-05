@@ -11,12 +11,12 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,10 +30,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.raed.drawingview.BrushView;
-import com.raed.drawingview.DrawingView;
-import com.raed.drawingview.brushes.BrushSettings;
-import com.raed.drawingview.brushes.Brushes;
+import com.raed.rasmview.RasmContext;
+import com.raed.rasmview.RasmView;
+import com.raed.rasmview.brushtool.model.BrushConfig;
+import com.raed.rasmview.state.RasmState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.margaritov.preference.colorpicker.ColorPickerDialog;
@@ -51,6 +51,8 @@ import java.util.Objects;
 
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class DrawingActivity extends AppCompatActivity {
 
@@ -66,15 +68,19 @@ public class DrawingActivity extends AppCompatActivity {
 
     //Variables as objects
     private Resources res;
-    private Toolbar toolbar;
     private Menu menu;
     private SlidingUpPanelLayout slidingUpPanelLayout;
-    private DrawingView drawing_view;
+    private RasmView drawing_view;
+    private RasmContext rasmContext;
+    private RasmState rasmState;
+    private BrushConfig brushConfig;
+
+    private BrushPreviewView brush_view;
+
     private ImageView color_preview;
     private TextView current_utility;
     private TextView current_size;
     private ImageView arrow;
-    private BrushView brush_view;
     private ImageView color_preview_slide;
     private Button choose_color;
     private SeekBar size;
@@ -109,11 +115,14 @@ public class DrawingActivity extends AppCompatActivity {
         res = getResources();
 
         //Initialize Toolbar
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle((i.hasExtra(DrawingActivityBuilder.TITLE) && !i.getStringExtra(DrawingActivityBuilder.TITLE).equals("")) ? i.getStringExtra(DrawingActivityBuilder.TITLE) : getString(R.string.drawing));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle((i.hasExtra(DrawingActivityBuilder.TITLE)
+                && !i.getStringExtra(DrawingActivityBuilder.TITLE).isEmpty())
+                ? i.getStringExtra(DrawingActivityBuilder.TITLE) : getString(R.string.drawing));
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        if(Build.VERSION.SDK_INT >= 21) getWindow().setStatusBarColor(darkenColor(res.getColor(R.color.colorPrimary)));
+        if (Build.VERSION.SDK_INT >= 21)
+            getWindow().setStatusBarColor(darkenColor(res.getColor(R.color.colorPrimary)));
 
         //Initialize SlidingUpPanel
         slidingUpPanelLayout = findViewById(R.id.slidingLayout);
@@ -127,22 +136,23 @@ public class DrawingActivity extends AppCompatActivity {
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {}
         });
 
-        //Initialize DrawingView
+        //Initialize RasmView
         drawing_view = findViewById(R.id.drawing_view);
-        drawing_view.setUndoAndRedoEnable(true);
-        drawing_view.getBrushSettings().setSelectedBrushSize(0.25f);
-        drawing_view.setOnDrawListener(new DrawingView.OnDrawListener() {
+        rasmContext = drawing_view.getRasmContext();
+        rasmState = rasmContext.getState();
+        brushConfig = rasmContext.getBrushConfig();
+
+        // размер по умолчанию 25%
+        brushConfig.setSize(0.25f);
+
+        // слушатель состояния для undo/redo/done
+        rasmState.addOnStateChangedListener(new Function1<RasmState, Unit>() {
             @Override
-            public void onDraw() {
-                menu.findItem(R.id.action_undo).setEnabled(true);
-                menu.findItem(R.id.action_undo).getIcon().setAlpha(255);
-                menu.findItem(R.id.action_redo).setEnabled(false);
-                menu.findItem(R.id.action_redo).getIcon().setAlpha(130);
-                menu.findItem(R.id.action_done).setEnabled(true);
-                menu.findItem(R.id.action_done).getIcon().setAlpha(255);
+            public Unit invoke(RasmState state) {
+                updateMenuFromState(state);
+                return Unit.INSTANCE;
             }
         });
-        drawing_view.clear();
 
         //Initialize Preview
         color_preview = findViewById(R.id.color_preview);
@@ -154,15 +164,17 @@ public class DrawingActivity extends AppCompatActivity {
         arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                slidingUpPanelLayout.setPanelState(slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED ? SlidingUpPanelLayout.PanelState.COLLAPSED : SlidingUpPanelLayout.PanelState.EXPANDED);
+                slidingUpPanelLayout.setPanelState(
+                        slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED
+                                ? SlidingUpPanelLayout.PanelState.COLLAPSED
+                                : SlidingUpPanelLayout.PanelState.EXPANDED
+                );
             }
         });
 
-        //Initialize BrushView
+        //Initialize BrushPreviewView
         brush_view = findViewById(R.id.brush_view);
-        brush_view.setDrawingView(drawing_view);
-
-        final BrushSettings settings = drawing_view.getBrushSettings();
+        brush_view.setRasmContext(rasmContext);
 
         color_preview_slide = findViewById(R.id.color_preview_slide);
         choose_color = findViewById(R.id.choose_color);
@@ -178,18 +190,24 @@ public class DrawingActivity extends AppCompatActivity {
                         current_color = color;
                         color_preview.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
                         color_preview_slide.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
-                        settings.setColor(color);
+                        rasmContext.setBrushColor(color);
+                        brush_view.invalidate();
                     }
                 });
                 color_picker.show();
             }
         });
+
         size = findViewById(R.id.size);
         size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                settings.setSelectedBrushSize(i / 100.0f);
-                current_size.setText(res.getString(R.string.current_size_) + " " + String.valueOf(i) + "%");
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float s = progress / 100.0f;
+                try {
+                    brushConfig.setSize(s);
+                } catch (IllegalArgumentException ignored) {}
+                current_size.setText(res.getString(R.string.current_size_) + " " + progress + "%");
+                brush_view.invalidate();
             }
 
             @Override
@@ -203,62 +221,77 @@ public class DrawingActivity extends AppCompatActivity {
         pencil.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    settings.setSelectedBrush(Brushes.PENCIL);
-                    settings.setSelectedBrushSize(size.getProgress() / 100.0f);
+                if (b) {
+                    applyUtility(UTILITIY_PENCIL);
                     current_utility.setText(getString(R.string.pencil));
                 }
             }
         });
+
         eraser = findViewById(R.id.utility_eraser);
         eraser.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    settings.setSelectedBrush(Brushes.ERASER);
-                    settings.setSelectedBrushSize(size.getProgress() / 100.0f);
+                if (b) {
+                    applyUtility(UTILITIY_ERASER);
                     current_utility.setText(getString(R.string.eraser));
                 }
             }
         });
+
         airbrush = findViewById(R.id.utility_airbrush);
         airbrush.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    settings.setSelectedBrush(Brushes.AIR_BRUSH);
-                    settings.setSelectedBrushSize(size.getProgress() / 100.0f);
+                if (b) {
+                    applyUtility(UTILITIY_AIR_BRUSH);
                     current_utility.setText(getString(R.string.air_brush));
                 }
             }
         });
+
         calligraphy = findViewById(R.id.utility_calligraphy);
         calligraphy.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    settings.setSelectedBrush(Brushes.CALLIGRAPHY);
-                    settings.setSelectedBrushSize(size.getProgress() / 100.0f);
+                if (b) {
+                    applyUtility(UTILITIY_CALLIGRAPHY);
                     current_utility.setText(getString(R.string.calligraphy));
                 }
             }
         });
+
         pen = findViewById(R.id.utility_pen);
         pen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    settings.setSelectedBrush(Brushes.PEN);
-                    settings.setSelectedBrushSize(size.getProgress() / 100.0f);
+                if (b) {
+                    applyUtility(UTILITIY_PEN);
                     current_utility.setText(getString(R.string.pen));
                 }
             }
         });
 
-        if(getIntent().getIntExtra(DrawingActivityBuilder.DEFAULT_UTILITY, DrawingActivity.UTILITIY_PENCIL) == DrawingActivity.UTILITIY_ERASER) eraser.setChecked(true);
-        if(getIntent().getIntExtra(DrawingActivityBuilder.DEFAULT_UTILITY, DrawingActivity.UTILITIY_PENCIL) == DrawingActivity.UTILITIY_AIR_BRUSH) airbrush.setChecked(true);
-        if(getIntent().getIntExtra(DrawingActivityBuilder.DEFAULT_UTILITY, DrawingActivity.UTILITIY_PENCIL) == DrawingActivity.UTILITIY_CALLIGRAPHY) calligraphy.setChecked(true);
-        if(getIntent().getIntExtra(DrawingActivityBuilder.DEFAULT_UTILITY, DrawingActivity.UTILITIY_PENCIL) == DrawingActivity.UTILITIY_PEN) pen.setChecked(true);
+        // установить дефолтный инструмент
+        int defaultUtility = getIntent().getIntExtra(DrawingActivityBuilder.DEFAULT_UTILITY, DrawingActivity.UTILITIY_PENCIL);
+        switch (defaultUtility) {
+            case UTILITIY_ERASER:
+                eraser.setChecked(true);
+                break;
+            case UTILITIY_AIR_BRUSH:
+                airbrush.setChecked(true);
+                break;
+            case UTILITIY_CALLIGRAPHY:
+                calligraphy.setChecked(true);
+                break;
+            case UTILITIY_PEN:
+                pen.setChecked(true);
+                break;
+            case UTILITIY_PENCIL:
+            default:
+                pencil.setChecked(true);
+                break;
+        }
 
         //Background
         background_color = findViewById(R.id.background_color);
@@ -292,7 +325,7 @@ public class DrawingActivity extends AppCompatActivity {
                     public void onColorChanged(int color) {
                         current_background_color = color;
                         background_color_preview.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
-                        drawing_view.setDrawingBackground(color);
+                        rasmContext.setBackgroundColor(color);
                         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                     }
                 });
@@ -320,14 +353,14 @@ public class DrawingActivity extends AppCompatActivity {
         });
 
         //Show toast
-        if(i.hasExtra(DrawingActivityBuilder.TOAST_ENABLED)) {
-            if(i.getBooleanExtra(DrawingActivityBuilder.TOAST_ENABLED, true)) {
-                Toast toast = Toast.makeText(this,getString(R.string.drawing_instructions), Toast.LENGTH_LONG);
+        if (i.hasExtra(DrawingActivityBuilder.TOAST_ENABLED)) {
+            if (i.getBooleanExtra(DrawingActivityBuilder.TOAST_ENABLED, true)) {
+                Toast toast = Toast.makeText(this, getString(R.string.drawing_instructions), Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }
         } else {
-            Toast toast = Toast.makeText(this,getString(R.string.drawing_instructions), Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, getString(R.string.drawing_instructions), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
@@ -337,22 +370,46 @@ public class DrawingActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_drawing, menu);
-        menu.findItem(R.id.action_undo).getIcon().setAlpha(130);
-        menu.findItem(R.id.action_redo).getIcon().setAlpha(130);
-        menu.findItem(R.id.action_done).getIcon().setAlpha(130);
+        // инициализируем иконки по состоянию
+        updateMenuFromState(rasmState);
         return true;
     }
 
+    private void updateMenuFromState(RasmState state) {
+        if (menu == null || state == null) return;
+
+        boolean canUndo = state.canCallUndo();
+        boolean canRedo = state.canCallRedo();
+
+        MenuItem undo = menu.findItem(R.id.action_undo);
+        MenuItem redo = menu.findItem(R.id.action_redo);
+        MenuItem done = menu.findItem(R.id.action_done);
+
+        if (undo != null && undo.getIcon() != null) {
+            undo.setEnabled(canUndo);
+            undo.getIcon().setAlpha(canUndo ? 255 : 130);
+        }
+        if (redo != null && redo.getIcon() != null) {
+            redo.setEnabled(canRedo);
+            redo.getIcon().setAlpha(canRedo ? 255 : 130);
+        }
+        // считаем, что "есть рисунок" == можно undo
+        if (done != null && done.getIcon() != null) {
+            done.setEnabled(canUndo);
+            done.getIcon().setAlpha(canUndo ? 255 : 130);
+        }
+    }
+
     /*
-   File storageDir -  абсолютный путь к каталогу конкретного приложения на
-   основном общем /внешнем устройстве хранения, где приложение может размещать
-   файлы кеша, которыми он владеет.
-  */
+     File storageDir -  абсолютный путь к каталогу конкретного приложения на
+     основном общем /внешнем устройстве хранения, где приложение может размещать
+     файлы кеша, которыми он владеет.
+    */
     public static File createTempImageFile(File storageDir) throws IOException {
 
         // Генерируем имя файла
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());//получаем время
-        String imageFileName = "photo_" + timeStamp;//состовляем имя файла
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "photo_" + timeStamp;
 
         //Создаём файл
         return File.createTempFile(
@@ -367,8 +424,8 @@ public class DrawingActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finishWarning();
-        } else if(id == R.id.action_done) {
-            Bitmap b = drawing_view.exportDrawing();
+        } else if (id == R.id.action_done) {
+            Bitmap b = rasmContext.exportRasm();
             try {
                 File file = createTempImageFile(getExternalCacheDir());
 
@@ -383,22 +440,14 @@ public class DrawingActivity extends AppCompatActivity {
             } catch (Exception e) {}
 
             finish();
-        } else if(id == R.id.action_undo) {
-            drawing_view.undo();
-            menu.findItem(R.id.action_undo).setEnabled(!drawing_view.isUndoStackEmpty());
-            menu.findItem(R.id.action_undo).getIcon().setAlpha(drawing_view.isUndoStackEmpty() ? 130 : 255);
-            menu.findItem(R.id.action_redo).setEnabled(!drawing_view.isRedoStackEmpty());
-            menu.findItem(R.id.action_redo).getIcon().setAlpha(drawing_view.isRedoStackEmpty() ? 130 : 255);
-            menu.findItem(R.id.action_done).setEnabled(!drawing_view.isUndoStackEmpty());
-            menu.findItem(R.id.action_done).getIcon().setAlpha(drawing_view.isUndoStackEmpty() ? 130 : 255);
-        } else if(id == R.id.action_redo) {
-            drawing_view.redo();
-            menu.findItem(R.id.action_undo).setEnabled(!drawing_view.isUndoStackEmpty());
-            menu.findItem(R.id.action_undo).getIcon().setAlpha(drawing_view.isUndoStackEmpty() ? 130 : 255);
-            menu.findItem(R.id.action_redo).setEnabled(!drawing_view.isRedoStackEmpty());
-            menu.findItem(R.id.action_redo).getIcon().setAlpha(drawing_view.isRedoStackEmpty() ? 130 : 255);
-            menu.findItem(R.id.action_done).setEnabled(!drawing_view.isUndoStackEmpty());
-            menu.findItem(R.id.action_done).getIcon().setAlpha(drawing_view.isUndoStackEmpty() ? 130 : 255);
+        } else if (id == R.id.action_undo) {
+            try {
+                rasmState.undo();
+            } catch (IllegalStateException ignored) {}
+        } else if (id == R.id.action_redo) {
+            try {
+                rasmState.redo();
+            } catch (IllegalStateException ignored) {}
         }
         return super.onOptionsItemSelected(item);
     }
@@ -406,7 +455,8 @@ public class DrawingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.DRAGGING) {
+            if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED
+                    || slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.DRAGGING) {
                 slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             } else {
                 finishWarning();
@@ -424,13 +474,7 @@ public class DrawingActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        drawing_view.clear();
-                        menu.findItem(R.id.action_undo).setEnabled(false);
-                        menu.findItem(R.id.action_undo).getIcon().setAlpha(130);
-                        menu.findItem(R.id.action_redo).setEnabled(false);
-                        menu.findItem(R.id.action_redo).getIcon().setAlpha(130);
-                        menu.findItem(R.id.action_done).setEnabled(false);
-                        menu.findItem(R.id.action_done).getIcon().setAlpha(130);
+                        rasmContext.clear();
                         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                     }
                 })
@@ -447,7 +491,7 @@ public class DrawingActivity extends AppCompatActivity {
     }
 
     private void finishWarning() {
-        if(!drawing_view.isUndoStackEmpty()) {
+        if (rasmState != null && rasmState.canCallUndo()) {
             if (!pressedOnce) {
                 pressedOnce = true;
                 Toast.makeText(DrawingActivity.this, R.string.press_again_to_discard_drawing, Toast.LENGTH_SHORT).show();
@@ -469,7 +513,7 @@ public class DrawingActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == FilePickerConst.REQUEST_CODE_PHOTO && resultCode == RESULT_OK && data != null) {
+        if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO && resultCode == RESULT_OK && data != null) {
             final ArrayList<String> paths = data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA);
             final Bitmap b = loadImageFromPath(paths.get(0));
 
@@ -477,36 +521,26 @@ public class DrawingActivity extends AppCompatActivity {
                     .setTitle(R.string.drawing)
                     .setMessage(R.string.warning_background_image)
                     .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            drawing_view.setBackgroundImage(b);
-                            background_image_preview.setImageBitmap(b);
-
-                            menu.findItem(R.id.action_undo).setEnabled(false);
-                            menu.findItem(R.id.action_undo).getIcon().setAlpha(130);
-                            menu.findItem(R.id.action_redo).setEnabled(false);
-                            menu.findItem(R.id.action_redo).getIcon().setAlpha(130);
-                            menu.findItem(R.id.action_done).setEnabled(false);
-                            menu.findItem(R.id.action_done).getIcon().setAlpha(130);
-
-                            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                        }
+                    .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                        rasmContext.setRasm(b);
+                        drawing_view.resetTransformation();
+                        background_image_preview.setImageBitmap(b);
+                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                     })
                     .create();
             d.show();
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQ_WRITE_EXTERNAL_STORAGE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) chooseBackgroundImage();
+        if (requestCode == REQ_WRITE_EXTERNAL_STORAGE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            chooseBackgroundImage();
     }
 
     private Bitmap loadImageFromPath(String path) {
         Bitmap b = null;
-        try{
+        try {
             InputStream in = new FileInputStream(path);
             b = BitmapFactory.decodeStream(in);
         } catch (Exception e) {}
@@ -522,5 +556,52 @@ public class DrawingActivity extends AppCompatActivity {
 
     public static DrawingActivity getInstance() {
         return new DrawingActivity();
+    }
+
+    /**
+     * Настройка параметров кисти под выбранный "инструмент"
+     */
+    private void applyUtility(int utility) {
+        float sizeValue = size != null ? size.getProgress() / 100.0f : 0.25f;
+
+        try {
+            brushConfig.setSize(sizeValue);
+        } catch (IllegalArgumentException ignored) {}
+
+        switch (utility) {
+            case UTILITIY_PENCIL:
+                brushConfig.setEraser(false);
+                brushConfig.setFlow(1f);
+                brushConfig.setOpacity(1f);
+                brushConfig.setSpacing(0f);
+                break;
+            case UTILITIY_ERASER:
+                brushConfig.setEraser(true);
+                brushConfig.setFlow(1f);
+                brushConfig.setOpacity(1f);
+                brushConfig.setSpacing(0f);
+                break;
+            case UTILITIY_AIR_BRUSH:
+                brushConfig.setEraser(false);
+                brushConfig.setFlow(0.3f);
+                brushConfig.setOpacity(0.5f);
+                brushConfig.setSpacing(0.2f);
+                break;
+            case UTILITIY_CALLIGRAPHY:
+                brushConfig.setEraser(false);
+                brushConfig.setFlow(1f);
+                brushConfig.setOpacity(1f);
+                brushConfig.setSpacing(0.05f);
+                break;
+            case UTILITIY_PEN:
+            default:
+                brushConfig.setEraser(false);
+                brushConfig.setFlow(1f);
+                brushConfig.setOpacity(1f);
+                brushConfig.setSpacing(0f);
+                break;
+        }
+
+        brush_view.invalidate();
     }
 }

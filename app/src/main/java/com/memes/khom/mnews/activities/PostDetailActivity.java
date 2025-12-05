@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,6 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -30,7 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.models.Post;
@@ -316,11 +317,11 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
 
-        private Context mContext;
-        private DatabaseReference mDatabaseReference;
-        private ChildEventListener mChildEventListener;
-        private List<String> mCommentIds = new ArrayList<>();
-        private List<Comment> mComments = new ArrayList<>();
+        private final Context mContext;
+        private final DatabaseReference mDatabaseReference;
+        private final ChildEventListener mChildEventListener;
+        private final List<String> mCommentIds = new ArrayList<>();
+        private final List<Comment> mComments = new ArrayList<>();
 
 
         CommentAdapter(final Context context, DatabaseReference ref) {

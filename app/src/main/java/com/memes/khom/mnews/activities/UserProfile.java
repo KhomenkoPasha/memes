@@ -8,11 +8,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.GlideApp;
 import com.memes.khom.mnews.utils.ImageUtils;
 import com.rilixtech.materialfancybutton.MaterialFancyButton;
@@ -47,6 +42,11 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.memes.khom.mnews.utils.ImageUtils.getRealPathFromURI;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 
 public class UserProfile extends AppCompatActivity {

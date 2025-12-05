@@ -9,7 +9,7 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 
 
 public class YouToubeActivity extends YouTubeBaseActivity implements

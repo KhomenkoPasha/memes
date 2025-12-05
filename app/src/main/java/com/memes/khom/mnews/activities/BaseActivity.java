@@ -2,10 +2,11 @@ package com.memes.khom.mnews.activities;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 
 import java.util.Objects;
 

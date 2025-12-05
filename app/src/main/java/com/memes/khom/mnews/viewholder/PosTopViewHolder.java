@@ -1,16 +1,17 @@
 package com.memes.khom.mnews.viewholder;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.google.android.youtube.player.YouTubeThumbnailView;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.Post;
 import com.memes.khom.mnews.utils.Convert;
 
@@ -19,12 +20,12 @@ import java.util.Calendar;
 
 public class PosTopViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView titleView;
-    private TextView authorView;
+    private final TextView titleView;
+    private final TextView authorView;
     TextView numStarsView;
-    private TextView bodyView;
-    private TextView post_date;
-    private TextView categ;
+    private final TextView bodyView;
+    private final TextView post_date;
+    private final TextView categ;
     public TextView post_rate;
     public LinearLayout comments_lay;
     public ImageView iv_piture;

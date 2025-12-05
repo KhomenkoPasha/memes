@@ -4,7 +4,7 @@ package com.memes.khom.mnews.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

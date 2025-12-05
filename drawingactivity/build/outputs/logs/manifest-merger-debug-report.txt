@@ -1,0 +1,29 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:2:1-13:12
+INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:2:1-13:12
+	package
+		ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:3:5-50
+		INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:5:5-79
+	android:name
+		ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:5:22-77
+application
+ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:7:5-11:19
+activity#com.mrgames13.jimdo.drawingactivity.DrawingActivity
+ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:8:9-10:50
+	android:theme
+		ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:10:13-48
+	android:name
+		ADDED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml:9:13-44
+uses-sdk
+INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml
+INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\github_khom\memes\drawingactivity\src\main\AndroidManifest.xml

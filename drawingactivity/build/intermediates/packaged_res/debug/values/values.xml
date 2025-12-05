@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000</color>
+    <color name="colorPrimary">#37b89a</color>
+    <color name="colorPrimaryDark">#2fa489</color>
+    <color name="gray_light">#bbb</color>
+    <color name="white">#fff</color>
+    <string name="air_brush">Воздушная кисть</string>
+    <string name="app_name">Drawing Activity</string>
+    <string name="background_color">Цвет фона</string>
+    <string name="background_image">Фоновое изображение</string>
+    <string name="calligraphy">Каллиграфия</string>
+    <string name="cancel">Отменить</string>
+    <string name="choose_color">Выбрать цвет</string>
+    <string name="choose_image">Выбрать изображение</string>
+    <string name="clear_image">Очистить изображение</string>
+    <string name="current_size_">Размер:</string>
+    <string name="current_utility_">Режим:</string>
+    <string name="done">Готово</string>
+    <string name="drawing">Рисование</string>
+    <string name="drawing_instructions">Рисование в пределах белой области</string>
+    <string name="eraser">Стерка</string>
+    <string name="pen">Ручка</string>
+    <string name="pencil">Карандаш</string>
+    <string name="press_again_to_discard_drawing">Нажмите еще раз, чтобы отбросить рисунок</string>
+    <string name="redo">Повторить</string>
+    <string name="undo">Отменить</string>
+    <string name="warning_background_image">Когда вы установите фоновое изображение, рисунок будет очищен. Продолжить?</string>
+    <string name="warning_clear">Вы действительно хотите очистить рисунок?</string>
+    <string name="yes">Да</string>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+    <style name="DrawingStyle" parent="AppTheme.NoActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+    <style name="toolbarStyle" parent="Theme.AppCompat">
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+    <declare-styleable name="SelectableRoundedImageView">
+        <attr format="dimension" name="sriv_left_top_corner_radius"/>
+        <attr format="dimension" name="sriv_right_top_corner_radius"/>
+        <attr format="dimension" name="sriv_left_bottom_corner_radius"/>
+        <attr format="dimension" name="sriv_right_bottom_corner_radius"/>
+        <attr format="dimension" name="sriv_border_width"/>
+        <attr format="color" name="sriv_border_color"/>
+        <attr format="boolean" name="sriv_oval"/>
+        <attr name="android:scaleType"/>
+    </declare-styleable>
+</resources>

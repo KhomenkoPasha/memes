@@ -9,13 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +39,7 @@ import com.krishna.fileloader.FileLoader;
 import com.krishna.fileloader.listener.FileRequestListener;
 import com.krishna.fileloader.pojo.FileResponse;
 import com.krishna.fileloader.request.FileLoadRequest;
-import com.memes.khom.mnews.R;
+import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.activities.PictureActivity;
 import com.memes.khom.mnews.models.Comment;
 import com.memes.khom.mnews.models.GlideApp;
@@ -65,8 +58,15 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 import static com.rilixtech.materialfancybutton.MaterialFancyButton.TAG;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class RandomPostFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+
+public class RandomPostFragment extends Fragment implements View.OnClickListener {
 
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
@@ -88,7 +88,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
     private int likeCount;
     private boolean likeActive;
     private AdView adView;
-
+    public static final String TAG = "RandomPostFragment";
 
     public RandomPostFragment() {
         // Required empty public constructor
@@ -482,7 +482,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                                         Intent share = new Intent(Intent.ACTION_SEND);
                                         share.setType("image/*");
 
-                                        Uri uri = (FileProvider.getUriForFile(getActivity(),
+                                        Uri uri = (FileProvider.getUriForFile(Objects.requireNonNull(getActivity()),
                                                 Objects.requireNonNull(getActivity()).getPackageName() + ".fileProv",
                                                 new File(loadedFile.getPath() + ".jpg")));
 
@@ -518,29 +518,27 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
         download.setIndeterminate();
         try {
             Handler handler = new Handler();
-            Runnable r = new Runnable() {
-                public void run() {
-                    download.setProgress(50);
-                    if (uriPhoto != null)
-                        FileLoader.with(getActivity())
-                                .load(uriPhoto.toString(), true)
-                                .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
-                                .asFile(new FileRequestListener<File>() {
-                                    @Override
-                                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                        File loadedFile = response.getBody();
-                                        boolean ileane = loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
-                                        if (ileane)
-                                            Toast.makeText(getActivity(), "Файл загружен в Downloads/" + loadedFile.getName() + ".jpg",
-                                                    Toast.LENGTH_LONG).show();
-                                        download.setFinish();
-                                    }
+            Runnable r = () -> {
+                download.setProgress(50);
+                if (uriPhoto != null)
+                    FileLoader.with(getActivity())
+                            .load(uriPhoto.toString(), true)
+                            .fromDirectory(Environment.DIRECTORY_DOWNLOADS, FileLoader.DIR_EXTERNAL_PUBLIC)
+                            .asFile(new FileRequestListener<File>() {
+                                @Override
+                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                    File loadedFile = response.getBody();
+                                    boolean ileane = loadedFile.renameTo(new File(loadedFile.getPath() + ".jpg"));
+                                    if (ileane)
+                                        Toast.makeText(getActivity(), "Файл загружен в Downloads/" + loadedFile.getName() + ".jpg",
+                                                Toast.LENGTH_LONG).show();
+                                    download.setFinish();
+                                }
 
-                                    @Override
-                                    public void onError(FileLoadRequest request, Throwable t) {
-                                    }
-                                });
-                }
+                                @Override
+                                public void onError(FileLoadRequest request, Throwable t) {
+                                }
+                            });
             };
             handler.postDelayed(r, 300);
         } catch (Exception ex) {
@@ -604,11 +602,11 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
 
     private static class CommentAdapter extends RecyclerView.Adapter<RandomPostFragment.CommentViewHolder> {
 
-        private Context mContext;
-        private DatabaseReference mDatabaseReference;
-        private ChildEventListener mChildEventListener;
-        private List<String> mCommentIds = new ArrayList<>();
-        private List<Comment> mComments = new ArrayList<>();
+        private final Context mContext;
+        private final DatabaseReference mDatabaseReference;
+        private final ChildEventListener mChildEventListener;
+        private final List<String> mCommentIds = new ArrayList<>();
+        private final List<Comment> mComments = new ArrayList<>();
 
 
         CommentAdapter(final Context context, DatabaseReference ref) {
@@ -698,7 +696,7 @@ public class RandomPostFragment extends android.support.v4.app.Fragment implemen
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.getValue() != null) {
                                 String str = snapshot.getValue().toString();
-                                if (str != null && !str.isEmpty()) {
+                                if (!str.isEmpty()) {
                                     GlideApp.with(mContext)
                                             .load(str)
                                             .into(holder.comment_photo);

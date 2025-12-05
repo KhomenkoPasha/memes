@@ -149,7 +149,7 @@ public class ImageUtils {
             //Copy the byte to the file
             //Assume source bitmap loaded using options.inPreferredConfig = Config.ARGB_8888;
             FileChannel channel = randomAccessFile.getChannel();
-            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, 0, imgIn.getRowBytes() * height);
+            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, 0, (long) imgIn.getRowBytes() * height);
             imgIn.copyPixelsToBuffer(map);
             //recycle the source bitmap, this will be no longer used.
             imgIn.recycle();
