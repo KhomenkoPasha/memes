@@ -190,7 +190,7 @@
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-7371958965084168/1655011300" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_submit_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

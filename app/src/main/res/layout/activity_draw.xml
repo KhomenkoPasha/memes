@@ -181,7 +181,7 @@
     </ScrollView>
 
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_submit_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

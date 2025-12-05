@@ -153,7 +153,7 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -164,6 +164,6 @@
         android:background="@color/white"
         android:visibility="visible"
         tools:listitem="@layout/item_comment">
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>

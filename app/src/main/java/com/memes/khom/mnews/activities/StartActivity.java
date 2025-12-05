@@ -21,13 +21,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -45,8 +47,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lapism.searchview.Search;
-import com.lapism.searchview.widget.SearchView;
+import com.lapism.searchview.SearchView;
 import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.fragments.AllTopPostsFragment;
 import com.memes.khom.mnews.fragments.MyPostsFragment;
@@ -74,7 +75,7 @@ public class StartActivity extends AppCompatActivity
     private ImageView imageClearSpinner;
     private RelativeLayout relLayStart;
     private FloatingActionButton fab_new_post;
-  //  private View viewLineTop;
+    //  private View viewLineTop;
     private EditText mSearchEditText;
     private boolean needFind = true;
     private AdView adView;
@@ -127,7 +128,7 @@ public class StartActivity extends AppCompatActivity
             catSpinner.setTitle(getString(R.string.select_cat));
             catSpinner.setPositiveButton(getString(R.string.chose));
             // Button launches NewPostActivity
-          //  viewLineTop = findViewById(R.id.viewLineTop);
+            //  viewLineTop = findViewById(R.id.viewLineTop);
             fab_new_post = findViewById(R.id.fab_new_post);
             fab_new_post.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -160,7 +161,9 @@ public class StartActivity extends AppCompatActivity
         }
     }
 
-    /** Called when returning to the activity */
+    /**
+     * Called when returning to the activity
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -169,7 +172,9 @@ public class StartActivity extends AppCompatActivity
         }
     }
 
-    /** Called before the activity is destroyed */
+    /**
+     * Called before the activity is destroyed
+     */
     @Override
     public void onDestroy() {
         if (adView != null) {
@@ -185,124 +190,91 @@ public class StartActivity extends AppCompatActivity
     }
 
     private void initSearcher() {
-        View v = mSearchView.findViewById(R.id.search_view_shadow);
-        v.setBackgroundColor(Color.parseColor("#3C515C"));
+        if (mSearchView == null) {
+            return;
+        }
+        /*
+        View shadow = mSearchView.findViewById(R.id.search_view_shadow);
+        if (shadow != null) {
+            shadow.setBackgroundColor(Color.parseColor("#3C515C"));
+        }
+        */
+        mSearchEditText = mSearchView.findViewById(com.lapism.searchview.R.id.searchEditText_input);
+        if (mSearchEditText != null) {
+            mSearchEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
-        if (mSearchView != null) {
-            //mSearchView.setVersionMargins(SearchView);
-            // mSearchView.setTextOnly(R.string.tag_symbol);
-            // mSearchView.setSele(mSearchView.getTextOnly().length());
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
-            mSearchEditText = findViewById(com.lapism.searchview.R.id.search_searchEditText);
-            if (mSearchEditText != null) {
-                // mSearchEditText.setText("#");
-                mSearchEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                @Override
+                public void afterTextChanged(Editable text) {
+                    String val = text.toString();
+                    if (val.length() == 1 && val.charAt(0) != '#') {
+                        text.insert(0, "#");
                     }
+                }
+            });
+        }
 
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count,
-                                                  int after) {
-                    }
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                try {
+                    mSearchView.close(true);
 
-                    @Override
-                    public void afterTextChanged(Editable text) {
-                        String val = text.toString();
-                        if (val.length() == 1 && val.charAt(0) != '#')
-                            text.insert(0, "#");
-                    }
-                });
+                    ((PostListFragment) mPagerAdapter.getCurrentFragment())
+                            .refreshFragment(
+                                    FirebaseDatabase.getInstance()
+                                            .getReference()
+                                            .child("posts")
+                                            .orderByChild("title")
+                                            .startAt(query)
+                                            .endAt(query + "\uf8ff")
+                                            .limitToFirst(10)
+                            );
+
+                    needFind = false;
+                    catSpinner.setSelection(0);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return false;
             }
 
-            mSearchView.setOnQueryTextListener(new Search.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(CharSequence query) {
-                    try {
-                        mSearchView.close();
-                        ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                refreshFragment(FirebaseDatabase.getInstance().
-                                        getReference().child("posts").orderByChild("title").startAt(query.toString())
-                                        .endAt(query + "\uf8ff")
-                                        .limitToFirst(10));
-
-                        needFind = false;
-                        catSpinner.setSelection(0);
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onQueryTextChange(CharSequence newText) {
-                    try {
-                        if (newText.toString().isEmpty()) {
-                            if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
-                                ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                        refreshFragment(FirebaseDatabase.getInstance().
-                                                getReference().child("posts").orderByChild("likes_count").limitToLast(10));
-
-
-                            } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
-                                ((PostListFragment) mPagerAdapter.getCurrentFragment()).
-                                        refreshFragment(FirebaseDatabase.getInstance().
-                                                getReference().child("posts").orderByChild("create_date")
-                                                .limitToLast(10));
-                            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                try {
+                    if (newText.isEmpty()) {
+                        if (mPagerAdapter.getCurrentFragment() instanceof AllTopPostsFragment) {
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment())
+                                    .refreshFragment(
+                                            FirebaseDatabase.getInstance()
+                                                    .getReference()
+                                                    .child("posts")
+                                                    .orderByChild("likes_count")
+                                                    .limitToLast(10)
+                                    );
+                        } else if (mPagerAdapter.getCurrentFragment() instanceof RecentPostsFragment) {
+                            ((PostListFragment) mPagerAdapter.getCurrentFragment())
+                                    .refreshFragment(
+                                            FirebaseDatabase.getInstance()
+                                                    .getReference()
+                                                    .child("posts")
+                                                    .orderByChild("create_date")
+                                                    .limitToLast(10)
+                                    );
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-
-
-            });
-
-
-            // mSearchView.ico
-            mSearchView.setOnOpenCloseListener(new Search.OnOpenCloseListener() {
-                @Override
-                public void onOpen() {
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-            });
-
-            mSearchView.setOnMenuClickListener(new Search.OnMenuClickListener() {
-                @Override
-                public void onMenuClick() {
-                }
-            });
-
-
-            mSearchView.setOnLogoClickListener(new Search.OnLogoClickListener() {
-                @Override
-                public void onLogoClick() {
-                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                    if (!drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.openDrawer(GravityCompat.START);
-                    }
-                }
-            });
-
-
-            mSearchView.setOnOpenCloseListener(new Search.OnOpenCloseListener() {
-                @Override
-                public void onOpen() {
-                }
-
-                @Override
-                public void onClose() {
-                }
-            });
-
-        }
+                return false;
+            }
+        });
     }
 
 
@@ -397,9 +369,7 @@ public class StartActivity extends AppCompatActivity
             catSpinner.getBackground().
                     setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
-            imageClearSpinner.setOnClickListener(new View.OnClickListener()
-
-            {
+            imageClearSpinner.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     needFind = true;
@@ -459,13 +429,13 @@ public class StartActivity extends AppCompatActivity
                         .title(R.string.attention)
                         .content(R.string.exit_cur_user)
                         .positiveText(R.string.yes).onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(StartActivity.this, SignInActivity.class));
-                        finish();
-                    }
-                })
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                FirebaseAuth.getInstance().signOut();
+                                startActivity(new Intent(StartActivity.this, SignInActivity.class));
+                                finish();
+                            }
+                        })
                         .negativeText(R.string.cancel)
                         .show();
                 break;
@@ -485,11 +455,11 @@ public class StartActivity extends AppCompatActivity
                 .title(R.string.attention)
                 .content(R.string.exit_app)
                 .positiveText(R.string.yes).onPositive(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                Process.killProcess(Process.myPid());
-            }
-        })
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Process.killProcess(Process.myPid());
+                    }
+                })
                 .negativeText(R.string.cancel)
                 .show();
 
@@ -570,7 +540,7 @@ public class StartActivity extends AppCompatActivity
                 case 0:
                     relLayStart.setVisibility(View.GONE);
                     fab_new_post.setVisibility(View.GONE);
-                  //  viewLineTop.setVisibility(View.GONE);
+                    //  viewLineTop.setVisibility(View.GONE);
                     mSearchEditText.setEnabled(false);
                     adView.setVisibility(View.INVISIBLE);
                     mSearchView.setClickable(false);
@@ -589,7 +559,7 @@ public class StartActivity extends AppCompatActivity
                 case 2:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                 //   viewLineTop.setVisibility(View.VISIBLE);
+                    //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(true);
                     mSearchView.setClickable(true);
                     adView.setVisibility(View.VISIBLE);
@@ -601,7 +571,7 @@ public class StartActivity extends AppCompatActivity
                 case 3:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                 //   viewLineTop.setVisibility(View.VISIBLE);
+                    //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     adView.setVisibility(View.VISIBLE);
                     mSearchView.setClickable(false);
@@ -612,7 +582,7 @@ public class StartActivity extends AppCompatActivity
                 case 4:
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
-                  //  viewLineTop.setVisibility(View.VISIBLE);
+                    //  viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     adView.setVisibility(View.VISIBLE);
                     mSearchView.setClickable(false);
@@ -624,7 +594,7 @@ public class StartActivity extends AppCompatActivity
                     relLayStart.setVisibility(View.VISIBLE);
                     fab_new_post.setVisibility(View.VISIBLE);
                     adView.setVisibility(View.VISIBLE);
-                 //   viewLineTop.setVisibility(View.VISIBLE);
+                    //   viewLineTop.setVisibility(View.VISIBLE);
                     mSearchEditText.setEnabled(false);
                     mSearchView.setClickable(false);
                     mSearchView.setHint("Мои в топчике)");

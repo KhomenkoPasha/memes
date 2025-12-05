@@ -3,12 +3,13 @@ package com.memes.khom.mnews.activities;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.memes.khom.memsnews.R;
 import com.memes.khom.mnews.models.GlideApp;

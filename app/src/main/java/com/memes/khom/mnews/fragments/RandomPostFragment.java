@@ -56,13 +56,13 @@ import java.util.Objects;
 
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-import static com.rilixtech.materialfancybutton.MaterialFancyButton.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 

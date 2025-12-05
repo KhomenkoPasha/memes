@@ -77,7 +77,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".activities.SignInActivity"
+            android:name="com.memes.khom.mnews.activities.SignInActivity"
             android:exported="true"
             tools:ignore="Instantiatable">
             <intent-filter>
@@ -89,14 +89,14 @@
         </activity>
 
         <service
-            android:name=".widget.MyService"
+            android:name="com.memes.khom.mnews.widget.MyService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <receiver
-            android:name=".widget.MyProvider"
+            android:name="com.memes.khom.mnews.widget.MyProvider"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE">
+                </action>
             </intent-filter>
 
             <meta-data
@@ -105,34 +105,37 @@
         </receiver>
 
         <activity
-            android:name=".activities.NewPostActivity"
+            android:name="com.memes.khom.mnews.activities.NewPostActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
         <activity
-            android:name=".activities.PostDetailActivity"
+            android:name="com.memes.khom.mnews.activities.PostDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
         <activity
-            android:name=".activities.StartActivity"
+            android:name="com.memes.khom.mnews.activities.StartActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:label="@string/title_activity_start"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.PictureActivity"
+            android:name="com.memes.khom.mnews.activities.PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar_dialog" />
-        <activity android:name=".activities.FaceebookRegAct" />
+        <activity android:name="com.memes.khom.mnews.activities.FaceebookRegAct" />
         <activity
-            android:name=".activities.UserProfile"
+            android:name="com.memes.khom.mnews.activities.UserProfile"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.RegisterActivity"
-            tools:ignore="Instantiatable"></activity>
+            android:name="com.memes.khom.mnews.activities.RegisterActivity"
+            tools:ignore="Instantiatable">
+        </activity>
         <activity
-            android:name=".activities.YouToubeActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"></activity>
+            android:name="com.memes.khom.mnews.activities.YouToubeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout">
+        </activity>
         <activity
-            android:name=".activities.DrawActivity"
-            tools:ignore="Instantiatable"></activity>
+            android:name="com.memes.khom.mnews.activities.DrawActivity"
+            tools:ignore="Instantiatable">
+        </activity>
     </application>
 
 </manifest>
